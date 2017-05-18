@@ -25,5 +25,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile group: 'com.metarhia.jstp', name: 'jstp', version: '0.7.0'
+    compile group: 'com.metarhia.jstp', name: 'jstp-compiler', version: '0.1.12'
+
     testCompile 'junit:junit:4.12'
 }

@@ -1,0 +1,61 @@
+package com.metarhia.metacom.models;
+
+/**
+ * Connection to certain server host and port for chat and file exchange purposes
+ *
+ * @author lidaamber
+ */
+
+public class UserConnection {
+
+    /**
+     * Identifier of connection
+     */
+    private final int mId;
+
+    /**
+     * Chats manager
+     */
+    private final ChatsManager mChatsManager;
+
+    /**
+     * Files manager
+     */
+    private final FilesManager mFilesManager;
+
+    /**
+     * Creates new user connection
+     */
+    public UserConnection(int id) {
+        mId = id;
+        mChatsManager = new ChatsManager();
+        mFilesManager = new FilesManager();
+    }
+
+    /**
+     * Gets connection ID
+     *
+     * @return connection ID
+     */
+    public int getId() {
+        return mId;
+    }
+
+    /**
+     * Gets connection chats manager
+     *
+     * @return connection chats manager
+     */
+    public ChatsManager getChatsManager() {
+        return mChatsManager;
+    }
+
+    /**
+     * Gets connection files manager
+     *
+     * @return connection files manager
+     */
+    public FilesManager getFilesManager() {
+        return mFilesManager;
+    }
+}
