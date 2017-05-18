@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">MetaCom</string>
+
+    <!--Connection Screen-->
+    <string name="connection_host">server host</string>
+    <string name="connection_port">port</string>
+    <string name="connection_submit">submit</string>
+
+    <!-- Main screen -->
+    <string name="hostname">HostName</string>
+    <string name="files">Files</string>
+    <string name="chat">Chat</string>
+    
+    <!-- Files fragment-->
+    <string name="enter_code">Enter file code to download</string>
+    <string name="file_code">File code</string>
+
+    <!--Common-->
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+
+    <string name="hello_blank_fragment">hello_blank_fragment</string>
+
 </resources>

@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="horizontal"
+              tools:context="com.metarhia.metacom.Files.FilesFragment">
+
+    <ImageView
+        android:id="@+id/upload_file"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/small_margin"
+        android:background="@drawable/border"
+        android:src="@drawable/ic_file_upload_black_24dp"/>
+
+    <ImageView
+        android:id="@+id/download_file"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/small_margin"
+        android:background="@drawable/border"
+        android:src="@drawable/ic_file_download_black_24dp"/>
+</LinearLayout>
