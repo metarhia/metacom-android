@@ -10,10 +10,20 @@
     <string name="hostname">HostName</string>
     <string name="files">Files</string>
     <string name="chat">Chat</string>
-    
+
     <!-- Files fragment-->
-    <string name="enter_code">Enter file code to download</string>
-    <string name="file_code">File code</string>
+    <string name="enter_download_code">Enter file code to download</string>
+    <string name="download_code">File code</string>
+    <string name="downloading">Downloading...</string>
+    <string name="complete">Complete!</string>
+    <string name="upload_code">Your file code is %s</string>
+    
+    <!--Chat Login-->
+    <string name="input_chat_name">Input chat name</string>
+
+    <!--Chat-->
+    <string name="chatname">ChatName</string>
+    <string name="input_message">Input message</string>
 
     <!--Common-->
     <string name="cancel">Cancel</string>

@@ -1,12 +1,31 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.metarhia.metacom.Chat.ChatLoginFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="ChatLoginFragment"/>
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/chat_name"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:hint="@string/input_chat_name"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:textSize="@dimen/text_size"/>
 
-</FrameLayout>
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/submit"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/small_margin"
+        android:background="@drawable/border"
+        android:clickable="true"
+        android:enabled="true"
+        android:fontFamily="sans-serif-light"
+        android:text="@string/connection_submit"
+        android:textSize="@dimen/text_size"/>
+
+</LinearLayout>

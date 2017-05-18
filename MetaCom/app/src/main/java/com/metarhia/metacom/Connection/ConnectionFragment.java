@@ -3,6 +3,7 @@ package com.metarhia.metacom.Connection;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.metarhia.metacom.MainActivity;
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.ConnectionCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +33,8 @@ public class ConnectionFragment extends Fragment {
     @BindView(R.id.port)
     TextInputEditText port;
 
+    private AppCompatButton submit = null;
+
     public ConnectionFragment() {
         // Required empty public constructor
     }
@@ -42,7 +46,8 @@ public class ConnectionFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_connection, container, false);
         ButterKnife.bind(this, v);
-        ButterKnife.findById(v, R.id.submit).setOnClickListener(new View.OnClickListener() {
+        submit = ButterKnife.findById(v, R.id.submit);
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submitClick();
@@ -52,8 +57,22 @@ public class ConnectionFragment extends Fragment {
     }
 
     public void submitClick() {
+        submit.setClickable(false);
         // todo set connection
-        getActivity().finish();
+        new CountDownTimer(2000, 1000) {
+
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                Toast.makeText(getContext(), "connection established", Toast.LENGTH_SHORT).show();
+                submit.setClickable(true);
+                ((ConnectionCallback) getActivity()).onConnectionEstablished();
+            }
+        }.start();
     }
 
 }
