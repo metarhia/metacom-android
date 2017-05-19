@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:gravity="center"
               android:orientation="vertical"
-              tools:context="com.metarhia.metacom.Connection.ConnectionFragment">
+              tools:context=".activities.connection.ConnectionFragment">
 
     <ImageView
         android:id="@+id/icon_image"

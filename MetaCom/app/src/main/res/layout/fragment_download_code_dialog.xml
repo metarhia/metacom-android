@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:background="@drawable/border"
               android:orientation="vertical"
-              tools:context="com.metarhia.metacom.Files.DownloadFileDialog">
+              tools:context=".activities.files.DownloadFileDialog">
 
     <TextView
         android:layout_width="match_parent"

@@ -1,26 +1,21 @@
-package com.metarhia.metacom.Connection;
+package com.metarhia.metacom.activities.connection;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.metarhia.metacom.MainActivity;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.

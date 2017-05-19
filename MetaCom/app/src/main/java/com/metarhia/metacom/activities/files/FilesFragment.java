@@ -1,4 +1,4 @@
-package com.metarhia.metacom.Files;
+package com.metarhia.metacom.activities.files;
 
 
 import android.os.Bundle;
@@ -17,8 +17,8 @@ import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
 import butterknife.ButterKnife;
 
-import static com.metarhia.metacom.Files.DownloadFileDialog.DownloadFileDialogTag;
-import static com.metarhia.metacom.Files.UploadFileDialog.UploadFileDialogTag;
+import static com.metarhia.metacom.activities.files.DownloadFileDialog.DownloadFileDialogTag;
+import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileDialogTag;
 
 
 /**

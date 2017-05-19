@@ -5,7 +5,7 @@
               android:background="@drawable/border"
               android:orientation="vertical"
               android:padding="@dimen/small_margin"
-              tools:context="com.metarhia.metacom.Files.DownloadFileDialog">
+              tools:context=".activities.files.DownloadFileDialog">
 
     <TextView
         android:id="@+id/code_string"

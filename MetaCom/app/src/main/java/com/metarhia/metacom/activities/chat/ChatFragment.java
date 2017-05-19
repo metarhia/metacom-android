@@ -1,4 +1,4 @@
-package com.metarhia.metacom.Chat;
+package com.metarhia.metacom.activities.chat;
 
 
 import android.content.Context;

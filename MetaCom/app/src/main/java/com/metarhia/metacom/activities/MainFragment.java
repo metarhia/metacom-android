@@ -1,4 +1,4 @@
-package com.metarhia.metacom;
+package com.metarhia.metacom.activities;
 
 
 import android.os.Bundle;
@@ -8,16 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.metarhia.metacom.Chat.ChatFragment;
-import com.metarhia.metacom.Chat.ChatLoginFragment;
-import com.metarhia.metacom.Files.FilesFragment;
+import com.metarhia.metacom.activities.chat.ChatLoginFragment;
+import com.metarhia.metacom.activities.files.FilesFragment;
+import com.metarhia.metacom.R;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.metarhia.metacom.Files.FilesFragment.FilesFragmentTag;
+import static com.metarhia.metacom.activities.files.FilesFragment.FilesFragmentTag;
 
 
 /**

@@ -1,24 +1,20 @@
-package com.metarhia.metacom.Files;
+package com.metarhia.metacom.activities.files;
 
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Toast;
 
-import com.metarhia.metacom.MainFragment;
 import com.metarhia.metacom.R;
 
 import butterknife.ButterKnife;
 
-import static com.metarhia.metacom.Files.FilesFragment.FilesFragmentTag;
-import static com.metarhia.metacom.MainFragment.MainFragmentTag;
+import static com.metarhia.metacom.activities.files.FilesFragment.FilesFragmentTag;
 
 /**
  * A simple {@link Fragment} subclass.
