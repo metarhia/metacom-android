@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MetaCom chat
+ * MetaCom chat room
  *
  * @author lidaamber
  */
 
-public class Chat {
+public class ChatRoom {
 
     /**
-     * Chat name
+     * Chat room name
      */
-    private String mChatName;
+    private String mChatRoomName;
 
     /**
      * MetaCom connection
@@ -26,42 +26,42 @@ public class Chat {
     private final AndroidJSTPConnection mConnection;
 
     /**
-     * Message listeners for incoming chat messages
+     * Message listeners for incoming chat room messages
      */
     private final List<MessageListener> mMessageListeners;
 
 
     /**
-     * Creates new chat by name
+     * Creates new chat room by name
      *
-     * @param chatName chat name
+     * @param chatRoomName chat name
      */
-    public Chat(String chatName, AndroidJSTPConnection connection) {
-        mChatName = chatName;
+    public ChatRoom(String chatRoomName, AndroidJSTPConnection connection) {
+        mChatRoomName = chatRoomName;
         mConnection = connection;
         mMessageListeners = new ArrayList<>();
     }
 
     /**
-     * Gets chat name
+     * Gets chat room name
      *
-     * @return chat name
+     * @return chat room name
      */
-    public String getChatName() {
-        return mChatName;
+    public String getChatRoomName() {
+        return mChatRoomName;
     }
 
     /**
-     * Sets chat name
+     * Sets chat room name
      *
-     * @param chatName chat name
+     * @param chatRoomName chat room name
      */
-    public void setChatName(String chatName) {
-        mChatName = chatName;
+    public void setChatRoomName(String chatRoomName) {
+        mChatRoomName = chatRoomName;
     }
 
     /**
-     * Sends message to chat
+     * Sends message to chat room
      *
      * @param message  message to be sent
      * @param callback callback after message sending (success and error)

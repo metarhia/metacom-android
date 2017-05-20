@@ -18,7 +18,7 @@ public class UserConnection {
     /**
      * Chats manager
      */
-    private final ChatsManager mChatsManager;
+    private final ChatRoomsManager mChatRoomsManager;
 
     /**
      * Files manager
@@ -30,7 +30,7 @@ public class UserConnection {
      */
     public UserConnection(int id, AndroidJSTPConnection connection) {
         mId = id;
-        mChatsManager = new ChatsManager(connection);
+        mChatRoomsManager = new ChatRoomsManager(connection);
         mFilesManager = new FilesManager(connection);
     }
 
@@ -48,8 +48,8 @@ public class UserConnection {
      *
      * @return connection chats manager
      */
-    public ChatsManager getChatsManager() {
-        return mChatsManager;
+    public ChatRoomsManager getChatRoomsManager() {
+        return mChatRoomsManager;
     }
 
     /**
