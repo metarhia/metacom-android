@@ -1,5 +1,6 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.ChatCallback;
 
 import java.util.ArrayList;
@@ -16,24 +17,30 @@ public class ChatsManager {
     /**
      * List of user chats
      */
-    private List<Chat> mChats;
+    private final List<Chat> mChats;
+
+    /**
+     * MetaCom connection
+     */
+    private final AndroidJSTPConnection mConnection;
 
     /**
      * Creates new chat manager
      */
-    public ChatsManager() {
+    public ChatsManager(AndroidJSTPConnection connection) {
+        mConnection = connection;
         mChats = new ArrayList<>();
     }
 
     /**
      * Adds new chat by name
      *
-     * @param chatName chat name to be added
+     * @param roomName room name to be added
      * @param callback callback after attempt to create chat (success and error)
      */
-    public void addChat(String chatName, ChatCallback callback) {
+    public void addChat(String roomName, ChatCallback callback) {
         // TODO add chat
-        mChats.add(new Chat(chatName));
+        mChats.add(new Chat(roomName, mConnection));
         callback.onChatEstablished();
     }
 

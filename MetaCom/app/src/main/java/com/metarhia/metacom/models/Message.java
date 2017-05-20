@@ -11,17 +11,17 @@ public class Message {
     /**
      * Type of the message
      */
-    private MessageType mType;
+    private final MessageType mType;
 
     /**
      * Message content
      */
-    private String mContent;
+    private final String mContent;
 
     /**
      * Shows if message belongs to user or it's incoming
      */
-    private boolean mIsIncoming;
+    private final boolean mIsIncoming;
 
     /**
      * Creates message with specified type and content

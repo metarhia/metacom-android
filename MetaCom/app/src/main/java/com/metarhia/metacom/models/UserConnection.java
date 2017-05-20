@@ -1,5 +1,7 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.metacom.connection.AndroidJSTPConnection;
+
 /**
  * Connection to certain server host and port for chat and file exchange purposes
  *
@@ -26,10 +28,10 @@ public class UserConnection {
     /**
      * Creates new user connection
      */
-    public UserConnection(int id) {
+    public UserConnection(int id, AndroidJSTPConnection connection) {
         mId = id;
-        mChatsManager = new ChatsManager();
-        mFilesManager = new FilesManager();
+        mChatsManager = new ChatsManager(connection);
+        mFilesManager = new FilesManager(connection);
     }
 
     /**

@@ -1,6 +1,11 @@
 package com.metarhia.metacom.models;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
+
+import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
+import com.metarhia.metacom.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,25 +26,42 @@ public class UserConnectionsManager {
     /**
      * List of user connections
      */
-    private List<UserConnection> mUserConnections;
+    private final List<UserConnection> mUserConnections;
 
     /**
-     * Gets user connection manager instance
+     * Context used for connections
+     */
+    private final Context mContext;
+
+    /**
+     * Gets user connection manager instance, if null, creates it
      *
+     * @param context application context
      * @return user connection manager instance
      */
-    public static UserConnectionsManager get() {
+    public static UserConnectionsManager get(Context context) {
         if (instance == null) {
-            instance = new UserConnectionsManager();
+            instance = new UserConnectionsManager(context);
         }
 
         return instance;
     }
 
     /**
+     * Gets user connection manager instance
+     *
+     * @return user connection manager instance
+     */
+    @Nullable
+    public static UserConnectionsManager get() {
+        return instance;
+    }
+
+    /**
      * Creates new user connections manager
      */
-    private UserConnectionsManager() {
+    private UserConnectionsManager(Context context) {
+        mContext = context;
         mUserConnections = new ArrayList<>();
     }
 
@@ -50,11 +72,22 @@ public class UserConnectionsManager {
      * @param port     required server port
      * @param callback callback after attempt to create connection (success and error)
      */
-    public void addConnection(String host, int port, ConnectionCallback callback) {
-        // TODO add real connection creation
+    public void addConnection(String host, int port, final ConnectionCallback callback) {
+        AndroidJSTPConnection connection = new AndroidJSTPConnection(host, port, true, mContext);
+        connection.addListener(new AndroidJSTPConnection.AndroidJSTPConnectionListener() {
+            @Override
+            public void onConnectionEstablished(AndroidJSTPConnection connection) {
+                mUserConnections.add(new UserConnection(mUserConnections.size(), connection));
+                callback.onConnectionEstablished();
+                connection.removeListener(this);
+            }
 
-        mUserConnections.add(new UserConnection(mUserConnections.size()));
-        callback.onConnectionEstablished();
+            @Override
+            public void onConnectionLost() {
+
+            }
+        });
+        connection.openConnection(Constants.APPLICATION_NAME);
     }
 
     /**

@@ -1,31 +1,21 @@
 package com.metarhia.metacom.activities;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.res.Resources;
+
+import com.metarhia.metacom.models.UserConnectionsManager;
 
 /**
- * Created by Lida on 18.05.17.
+ * MetaCom application
+ *
+ * @author lidaamber
  */
 
 public class MetaComApplication extends Application {
 
-    private static Context mContext;
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    private static Resources mAppResources;
-
-    public MetaComApplication() {
-        super();
-
-        mContext = getApplicationContext();
-        mAppResources = getResources();
-    }
-
-    public static Context getContext() {
-        return mContext;
-    }
-
-    public static Resources getAppResources() {
-        return mAppResources;
+        UserConnectionsManager.get(getApplicationContext());
     }
 }

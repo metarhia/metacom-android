@@ -1,5 +1,6 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
 
@@ -20,9 +21,14 @@ public class Chat {
     private String mChatName;
 
     /**
+     * MetaCom connection
+     */
+    private final AndroidJSTPConnection mConnection;
+
+    /**
      * Message listeners for incoming chat messages
      */
-    private List<MessageListener> mMessageListeners;
+    private final List<MessageListener> mMessageListeners;
 
 
     /**
@@ -30,8 +36,9 @@ public class Chat {
      *
      * @param chatName chat name
      */
-    public Chat(String chatName) {
+    public Chat(String chatName, AndroidJSTPConnection connection) {
         mChatName = chatName;
+        mConnection = connection;
         mMessageListeners = new ArrayList<>();
     }
 

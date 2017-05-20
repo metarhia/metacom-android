@@ -1,5 +1,6 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
@@ -12,10 +13,15 @@ import com.metarhia.metacom.interfaces.FileUploadedCallback;
 public class FilesManager {
 
     /**
+     * MetaCom connection
+     */
+    private final AndroidJSTPConnection mConnection;
+
+    /**
      * Creates new files manager
      */
-    public FilesManager() {
-
+    public FilesManager(AndroidJSTPConnection connection) {
+        mConnection = connection;
     }
 
     /**

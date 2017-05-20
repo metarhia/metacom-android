@@ -1,11 +1,16 @@
 package com.metarhia.metacom.utils;
 
 /**
- * Created by Lida on 18.05.17.
+ * Application constants
+ *
+ * @author lidaamber
  */
 
 public class Constants {
 
+    public static final String APPLICATION_NAME = "metarhia.com";
+
+    public static final String META_COM = "metacom";
 
     public static final String ACTION_NEEDS_CONNECTION = "actionNeedsConnection";
     public static final String ACTION_HAS_CONNECTION = "actionHasConnection";
