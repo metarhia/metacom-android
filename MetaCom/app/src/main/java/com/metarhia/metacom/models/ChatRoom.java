@@ -1,8 +1,15 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.jstp.core.Handlers.ManualHandler;
+import com.metarhia.jstp.core.JSTypes.JSArray;
+import com.metarhia.jstp.core.JSTypes.JSObject;
+import com.metarhia.jstp.core.JSTypes.JSValue;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
+import com.metarhia.metacom.connection.Errors;
+import com.metarhia.metacom.connection.JSTPOkErrorHandler;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
+import com.metarhia.metacom.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,7 @@ public class ChatRoom {
         mChatRoomName = chatRoomName;
         mConnection = connection;
         mMessageListeners = new ArrayList<>();
+        initIncomingMessagesListener();
     }
 
     /**
@@ -66,8 +74,20 @@ public class ChatRoom {
      * @param message  message to be sent
      * @param callback callback after message sending (success and error)
      */
-    public void sendMessage(Message message, MessageSentCallback callback) {
-        // TODO send message
+    public void sendMessage(Message message, final MessageSentCallback callback) {
+        JSArray args = new JSArray();
+        args.add(message.getContent());
+        mConnection.cacheCall(Constants.META_COM, "send", args, new JSTPOkErrorHandler() {
+            @Override
+            public void onOk(JSArray args) {
+                callback.onMessageSent();
+            }
+
+            @Override
+            public void onError(Integer errorCode) {
+                callback.onMessageSentError(Errors.getErrorByCode(errorCode));
+            }
+        });
 
         callback.onMessageSent();
     }
@@ -88,5 +108,23 @@ public class ChatRoom {
      */
     public void removeMessageListener(MessageListener listener) {
         mMessageListeners.remove(listener);
+    }
+
+    /**
+     * Adds message event handler to JSTP connection
+     */
+    private void initIncomingMessagesListener() {
+        mConnection.addEventHandler(Constants.META_COM, "message", new ManualHandler() {
+            @Override
+            public void invoke(JSValue jsValue) {
+                JSArray messagePayload = (JSArray) ((JSObject) jsValue).get("message");
+                String messageContent = (String) messagePayload.get(0).getGeneralizedValue();
+
+                Message message = new Message(MessageType.TEXT, messageContent, true);
+                for (MessageListener listener : mMessageListeners) {
+                    listener.onMessageReceived(message);
+                }
+            }
+        });
     }
 }

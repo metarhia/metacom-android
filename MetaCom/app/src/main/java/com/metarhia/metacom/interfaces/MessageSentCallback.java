@@ -16,6 +16,8 @@ public interface MessageSentCallback {
 
     /**
      * Called when server responds error
+     *
+     * @param message error message
      */
-    void onMessageSentError();
+    void onMessageSentError(String message);
 }

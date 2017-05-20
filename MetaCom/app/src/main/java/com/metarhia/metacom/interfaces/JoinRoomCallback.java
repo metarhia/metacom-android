@@ -6,15 +6,17 @@ package com.metarhia.metacom.interfaces;
  * @author lidaamber
  */
 
-public interface ChatCallback {
+public interface JoinRoomCallback {
 
     /**
      * Called when chat is established successfully
      */
-    void onChatEstablished();
+    void onJoinedRoom();
 
     /**
      * Called when server responds error
+     *
+     * @param errorMessage error message
      */
-    void onChatError();
+    void onJoinError(String errorMessage);
 }

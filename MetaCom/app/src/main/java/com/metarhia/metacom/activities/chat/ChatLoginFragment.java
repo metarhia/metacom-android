@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.metarhia.metacom.R;
-import com.metarhia.metacom.interfaces.ChatCallback;
+import com.metarhia.metacom.interfaces.JoinRoomCallback;
 
 import butterknife.ButterKnife;
 
@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatLoginFragment extends Fragment implements ChatCallback{
+public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
 
     public ChatLoginFragment() {
@@ -35,20 +35,20 @@ public class ChatLoginFragment extends Fragment implements ChatCallback{
             @Override
             public void onClick(View view) {
                 // TODO: set chat connection
-                onChatEstablished();
+                onJoinedRoom();
             }
         });
         return view;
     }
 
     @Override
-    public void onChatEstablished() {
+    public void onJoinedRoom() {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onChatError() {
+    public void onJoinError(String errorMessage) {
 
     }
 }

@@ -1,7 +1,12 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.jstp.core.JSTypes.JSArray;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
-import com.metarhia.metacom.interfaces.ChatCallback;
+import com.metarhia.metacom.connection.Errors;
+import com.metarhia.metacom.connection.JSTPOkErrorHandler;
+import com.metarhia.metacom.interfaces.JoinRoomCallback;
+import com.metarhia.metacom.interfaces.LeaveRoomCallback;
+import com.metarhia.metacom.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +43,23 @@ public class ChatRoomsManager {
      * @param roomName room name to be added
      * @param callback callback after attempt to create chat (success and error)
      */
-    public void addChatRoom(String roomName, ChatCallback callback) {
-        // TODO add chat
-        mChatRooms.add(new ChatRoom(roomName, mConnection));
-        callback.onChatEstablished();
+    public void addChatRoom(final String roomName, final JoinRoomCallback callback) {
+        JSArray args = new JSArray();
+        args.add(roomName);
+
+        mConnection.cacheCall(Constants.META_COM, "join", args, new JSTPOkErrorHandler() {
+            @Override
+            public void onOk(JSArray args) {
+                mChatRooms.add(new ChatRoom(roomName, mConnection));
+                callback.onJoinedRoom();
+            }
+
+            @Override
+            public void onError(Integer errorCode) {
+                callback.onJoinError(Errors.getErrorByCode(errorCode));
+            }
+        });
+
     }
 
     /**
@@ -60,12 +78,23 @@ public class ChatRoomsManager {
     }
 
     /**
-     * Removes chat room from chats list
+     * Leaves chat room and removes char room from chats list
      *
      * @param chatRoom chatRoom to be removed
      */
-    public void removeChatRoom(ChatRoom chatRoom) {
-        mChatRooms.remove(chatRoom);
+    public void leaveChatRoom(final ChatRoom chatRoom, final LeaveRoomCallback callback) {
+        mConnection.cacheCall(Constants.META_COM, "leave", new JSArray(), new JSTPOkErrorHandler() {
+            @Override
+            public void onOk(JSArray args) {
+                mChatRooms.remove(chatRoom);
+                callback.onLeavedRoom();
+            }
+
+            @Override
+            public void onError(Integer errorCode) {
+                callback.onLeaveError(Errors.getErrorByCode(errorCode));
+            }
+        });
     }
 
 }
