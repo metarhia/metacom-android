@@ -17,7 +17,7 @@
     <string name="downloading">Downloading...</string>
     <string name="complete">Complete!</string>
     <string name="upload_code">Your file code is %s</string>
-    
+
     <!--Chat Login-->
     <string name="input_chat_name">Input chat name</string>
 
@@ -31,4 +31,9 @@
 
     <string name="hello_blank_fragment">hello_blank_fragment</string>
 
+    <!-- Errors -->
+    <string name="err_room_taken">Room is already taken</string>
+    <string name="err_not_in_chat">You are not in chat</string>
+    <string name="err_no_interlocutor">You are the only person in the chat room</string>
+    <string name="err_no_such_file">No such file</string>
 </resources>

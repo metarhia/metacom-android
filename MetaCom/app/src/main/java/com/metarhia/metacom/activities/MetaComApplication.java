@@ -2,6 +2,7 @@ package com.metarhia.metacom.activities;
 
 import android.app.Application;
 
+import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.models.UserConnectionsManager;
 
 /**
@@ -17,5 +18,6 @@ public class MetaComApplication extends Application {
         super.onCreate();
 
         UserConnectionsManager.get(getApplicationContext());
+        Errors.initResources(getResources());
     }
 }
