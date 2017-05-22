@@ -4,28 +4,16 @@
                 android:layout_height="match_parent"
                 tools:context=".activities.chat.ChatFragment">
 
-    <LinearLayout
+    <include
         android:id="@+id/toolbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
-
-        <include layout="@layout/toolbar"/>
-    </LinearLayout>
-
+        layout="@layout/toolbar"/>
 
     <RelativeLayout
         android:id="@+id/input_message_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        >
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentTop="true"
-            android:background="@color/black"/>
+        android:layout_marginBottom="@dimen/small_margin">
 
         <ImageView
             android:id="@+id/attach"
@@ -64,11 +52,11 @@
 
     <ListView
         android:id="@+id/messages_list"
-        android:layout_margin="@dimen/small_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/input_message_layout"
         android:layout_below="@id/toolbar_layout"
+        android:layout_margin="@dimen/small_margin"
         android:divider="@null"
         android:dividerHeight="@dimen/small_margin"/>
 </RelativeLayout>

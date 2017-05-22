@@ -2,13 +2,12 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@drawable/border"
               android:orientation="vertical"
               android:padding="@dimen/small_margin"
               tools:context=".activities.files.DownloadFileDialog">
 
     <TextView
-        android:id="@+id/code_string"
+        android:id="@+id/upload_result_string"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
@@ -16,23 +15,4 @@
         android:text="@string/upload_code"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size"/>
-
-    <LinearLayout
-        android:id="@+id/button_ok"
-        android:layout_width="150dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center"
-        android:background="@drawable/border">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center"
-            android:text="@string/ok"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size"/>
-
-    </LinearLayout>
 </LinearLayout>

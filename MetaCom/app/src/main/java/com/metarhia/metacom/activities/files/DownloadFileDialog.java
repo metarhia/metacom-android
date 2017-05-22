@@ -1,10 +1,14 @@
 package com.metarhia.metacom.activities.files;
 
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +17,8 @@ import android.view.Window;
 import com.metarhia.metacom.R;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
-import static com.metarhia.metacom.activities.files.FilesFragment.FilesFragmentTag;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,40 +27,32 @@ public class DownloadFileDialog extends DialogFragment {
 
     public final static String DownloadFileDialogTag = "DownloadFileDialogTag";
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_download_code_dialog, null);
-        ButterKnife.bind(this, v);
-        ButterKnife.findById(v, R.id.button_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
-        ButterKnife.findById(v, R.id.button_ok).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // todo start downloading file
-                final FilesFragment fragment = (FilesFragment) getFragmentManager().findFragmentByTag(FilesFragmentTag);
-                if (fragment != null && fragment.isVisible()) {
-                    fragment.setBottomNotice(true, getString(R.string.downloading));
-                    CountDownTimer countDownTimer = new CountDownTimer(2000, 1000) {
-                        @Override
-                        public void onTick(long l) {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-                        }
+        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
-                        @Override
-                        public void onFinish() {
-                            fragment.onFileDownloaded();
+        View view = layoutInflater.inflate(R.layout.fragment_download_code_dialog, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setPositiveButton(getResources().getString(R.string.ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // todo start downloading
+                            }
                         }
-                    }.start();
-                }
-                dismiss();
-            }
-        });
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        return v;
+                )
+                .setNegativeButton(getResources().getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                            }
+                        }
+                );
+
+        return builder.create();
     }
 
 }

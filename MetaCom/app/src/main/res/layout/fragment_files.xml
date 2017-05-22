@@ -17,7 +17,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="@dimen/small_margin"
-            android:background="@drawable/border"
             android:src="@drawable/ic_file_upload_black_24dp"/>
 
         <ImageView
@@ -25,27 +24,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="@dimen/small_margin"
-            android:background="@drawable/border"
             android:src="@drawable/ic_file_download_black_24dp"/>
     </LinearLayout>
 
-    <LinearLayout
+    <include
         android:id="@+id/bottom_notice_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/border"
-        android:orientation="vertical"
-        android:padding="@dimen/small_margin"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/bottom_notice_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:text=""
-            android:textAlignment="center"
-            android:textSize="@dimen/text_size"/>
-    </LinearLayout>
+        layout="@layout/bottom_notice"
+        android:visibility="gone"/>
 </RelativeLayout>

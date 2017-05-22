@@ -2,20 +2,28 @@ package com.metarhia.metacom.activities;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.metarhia.metacom.activities.chat.ChatFragment;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
 import com.metarhia.metacom.R;
 
-import butterknife.ButterKnife;
+import java.util.ArrayList;
 
-import static com.metarhia.metacom.activities.files.FilesFragment.FilesFragmentTag;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 
 /**
@@ -25,6 +33,24 @@ public class MainFragment extends Fragment {
 
     public final static String MainFragmentTag = "MainFragmentTag";
 
+    private Unbinder mUnbinder;
+
+    @BindView(R.id.toolbar_title)
+    TextView mToolbarTitle;
+
+    @BindView(R.id.toolbar_back)
+    ImageView mToolbarBack;
+
+    @BindView(R.id.tab_layout)
+    TabLayout mTabLayout;
+
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
+
+    private ArrayList<Fragment> mFragmentArrayList;
+    private PagerAdapter mPagerAdapter;
+    private ArrayList<String> mFragmentTitles;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -33,46 +59,56 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_main, container, false);
-        ButterKnife.bind(this, v);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
 
-        final TextView toolbar_title = (TextView) ButterKnife.findById(v, R.id.toolbar_title);
-        toolbar_title.setText(getString(R.string.hostname));
-        final ImageView toolbar_back = (ImageView) ButterKnife.findById(v, R.id.toolbar_back);
-        toolbar_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().finish();
-            }
-        });
+        mToolbarTitle.setText(getString(R.string.hostname));
 
-        final TextView files_tab = (TextView) ButterKnife.findById(v, R.id.files_tab);
-        final TextView chat_tab = (TextView) ButterKnife.findById(v, R.id.chat_tab);
+        setPages();
 
-        files_tab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                files_tab.setTextColor(getResources().getColor(R.color.red));
-                chat_tab.setTextColor(getResources().getColor(R.color.black));
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_screen_container, new FilesFragment(), FilesFragmentTag)
-                        .commit();
-            }
-        });
-
-        chat_tab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                files_tab.setTextColor(getResources().getColor(R.color.black));
-                chat_tab.setTextColor(getResources().getColor(R.color.red));
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_screen_container, new ChatLoginFragment())
-                        .commit();
-            }
-        });
-
-        return v;
+        return view;
     }
 
+    @OnClick(R.id.toolbar_back)
+    public void onBackClick() {
+        getActivity().finish();
+    }
 
+    private void setPages() {
+        mFragmentArrayList = new ArrayList<>();
+        mFragmentArrayList.add(new FilesFragment());
+        mFragmentArrayList.add(new ChatLoginFragment());
+
+        mPagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
+
+            @Override
+            public int getCount() {
+                return mFragmentArrayList.size();
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return mFragmentArrayList.get(position);
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return mFragmentTitles.get(position);
+            }
+        };
+
+        mViewPager.setAdapter(mPagerAdapter);
+
+        mFragmentTitles = new ArrayList<>();
+        mFragmentTitles.add(getResources().getString(R.string.files));
+        mFragmentTitles.add(getResources().getString(R.string.chat));
+
+        mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 }

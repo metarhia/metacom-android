@@ -2,10 +2,10 @@
        android:shape="rectangle">
     <solid android:color="@android:color/transparent"/>
     <corners
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="0dp"
-        android:radius="0dp"
-        android:topRightRadius="0dp"/>
+        android:bottomLeftRadius="@dimen/small_margin"
+        android:bottomRightRadius="@dimen/small_margin"
+        android:topLeftRadius="@dimen/small_margin"
+        android:topRightRadius="@dimen/small_margin"/>
     <stroke
         android:width="1px"
         android:color="@color/black"/>

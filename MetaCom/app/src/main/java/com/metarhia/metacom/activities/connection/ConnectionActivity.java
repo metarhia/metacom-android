@@ -8,7 +8,7 @@ import com.metarhia.metacom.activities.MainActivity;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
 
-public class ConnectionActivity extends AppCompatActivity implements ConnectionCallback {
+public class ConnectionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,15 +19,4 @@ public class ConnectionActivity extends AppCompatActivity implements ConnectionC
                 .commit();
     }
 
-    @Override
-    public void onConnectionEstablished() {
-        // TODO: onConnectionEstablished
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onConnectionError() {
-
-    }
 }

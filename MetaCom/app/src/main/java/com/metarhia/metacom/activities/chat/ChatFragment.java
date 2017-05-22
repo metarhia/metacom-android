@@ -19,13 +19,32 @@ import com.metarhia.metacom.models.MessageType;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ChatFragment extends Fragment {
 
+    private Unbinder mUnbinder;
+
+    @BindView(R.id.toolbar_title)
+    TextView mToolbarTitle;
+
+    @BindView(R.id.toolbar_back)
+    ImageView mToolbarBack;
+
+    @BindView(R.id.attach)
+    ImageView mFileAttach;
+
+    @BindView(R.id.send)
+    ImageView mSendMessage;
+
+    @BindView(R.id.messages_list)
+    ListView mMessagesListView;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -37,30 +56,12 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_chat2, container, false);
-        ButterKnife.bind(this, v);
+        mUnbinder = ButterKnife.bind(this, v);
 
-        final TextView toolbar_title = (TextView) ButterKnife.findById(v, R.id.toolbar_title);
-        toolbar_title.setText(getString(R.string.chatname));
-        final ImageView toolbar_back = (ImageView) ButterKnife.findById(v, R.id.toolbar_back);
-        toolbar_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().finish();
-            }
-        });
+        mToolbarTitle.setText(getString(R.string.chatname));
 
-        final ImageView attach = (ImageView) ButterKnife.findById(v, R.id.attach);
-        attach.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO: choose file to send
-                Toast.makeText(getContext(), "file was sent", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        final ListView messagesList = ButterKnife.findById(v, R.id.messages_list);
         MessageAdapter adapter = new MessageAdapter(getActivity(), getMessageExamples());
-        messagesList.setAdapter(adapter);
+        mMessagesListView.setAdapter(adapter);
 
         return v;
     }
@@ -114,20 +115,44 @@ public class ChatFragment extends Fragment {
 
             Message m = messages.get(position);
 
-            View message_right_layout = view.findViewById(R.id.message_right_layout);
-            View message_left_layout = view.findViewById(R.id.message_left_layout);
+            View messageRightLayout = ButterKnife.findById(view, R.id.message_right_layout);
+            View messageLeftLayout = ButterKnife.findById(view, R.id.message_left_layout);
+            TextView messageLeftText = ButterKnife.findById(view, R.id.message_left_text);
+            TextView messageRightText = ButterKnife.findById(view, R.id.message_right_text);
             if (m.isIncoming()) {
-                message_right_layout.setVisibility(View.GONE);
-                message_left_layout.setVisibility(View.VISIBLE);
-                ((TextView) view.findViewById(R.id.message_left_text)).setText(m.getContent());
+                messageRightLayout.setVisibility(View.GONE);
+                messageLeftLayout.setVisibility(View.VISIBLE);
+                messageLeftText.setText(m.getContent());
             } else {
-                message_right_layout.setVisibility(View.VISIBLE);
-                message_left_layout.setVisibility(View.GONE);
-                ((TextView) view.findViewById(R.id.message_right_text)).setText(m.getContent());
+                messageRightLayout.setVisibility(View.VISIBLE);
+                messageLeftLayout.setVisibility(View.GONE);
+                messageRightText.setText(m.getContent());
             }
 
             return view;
         }
     }
 
+    @OnClick(R.id.toolbar_back)
+    public void onToolbarBackClick() {
+        getActivity().finish();
+    }
+
+    @OnClick(R.id.attach)
+    public void onFileAttachClick() {
+        // todo choose file to send
+        Toast.makeText(getContext(), "file was sent", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.send)
+    public void onSendMessageClick() {
+        // todo send message
+        Toast.makeText(getContext(), "message was sent", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
 }

@@ -49,10 +49,9 @@
         android:id="@+id/submit"
         android:layout_width="200dp"
         android:layout_height="40dp"
-        android:enabled="true"
-        android:clickable="true"
         android:layout_margin="@dimen/small_margin"
-        android:background="@drawable/border"
+        android:clickable="true"
+        android:enabled="true"
         android:fontFamily="sans-serif-light"
         android:text="@string/connection_submit"
         android:textSize="@dimen/text_size"/>
