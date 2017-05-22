@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimary">#3F51B5</color>-->
-    <!--<color name="colorPrimaryDark">#303F9F</color>-->
-    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorPrimaryDark">@color/grey</color>-->
+    <color name="colorAccent">@color/lightBlue600</color>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="grey">#888888</color>
+    <color name="greyLight">#CCCCCC</color>
+    <color name="greyDark">#888888</color>
     <color name="red">#FF0000</color>
+    <color name="lightBlue600">#039BE5</color>
 </resources>

@@ -3,4 +3,5 @@
     <dimen name="text_size">16sp</dimen>
     <dimen name="small_margin">10dp</dimen>
     <dimen name="big_margin">20dp</dimen>
+    <dimen name="message_angle">20dp</dimen>
 </resources>

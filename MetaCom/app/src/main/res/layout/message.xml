@@ -11,9 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_marginBottom="@dimen/small_margin"
-        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginLeft="@dimen/big_margin"
         android:layout_marginRight="@dimen/small_margin"
-        android:background="@drawable/border">
+        android:background="@drawable/message_out">
 
         <TextView
             android:id="@+id/message_right_text"
@@ -22,7 +22,7 @@
             android:layout_margin="@dimen/small_margin"
             android:fontFamily="sans-serif-light"
             android:text="Lorem ipsum"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size"/>
     </LinearLayout>
 
@@ -32,8 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/small_margin"
         android:layout_marginLeft="@dimen/small_margin"
-        android:layout_marginRight="@dimen/small_margin"
-        android:background="@drawable/border">
+        android:layout_marginRight="@dimen/big_margin"
+        android:background="@drawable/message_in">
 
         <TextView
             android:id="@+id/message_left_text"

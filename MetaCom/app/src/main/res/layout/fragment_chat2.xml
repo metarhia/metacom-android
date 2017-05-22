@@ -11,9 +11,10 @@
     <RelativeLayout
         android:id="@+id/input_message_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?actionBarSize"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/small_margin">
+        android:background="@color/white"
+        android:elevation="@dimen/small_margin">
 
         <ImageView
             android:id="@+id/attach"
