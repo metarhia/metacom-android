@@ -1,6 +1,8 @@
 package com.metarhia.metacom.activities.files;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -22,6 +24,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.metarhia.metacom.activities.files.DownloadFileDialog.DownloadFileDialogTag;
+import static com.metarhia.metacom.activities.files.DownloadFileDialog.KEY_DOWNLOAD_FILE_CODE;
 import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileDialogTag;
 
 
@@ -32,19 +35,16 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 
-    Unbinder mUnbinder;
-
+    public final int DIALOG_FRAGMENT_DONWLOAD = 1;
     @BindView(R.id.bottom_notice_text)
     TextView mBottomNoticeText;
-
     @BindView(R.id.bottom_notice_layout)
     View mBottomNoticeLayout;
-
     @BindView(R.id.download_file)
     ImageView mDownloadFile;
-
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
+    private Unbinder mUnbinder;
 
     public FilesFragment() {
         // Required empty public constructor
@@ -59,6 +59,26 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         mUnbinder = ButterKnife.bind(this, view);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case DIALOG_FRAGMENT_DONWLOAD:
+                if (resultCode == Activity.RESULT_OK) {
+                    String code = data.getStringExtra(KEY_DOWNLOAD_FILE_CODE);
+                    Toast.makeText(getContext(), code, Toast.LENGTH_SHORT).show();
+                    setBottomNotice(true, getString(R.string.downloading));
+                    // todo download file
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onFileDownloaded();
+                        }
+                    }, 1000);
+                }
+                break;
+        }
     }
 
     public void setBottomNotice(boolean visability, String message) {
@@ -84,6 +104,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     @OnClick(R.id.download_file)
     public void onDownloadFileClick() {
         DialogFragment dialog = new DownloadFileDialog();
+        dialog.setTargetFragment(this, DIALOG_FRAGMENT_DONWLOAD);
         dialog.show(getActivity().getSupportFragmentManager(), DownloadFileDialogTag);
     }
 
@@ -106,7 +127,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
             @Override
             public void onClick(View view) {
                 // todo choose app to open the file
-                Toast.makeText(getContext(), "choose app to open", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "choose app to open", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -118,7 +139,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 
     @Override
     public void onFileUploaded(String fileCode) {
-        DialogFragment dialog = new UploadFileDialog();
+        DialogFragment dialog = UploadFileDialog.newInstance(fileCode);
         dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
     }
 
