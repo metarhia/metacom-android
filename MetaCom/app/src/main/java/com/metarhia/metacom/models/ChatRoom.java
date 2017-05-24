@@ -1,5 +1,7 @@
 package com.metarhia.metacom.models;
 
+import android.util.Base64;
+
 import com.metarhia.jstp.core.Handlers.ManualHandler;
 import com.metarhia.jstp.core.JSTypes.JSArray;
 import com.metarhia.jstp.core.JSTypes.JSObject;
@@ -7,10 +9,13 @@ import com.metarhia.jstp.core.JSTypes.JSValue;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
+import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.utils.Constants;
+import com.metarhia.metacom.utils.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,5 +131,58 @@ public class ChatRoom {
                 }
             }
         });
+    }
+
+    /**
+     * Uploads file in chat
+     *
+     * @param file     file to upload
+     * @param callback callback after file upload (success and error)
+     */
+    public void uploadFile(File file, FileUploadedCallback callback) {
+        FileUtils.uploadSplitFile(file, new FileUtils.FileUploadingInterface() {
+            @Override
+            public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
+                ChatRoom.this.sendChunk(chunk, handler);
+            }
+
+            @Override
+            public void endFileUpload(FileUploadedCallback callback) {
+                ChatRoom.this.endFileUpload(callback);
+            }
+        }, callback);
+    }
+
+    /**
+     * Sends chunk to server
+     *
+     * @param chunk   chunk to send
+     * @param handler JSTP handler
+     */
+    private void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
+        JSArray args = new JSArray();
+        args.add(Base64.encode(chunk, Base64.DEFAULT));
+        mConnection.cacheCall(Constants.META_COM, "sendFileChunkToChat", args, handler);
+    }
+
+    /**
+     * Ends file upload to server
+     *
+     * @param callback callback after ending file upload
+     */
+    private void endFileUpload(final FileUploadedCallback callback) {
+        mConnection.cacheCall(Constants.META_COM, "endChatFileTransfer", new JSArray(),
+                new JSTPOkErrorHandler() {
+                    @Override
+                    public void onOk(JSArray args) {
+                        String fileCode = (String) args.get(0).getGeneralizedValue();
+                        callback.onFileUploaded(fileCode);
+                    }
+
+                    @Override
+                    public void onError(Integer errorCode) {
+                        callback.onFileUploadError(Errors.getErrorByCode(errorCode));
+                    }
+                });
     }
 }

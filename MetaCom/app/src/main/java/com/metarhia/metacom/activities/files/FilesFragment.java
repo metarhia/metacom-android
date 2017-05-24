@@ -2,7 +2,6 @@ package com.metarhia.metacom.activities.files;
 
 
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -94,7 +93,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                onFileUploaded();
+                onFileUploaded("123");
             }
         }, 2000);
     }
@@ -118,13 +117,13 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     }
 
     @Override
-    public void onFileUploaded() {
+    public void onFileUploaded(String fileCode) {
         DialogFragment dialog = new UploadFileDialog();
         dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
     }
 
     @Override
-    public void onFileUploadError() {
+    public void onFileUploadError(String message) {
         // todo onFileUploadError
     }
 
