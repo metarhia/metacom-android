@@ -1,10 +1,8 @@
 package com.metarhia.metacom.activities.files;
 
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -15,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
 
 import butterknife.ButterKnife;
 
@@ -26,6 +25,7 @@ public class DownloadFileDialog extends DialogFragment {
 
     public final static String DownloadFileDialogTag = "DownloadFileDialogTag";
     public final static String KEY_DOWNLOAD_FILE_CODE = "KEY_DOWNLOAD_FILE_CODE";
+    private DownloadFileByCodeListener mListener = null;
 
     @NonNull
     @Override
@@ -41,9 +41,7 @@ public class DownloadFileDialog extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String code = ((TextInputEditText) ButterKnife.findById(view, R.id.file_code)).getText().toString();
-                                Intent intent = new Intent();
-                                intent.putExtra(KEY_DOWNLOAD_FILE_CODE, code);
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                mListener.downloadByCode(code);
                             }
                         }
                 )
@@ -56,6 +54,10 @@ public class DownloadFileDialog extends DialogFragment {
                 );
 
         return builder.create();
+    }
+
+    public void setDownloadFileByCodeListener(DownloadFileByCodeListener listener) {
+        mListener = listener;
     }
 
 }

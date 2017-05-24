@@ -1,8 +1,6 @@
 package com.metarhia.metacom.activities.files;
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -12,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
 import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
@@ -24,14 +22,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.metarhia.metacom.activities.files.DownloadFileDialog.DownloadFileDialogTag;
-import static com.metarhia.metacom.activities.files.DownloadFileDialog.KEY_DOWNLOAD_FILE_CODE;
 import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileDialogTag;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FilesFragment extends Fragment implements FileDownloadedCallback, FileUploadedCallback {
+public class FilesFragment extends Fragment implements FileDownloadedCallback, FileUploadedCallback, DownloadFileByCodeListener {
 
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 
@@ -44,6 +41,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     ImageView mDownloadFile;
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
+    private String fileCode = null;
     private Unbinder mUnbinder;
 
     public FilesFragment() {
@@ -61,33 +59,13 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         return view;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case DIALOG_FRAGMENT_DONWLOAD:
-                if (resultCode == Activity.RESULT_OK) {
-                    String code = data.getStringExtra(KEY_DOWNLOAD_FILE_CODE);
-                    Toast.makeText(getContext(), code, Toast.LENGTH_SHORT).show();
-                    setBottomNotice(true, getString(R.string.downloading));
-                    // todo download file
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onFileDownloaded();
-                        }
-                    }, 1000);
-                }
-                break;
-        }
+    public void hideBottomNotice() {
+        mBottomNoticeLayout.setVisibility(View.GONE);
     }
 
-    public void setBottomNotice(boolean visability, String message) {
-        if (visability) {
-            mBottomNoticeLayout.setVisibility(View.VISIBLE);
-            mBottomNoticeText.setText(message);
-        } else {
-            mBottomNoticeLayout.setVisibility(View.GONE);
-        }
+    public void setBottomNoticeMessage(String message) {
+        mBottomNoticeLayout.setVisibility(View.VISIBLE);
+        mBottomNoticeText.setText(message);
     }
 
     public void setBottomNoticeOnClick(final View.OnClickListener onClickListener) {
@@ -96,15 +74,15 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
             public void onClick(View view) {
                 onClickListener.onClick(view);
                 mBottomNoticeLayout.setOnClickListener(null);
-                mBottomNoticeLayout.setVisibility(View.GONE);
+                hideBottomNotice();
             }
         });
     }
 
     @OnClick(R.id.download_file)
     public void onDownloadFileClick() {
-        DialogFragment dialog = new DownloadFileDialog();
-        dialog.setTargetFragment(this, DIALOG_FRAGMENT_DONWLOAD);
+        DownloadFileDialog dialog = new DownloadFileDialog();
+        dialog.setDownloadFileByCodeListener(this);
         dialog.show(getActivity().getSupportFragmentManager(), DownloadFileDialogTag);
     }
 
@@ -119,10 +97,9 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         }, 2000);
     }
 
-
     @Override
     public void onFileDownloaded() {
-        setBottomNotice(true, getString(R.string.complete));
+        setBottomNoticeMessage(getString(R.string.complete));
         setBottomNoticeOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,5 +129,18 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void downloadByCode(String code) {
+        fileCode = code;
+        setBottomNoticeMessage(getString(R.string.downloading));
+        // todo download file
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onFileDownloaded();
+            }
+        }, 1000);
     }
 }
