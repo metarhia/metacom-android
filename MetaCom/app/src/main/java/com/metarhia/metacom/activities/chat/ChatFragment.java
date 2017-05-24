@@ -3,6 +3,8 @@ package com.metarhia.metacom.activities.chat;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.MessageListener;
+import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
 
@@ -27,24 +31,23 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends Fragment {
-
-    private Unbinder mUnbinder;
+public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback {
 
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
-
     @BindView(R.id.toolbar_back)
     ImageView mToolbarBack;
-
     @BindView(R.id.attach)
     ImageView mFileAttach;
-
     @BindView(R.id.send)
     ImageView mSendMessage;
-
     @BindView(R.id.messages_list)
     ListView mMessagesListView;
+    @BindView(R.id.input_message)
+    TextInputEditText mInputMessage;
+    private Unbinder mUnbinder;
+    private ArrayList<Message> mMessages;
+    private MessageAdapter mMessageAdapter;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -60,22 +63,74 @@ public class ChatFragment extends Fragment {
 
         mToolbarTitle.setText(getString(R.string.chatname));
 
-        MessageAdapter adapter = new MessageAdapter(getActivity(), getMessageExamples());
-        mMessagesListView.setAdapter(adapter);
+        mMessages = new ArrayList<>();
+        mMessageAdapter = new MessageAdapter(getActivity(), mMessages);
+        mMessagesListView.setAdapter(mMessageAdapter);
+
+        getMessageQueueExamples();
 
         return v;
     }
 
-    private ArrayList<Message> getMessageExamples() {
-        ArrayList<Message> messages = new ArrayList<>();
+    private void getMessageQueueExamples() {
         for (int i = 0; i < 10; i++) {
             String mes = "";
             for (int j = 0; j < 10; j++) {
                 mes = mes.concat(i + "");
             }
-            messages.add(new Message(MessageType.TEXT, mes, (i % 2 == 0)));
+            final Message message = new Message(MessageType.TEXT, mes, (i % 2 == 0));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onMessageReceived(message);
+                }
+            }, 500 * i);
         }
-        return messages;
+    }
+
+    @Override
+    public void onMessageReceived(Message message) {
+        mMessages.add(message);
+        mMessageAdapter.notifyDataSetChanged();
+        mMessagesListView.setSelection(mMessageAdapter.getCount() - 1);
+    }
+
+    @Override
+    public void onMessageSent() {
+        // todo onMessageSent
+    }
+
+    @Override
+    public void onMessageSentError(String message) {
+        // todo onMessageSentError
+    }
+
+    @OnClick(R.id.toolbar_back)
+    public void onToolbarBackClick() {
+        getActivity().finish();
+    }
+
+    @OnClick(R.id.attach)
+    public void onFileAttachClick() {
+        // todo choose file to send
+        Toast.makeText(getContext(), "file was sent", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.send)
+    public void onSendMessageClick() {
+        String messageText = mInputMessage.getText().toString();
+        if (!messageText.isEmpty()) {
+            Message message = new Message(MessageType.TEXT, messageText, false);
+            // todo send message and display it
+            onMessageReceived(message);
+            mInputMessage.setText("");
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     public class MessageAdapter extends BaseAdapter {
@@ -131,28 +186,5 @@ public class ChatFragment extends Fragment {
 
             return view;
         }
-    }
-
-    @OnClick(R.id.toolbar_back)
-    public void onToolbarBackClick() {
-        getActivity().finish();
-    }
-
-    @OnClick(R.id.attach)
-    public void onFileAttachClick() {
-        // todo choose file to send
-        Toast.makeText(getContext(), "file was sent", Toast.LENGTH_SHORT).show();
-    }
-
-    @OnClick(R.id.send)
-    public void onSendMessageClick() {
-        // todo send message
-        Toast.makeText(getContext(), "message was sent", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
     }
 }
