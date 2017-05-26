@@ -1,6 +1,5 @@
 package com.metarhia.metacom.models;
 
-import com.metarhia.jstp.core.JSTypes.JSArray;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -44,12 +43,12 @@ public class ChatRoomsManager {
      * @param callback callback after attempt to create chat (success and error)
      */
     public void addChatRoom(final String roomName, final JoinRoomCallback callback) {
-        JSArray args = new JSArray();
+        List args = new ArrayList();
         args.add(roomName);
 
         mConnection.cacheCall(Constants.META_COM, "join", args, new JSTPOkErrorHandler() {
             @Override
-            public void onOk(JSArray args) {
+            public void onOk(List args) {
                 mChatRooms.add(new ChatRoom(roomName, mConnection));
                 callback.onJoinedRoom();
             }
@@ -83,9 +82,9 @@ public class ChatRoomsManager {
      * @param chatRoom chatRoom to be removed
      */
     public void leaveChatRoom(final ChatRoom chatRoom, final LeaveRoomCallback callback) {
-        mConnection.cacheCall(Constants.META_COM, "leave", new JSArray(), new JSTPOkErrorHandler() {
+        mConnection.cacheCall(Constants.META_COM, "leave", new ArrayList<>(), new JSTPOkErrorHandler() {
             @Override
-            public void onOk(JSArray args) {
+            public void onOk(List<?> args) {
                 mChatRooms.remove(chatRoom);
                 callback.onLeavedRoom();
             }

@@ -3,7 +3,6 @@ package com.metarhia.metacom.utils;
 import android.os.Handler;
 import android.os.HandlerThread;
 
-import com.metarhia.jstp.core.JSTypes.JSArray;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
@@ -61,7 +60,7 @@ public class FileUtils {
                     byte[] chunk = chunkIterator.next();
                     final JSTPOkErrorHandler handler = new JSTPOkErrorHandler() {
                         @Override
-                        public void onOk(JSArray args) {
+                        public void onOk(List<?> args) {
                             if (chunkIterator.hasNext()) {
                                 sendingInterface.sendChunk(chunkIterator.next(), this);
                             } else {

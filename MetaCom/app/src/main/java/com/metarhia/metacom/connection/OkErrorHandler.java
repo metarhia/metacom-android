@@ -1,10 +1,11 @@
 package com.metarhia.metacom.connection;
 
-import com.metarhia.jstp.compiler.annotations.Indexed;
-import com.metarhia.jstp.compiler.annotations.JSTPHandler;
-import com.metarhia.jstp.compiler.annotations.Named;
-import com.metarhia.jstp.compiler.annotations.NotNull;
-import com.metarhia.jstp.core.JSTypes.JSArray;
+import com.metarhia.jstp.compiler.annotations.handlers.Array;
+import com.metarhia.jstp.compiler.annotations.handlers.Handler;
+import com.metarhia.jstp.compiler.annotations.handlers.NotNull;
+import com.metarhia.jstp.compiler.annotations.handlers.Object;
+
+import java.util.List;
 
 /**
  * JSTP handler
@@ -12,14 +13,14 @@ import com.metarhia.jstp.core.JSTypes.JSArray;
  * @author lidaamber
  */
 
-@JSTPHandler
+@Handler
 public interface OkErrorHandler {
 
     @NotNull
-    @Named("ok")
-    void onOk(JSArray args);
+    @Object("ok")
+    void onOk(List<?> args);
 
     @NotNull
-    @Named("error")
-    void onError(@Indexed(0) Integer errorCode);
+    @Object("error")
+    void onError(@Array(0) Integer errorCode);
 }

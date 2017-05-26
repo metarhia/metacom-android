@@ -3,9 +3,7 @@ package com.metarhia.metacom.models;
 import android.util.Base64;
 
 import com.metarhia.jstp.core.Handlers.ManualHandler;
-import com.metarhia.jstp.core.JSTypes.JSArray;
-import com.metarhia.jstp.core.JSTypes.JSObject;
-import com.metarhia.jstp.core.JSTypes.JSValue;
+import com.metarhia.jstp.core.JSInterfaces.JSObject;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -80,11 +78,11 @@ public class ChatRoom {
      * @param callback callback after message sending (success and error)
      */
     public void sendMessage(Message message, final MessageSentCallback callback) {
-        JSArray args = new JSArray();
+        List<String> args = new ArrayList<>();
         args.add(message.getContent());
         mConnection.cacheCall(Constants.META_COM, "send", args, new JSTPOkErrorHandler() {
             @Override
-            public void onOk(JSArray args) {
+            public void onOk(List<?> args) {
                 callback.onMessageSent();
             }
 
@@ -121,9 +119,9 @@ public class ChatRoom {
     private void initIncomingMessagesListener() {
         mConnection.addEventHandler(Constants.META_COM, "message", new ManualHandler() {
             @Override
-            public void invoke(JSValue jsValue) {
-                JSArray messagePayload = (JSArray) ((JSObject) jsValue).get("message");
-                String messageContent = (String) messagePayload.get(0).getGeneralizedValue();
+            public void handle(JSObject jsValue) {
+                List messagePayload = (List) (jsValue).get("message");
+                String messageContent = (String) messagePayload.get(0);
 
                 Message message = new Message(MessageType.TEXT, messageContent, true);
                 for (MessageListener listener : mMessageListeners) {
@@ -160,8 +158,8 @@ public class ChatRoom {
      * @param handler JSTP handler
      */
     private void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
-        JSArray args = new JSArray();
-        args.add(Base64.encode(chunk, Base64.DEFAULT));
+        List<String> args = new ArrayList<>();
+        args.add(Base64.encodeToString(chunk, Base64.DEFAULT));
         mConnection.cacheCall(Constants.META_COM, "sendFileChunkToChat", args, handler);
     }
 
@@ -171,11 +169,11 @@ public class ChatRoom {
      * @param callback callback after ending file upload
      */
     private void endFileUpload(final FileUploadedCallback callback) {
-        mConnection.cacheCall(Constants.META_COM, "endChatFileTransfer", new JSArray(),
+        mConnection.cacheCall(Constants.META_COM, "endChatFileTransfer", new ArrayList<>(),
                 new JSTPOkErrorHandler() {
                     @Override
-                    public void onOk(JSArray args) {
-                        String fileCode = (String) args.get(0).getGeneralizedValue();
+                    public void onOk(List<?> args) {
+                        String fileCode = (String) args.get(0);
                         callback.onFileUploaded(fileCode);
                     }
 

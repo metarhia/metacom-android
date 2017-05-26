@@ -8,14 +8,12 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.metarhia.jstp.connection.JSTPConnection;
-import com.metarhia.jstp.connection.JSTPConnectionListener;
-import com.metarhia.jstp.connection.JSTPMessage;
+import com.metarhia.jstp.connection.Connection;
+import com.metarhia.jstp.connection.ConnectionListener;
+import com.metarhia.jstp.connection.Message;
 import com.metarhia.jstp.connection.RestorationPolicy;
 import com.metarhia.jstp.core.Handlers.ManualHandler;
-import com.metarhia.jstp.core.JSTypes.JSArray;
-import com.metarhia.jstp.core.JSTypes.JSObject;
-import com.metarhia.jstp.core.JSTypes.JSValue;
+import com.metarhia.jstp.core.JSInterfaces.JSObject;
 import com.metarhia.jstp.transport.TCPTransport;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.NetworkUtils;
@@ -34,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author lundibundi
  */
 
-public class AndroidJSTPConnection implements JSTPConnectionListener, RestorationPolicy {
+public class AndroidJSTPConnection implements ConnectionListener, RestorationPolicy {
 
     private static final String DEFAULT_CACHE = "defaultCacheTag";
 
@@ -46,7 +44,7 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
 
     private String mApplicationName;
 
-    private final JSTPConnection mConnection;
+    private final Connection mConnection;
 
     private final Context mContext;
 
@@ -64,7 +62,7 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
         mContext = context;
 
         TCPTransport transport = new TCPTransport(host, port, usesSSL);
-        mConnection = new JSTPConnection(transport, this);
+        mConnection = new Connection(transport, this);
         mConnection.addSocketListener(this);
 
         mBroadcastManager = LocalBroadcastManager.getInstance(mContext);
@@ -98,17 +96,16 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
     }
 
     @Override
-    public boolean restore(JSTPConnection jstpConnection, Queue<JSTPMessage> queue) {
-        queue.clear();
+    public boolean restore(Connection connection, Queue<Message> queue) {
         return false;
     }
 
     @Override
-    public void onTransportAvailable(JSTPConnection jstpConnection, String appName,
+    public void onTransportAvailable(Connection jstpConnection, String appName,
                                      String sessionID) {
         jstpConnection.handshake(appName, new ManualHandler() {
             @Override
-            public void invoke(JSValue jsValue) {
+            public void handle(JSObject jsValue) {
                 mConnectionState = STATE_CONNECTED;
                 notifyHasConnection();
 
@@ -155,9 +152,9 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
                 callData.mArgs,
                 new ManualHandler() {
                     @Override
-                    public void invoke(JSValue jsValue) {
+                    public void handle(JSObject message) {
                         CacheCallData callData = mTaggedCacheCalls.get(tag).remove(uuid);
-                        callData.mManualHandler.invoke(jsValue);
+                        callData.mManualHandler.handle(message);
                     }
                 });
     }
@@ -166,7 +163,7 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
         return mConnectionState == STATE_CONNECTED;
     }
 
-    public JSTPConnection getJSTPConnection() {
+    public Connection getJSTPConnection() {
         if (isConnected()) return mConnection;
         return null;
     }
@@ -209,13 +206,13 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
         void onConnectionLost();
     }
 
-    public UUID cacheCall(String interfaceName, final String methodName, JSArray args,
+    public UUID cacheCall(String interfaceName, final String methodName, List<?> args,
                           final ManualHandler handler) {
         return cacheCall(DEFAULT_CACHE, interfaceName, methodName, args, handler);
     }
 
     public UUID cacheCall(final String cacheTag, String interfaceName, final String methodName,
-                          JSArray args, final ManualHandler handler) {
+                          List<?> args, final ManualHandler handler) {
         ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheTag);
         if (cachedCalls == null) {
             cachedCalls = new ConcurrentHashMap<>();
@@ -255,12 +252,12 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
         return false;
     }
 
-    public void event(String interfaceName, String methodName, JSArray args) {
+    public void event(String interfaceName, String methodName, List<?> args) {
         mConnection.event(interfaceName, methodName, args);
     }
 
-    public void addCallHandler(String methodName, ManualHandler callHandler) {
-        mConnection.setCallHandler(methodName, callHandler);
+    public void addCallHandler(String interfaceName, String methodName, ManualHandler callHandler) {
+        mConnection.setCallHandler(interfaceName, methodName, callHandler);
     }
 
     public void addEventHandler(String interfaceName, String eventName, ManualHandler handler) {
@@ -276,7 +273,8 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
     }
 
     @Override
-    public void onPacketRejected(JSObject jsObject) {
+    public void onMessageRejected(JSObject jsObject) {
+
     }
 
     @Override
@@ -295,10 +293,10 @@ public class AndroidJSTPConnection implements JSTPConnectionListener, Restoratio
 
         public final String mInterfaceName;
         public final String mMethodName;
-        public final JSArray mArgs;
+        public final List<?> mArgs;
         public final ManualHandler mManualHandler;
 
-        public CacheCallData(String interfaceName, String methodName, JSArray args,
+        public CacheCallData(String interfaceName, String methodName, List<?> args,
                              ManualHandler manualHandler) {
             this.mArgs = args;
             this.mInterfaceName = interfaceName;
