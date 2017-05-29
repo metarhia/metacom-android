@@ -1,6 +1,9 @@
 package com.metarhia.metacom.activities.files;
 
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -43,6 +46,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     ImageView mUploadFile;
     private String fileCode = null;
     private Unbinder mUnbinder;
+    private static final int PICK_IMAGE = 0;
 
     public FilesFragment() {
         // Required empty public constructor
@@ -89,12 +93,15 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     @OnClick(R.id.upload_file)
     public void onUploadFileClick() {
         // todo open file browser to choose file
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                onFileUploaded("123");
-            }
-        }, 2000);
+
+        showFileChooser();
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                onFileUploaded("123");
+//            }
+//        }, 2000);
     }
 
     @Override
@@ -142,5 +149,23 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
                 onFileDownloaded();
             }
         }, 1000);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            Uri fileUri = data.getData();
+
+            // TODO use stream from fileUri to upload file
+        }
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("*/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE);
     }
 }

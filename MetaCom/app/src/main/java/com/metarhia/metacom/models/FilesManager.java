@@ -12,7 +12,7 @@ import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.FileUtils;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +39,11 @@ public class FilesManager {
     /**
      * Uploads file to server specified in UserConnection
      *
-     * @param file     file to upload
-     * @param callback callback after file upload (success and error)
+     * @param fileStream file to upload
+     * @param callback   callback after file upload (success and error)
      */
-    public void uploadFile(File file, final FileUploadedCallback callback) {
-        FileUtils.uploadSplitFile(file, new FileUtils.FileUploadingInterface() {
+    public void uploadFile(InputStream fileStream, final FileUploadedCallback callback) {
+        FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
             @Override
             public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
                 FilesManager.this.sendChunk(chunk, handler);

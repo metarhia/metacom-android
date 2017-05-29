@@ -13,10 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.metarhia.metacom.activities.chat.ChatFragment;
+import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
-import com.metarhia.metacom.R;
 
 import java.util.ArrayList;
 

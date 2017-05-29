@@ -13,7 +13,7 @@ import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.FileUtils;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,11 +134,11 @@ public class ChatRoom {
     /**
      * Uploads file in chat
      *
-     * @param file     file to upload
-     * @param callback callback after file upload (success and error)
+     * @param fileStream file to upload
+     * @param callback   callback after file upload (success and error)
      */
-    public void uploadFile(File file, FileUploadedCallback callback) {
-        FileUtils.uploadSplitFile(file, new FileUtils.FileUploadingInterface() {
+    public void uploadFile(InputStream fileStream, FileUploadedCallback callback) {
+        FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
             @Override
             public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
                 ChatRoom.this.sendChunk(chunk, handler);

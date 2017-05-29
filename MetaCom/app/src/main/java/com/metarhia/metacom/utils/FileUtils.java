@@ -7,9 +7,6 @@ import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,13 +43,13 @@ public class FileUtils {
     /**
      * Uploads file to server
      *
-     * @param file             file to upload
+     * @param fileStream       file to upload
      * @param sendingInterface send and end sending methods specific for uploading
      * @param callback         callback after file upload (success and error)
      */
-    public static void uploadSplitFile(File file, final FileUploadingInterface sendingInterface,
+    public static void uploadSplitFile(InputStream fileStream, final FileUploadingInterface sendingInterface,
                                        final FileUploadedCallback callback) {
-        splitFile(file, FILE_CHUNK_SIZE, new FileUtils.FileContentsCallback() {
+        splitFile(fileStream, FILE_CHUNK_SIZE, new FileUtils.FileContentsCallback() {
             @Override
             public void onSplitToChunks(List<byte[]> chunks) {
                 final Iterator<byte[]> chunkIterator = chunks.iterator();
@@ -87,24 +84,22 @@ public class FileUtils {
     /**
      * Splits file into byte[] chunks
      *
-     * @param file      file to split
-     * @param chunkSize size of the chunk
-     * @param callback  callback on file split
+     * @param fileStream file to split
+     * @param chunkSize  size of the chunk
+     * @param callback   callback on file split
      */
-    private static void splitFile(final File file, final int chunkSize,
+    private static void splitFile(final InputStream fileStream, final int chunkSize,
                                   final FileContentsCallback callback) {
         sFileHandler.post(new Runnable() {
             @Override
             public void run() {
                 List<byte[]> chunks = new ArrayList<>();
-                InputStream in;
                 try {
-                    in = new BufferedInputStream(new FileInputStream(file));
                     final byte[] buf = new byte[chunkSize];
-                    while (in.read(buf) != -1) {
+                    while (fileStream.read(buf) != -1) {
                         chunks.add(buf);
                     }
-                    in.close();
+                    fileStream.close();
 
                     callback.onSplitToChunks(chunks);
                 } catch (FileNotFoundException e) {
