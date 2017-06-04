@@ -35,23 +35,33 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 
+    private static final String KEY_CONNECTION_ID = "keyConnectionId";
+
     public final int DIALOG_FRAGMENT_DONWLOAD = 1;
+
     @BindView(R.id.bottom_notice_text)
     TextView mBottomNoticeText;
+
     @BindView(R.id.bottom_notice_layout)
     View mBottomNoticeLayout;
+
     @BindView(R.id.download_file)
     ImageView mDownloadFile;
+
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
+
     private String fileCode = null;
     private Unbinder mUnbinder;
     private static final int PICK_IMAGE = 0;
 
-    public FilesFragment() {
-        // Required empty public constructor
+    public static FilesFragment newInstance(int connectionID) {
+        Bundle args = new Bundle();
+        args.putInt(KEY_CONNECTION_ID, connectionID);
+        FilesFragment fragment = new FilesFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

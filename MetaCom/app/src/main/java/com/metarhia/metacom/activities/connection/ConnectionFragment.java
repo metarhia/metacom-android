@@ -3,8 +3,6 @@ package com.metarhia.metacom.activities.connection;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.MainActivity;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
+import com.metarhia.metacom.models.UserConnectionsManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,21 +53,21 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
         mButtonSubmit.setClickable(false);
-        // todo set connection
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), "connection established", Toast.LENGTH_SHORT).show();
-                onConnectionEstablished();
-            }
-        }, 1000);
+
+        String host = mHostEditText.getText().toString();
+        int port = Integer.valueOf(mPortEditText.getText().toString());
+
+        // TODO validate data
+
+        UserConnectionsManager.get().addConnection(host, port, this);
     }
 
 
     @Override
-    public void onConnectionEstablished() {
+    public void onConnectionEstablished(int connectionID) {
         mButtonSubmit.setClickable(true);
         Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
         startActivity(intent);
     }
 

@@ -30,6 +30,7 @@
         android:fontFamily="sans-serif-light"
         android:hint="@string/connection_host"
         android:inputType="text"
+        android:text="dev.metarhia.com"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="@dimen/text_size"/>
@@ -41,6 +42,7 @@
         android:fontFamily="sans-serif-light"
         android:hint="@string/connection_port"
         android:inputType="number"
+        android:text="3000"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="@dimen/text_size"/>

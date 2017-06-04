@@ -77,8 +77,9 @@ public class UserConnectionsManager {
         connection.addListener(new AndroidJSTPConnection.AndroidJSTPConnectionListener() {
             @Override
             public void onConnectionEstablished(AndroidJSTPConnection connection) {
-                mUserConnections.add(new UserConnection(mUserConnections.size(), connection));
-                callback.onConnectionEstablished();
+                UserConnection uc = new UserConnection(mUserConnections.size(), connection);
+                mUserConnections.add(uc);
+                callback.onConnectionEstablished(uc.getId());
                 connection.removeListener(this);
             }
 

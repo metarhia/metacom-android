@@ -10,8 +10,10 @@ public interface ConnectionCallback {
 
     /**
      * Called when connection is successfully established
+     *
+     * @param connectionID connection id
      */
-    void onConnectionEstablished();
+    void onConnectionEstablished(int connectionID);
 
     /**
      * Called when server responds error

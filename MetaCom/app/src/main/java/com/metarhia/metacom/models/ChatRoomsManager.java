@@ -49,7 +49,8 @@ public class ChatRoomsManager {
         mConnection.cacheCall(Constants.META_COM, "join", args, new JSTPOkErrorHandler() {
             @Override
             public void onOk(List args) {
-                mChatRooms.add(new ChatRoom(roomName, mConnection));
+                ChatRoom room = new ChatRoom(roomName, mConnection);
+                mChatRooms.add(room);
                 callback.onJoinedRoom();
             }
 

@@ -30,8 +30,8 @@ import butterknife.Unbinder;
  */
 public class MainFragment extends Fragment {
 
-    public final static String MainFragmentTag = "MainFragmentTag";
-
+    public final static String MAIN_FRAGMENT_TAG = "MainFragmentTag";
+    private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private Unbinder mUnbinder;
 
     @BindView(R.id.toolbar_title)
@@ -47,11 +47,14 @@ public class MainFragment extends Fragment {
     ViewPager mViewPager;
 
     private ArrayList<Fragment> mFragmentArrayList;
-    private PagerAdapter mPagerAdapter;
     private ArrayList<String> mFragmentTitles;
 
-    public MainFragment() {
-        // Required empty public constructor
+    public static MainFragment newInstance(int connectionID) {
+        Bundle args = new Bundle();
+        args.putInt(KEY_CONNECTION_ID, connectionID);
+        MainFragment fragment = new MainFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -63,7 +66,10 @@ public class MainFragment extends Fragment {
 
         mToolbarTitle.setText(getString(R.string.hostname));
 
-        setPages();
+        if (getArguments() != null) {
+            int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
+            setPages(connectionID);
+        }
 
         return view;
     }
@@ -73,12 +79,12 @@ public class MainFragment extends Fragment {
         getActivity().finish();
     }
 
-    private void setPages() {
+    private void setPages(int connectionID) {
         mFragmentArrayList = new ArrayList<>();
-        mFragmentArrayList.add(new FilesFragment());
-        mFragmentArrayList.add(new ChatLoginFragment());
+        mFragmentArrayList.add(FilesFragment.newInstance(connectionID));
+        mFragmentArrayList.add(ChatLoginFragment.newInstance(connectionID));
 
-        mPagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
+        PagerAdapter pagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
 
             @Override
             public int getCount() {
@@ -96,7 +102,7 @@ public class MainFragment extends Fragment {
             }
         };
 
-        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setAdapter(pagerAdapter);
 
         mFragmentTitles = new ArrayList<>();
         mFragmentTitles.add(getResources().getString(R.string.files));

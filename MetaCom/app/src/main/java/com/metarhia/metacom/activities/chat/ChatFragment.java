@@ -18,8 +18,10 @@ import android.widget.Toast;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
+import com.metarhia.metacom.models.ChatRoom;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
+import com.metarhia.metacom.models.UserConnectionsManager;
 
 import java.util.ArrayList;
 
@@ -33,42 +35,64 @@ import butterknife.Unbinder;
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback {
 
+    private static final String KEY_CONNECTION_ID = "keyConnectionId";
+    private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
+
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
+
     @BindView(R.id.toolbar_back)
     ImageView mToolbarBack;
+
     @BindView(R.id.attach)
     ImageView mFileAttach;
+
     @BindView(R.id.send)
     ImageView mSendMessage;
+
     @BindView(R.id.messages_list)
     ListView mMessagesListView;
+
     @BindView(R.id.input_message)
     TextInputEditText mInputMessage;
+
     private Unbinder mUnbinder;
     private ArrayList<Message> mMessages;
     private MessageAdapter mMessageAdapter;
+    private ChatRoom mChatRoom;
 
-    public ChatFragment() {
-        // Required empty public constructor
+    public static ChatFragment newInstance(int connectionID, String chatRoomName) {
+        Bundle args = new Bundle();
+        args.putInt(KEY_CONNECTION_ID, connectionID);
+        args.putString(KEY_CHAT_ROOM_NAME, chatRoomName);
+
+        ChatFragment fragment = new ChatFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_chat2, container, false);
+        View v = inflater.inflate(R.layout.fragment_chat, container, false);
         mUnbinder = ButterKnife.bind(this, v);
 
-        mToolbarTitle.setText(getString(R.string.chatname));
+        if (getArguments() != null) {
 
-        mMessages = new ArrayList<>();
-        mMessageAdapter = new MessageAdapter(getActivity(), mMessages);
-        mMessagesListView.setAdapter(mMessageAdapter);
+            int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
+            String chatRoomName = getArguments().getString(KEY_CHAT_ROOM_NAME);
 
-        getMessageQueueExamples();
+            mChatRoom = UserConnectionsManager.get().getConnection(connectionID)
+                    .getChatRoomsManager().getChatRoom(chatRoomName);
+            mToolbarTitle.setText(chatRoomName);
 
+            mMessages = new ArrayList<>();
+            mMessageAdapter = new MessageAdapter(getActivity(), mMessages);
+            mMessagesListView.setAdapter(mMessageAdapter);
+
+            getMessageQueueExamples();
+
+        }
         return v;
     }
 
