@@ -85,7 +85,7 @@ public class UserConnectionsManager {
 
             @Override
             public void onConnectionLost() {
-
+                callback.onConnectionError();
             }
         });
         connection.openConnection(Constants.APPLICATION_NAME);
