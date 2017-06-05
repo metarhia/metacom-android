@@ -14,7 +14,7 @@
     <!-- Files fragment-->
     <string name="enter_download_code">Enter file code to download</string>
     <string name="download_code">File code</string>
-    <string name="downloading">Downloading...</string>
+    <string name="downloading">Downloading… %d\%%</string>
     <string name="complete">Complete!</string>
     <string name="upload_code">Your file code is %s</string>
 
@@ -24,6 +24,7 @@
     <!--Chat-->
     <string name="chatname">ChatName</string>
     <string name="input_message">Input message</string>
+    <string name="uploaded_file">File: %s</string>
 
     <!--Common-->
     <string name="cancel">Cancel</string>
