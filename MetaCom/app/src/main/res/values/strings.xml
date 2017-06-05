@@ -40,4 +40,8 @@
 
     <!-- Local error descriptions -->
     <string name="err_file_load">Could`nt load file</string>
+
+    <!-- Event description -->
+    <string name="event_chat_join">Somebody joined chat</string>
+    <string name="event_chat_leave">Somebody left chat</string>
 </resources>

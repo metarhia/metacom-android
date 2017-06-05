@@ -51,6 +51,8 @@ public class ChatRoom {
         mConnection = connection;
         mMessageListeners = new ArrayList<>();
         initIncomingMessagesListener();
+        initChatJoinListener();
+        initChatLeaveListener();
     }
 
     /**
@@ -130,6 +132,33 @@ public class ChatRoom {
             }
         });
     }
+
+    private void initChatJoinListener() {
+        mConnection.addEventHandler(Constants.META_COM, "chatJoin", new ManualHandler() {
+            @Override
+            public void handle(JSObject jsObject) {
+                String infoText = Constants.EVENT_CHAT_JOIN;
+                Message message = new Message(MessageType.INFO, infoText, true);
+                for (MessageListener listener : mMessageListeners) {
+                    listener.onMessageReceived(message);
+                }
+            }
+        });
+    }
+
+    private void initChatLeaveListener() {
+        mConnection.addEventHandler(Constants.META_COM, "chatLeave", new ManualHandler() {
+            @Override
+            public void handle(JSObject jsObject) {
+                String infoText = Constants.EVENT_CHAT_LEAVE;
+                Message message = new Message(MessageType.INFO, infoText, true);
+                for (MessageListener listener : mMessageListeners) {
+                    listener.onMessageReceived(message);
+                }
+            }
+        });
+    }
+
 
     /**
      * Uploads file in chat

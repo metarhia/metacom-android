@@ -9,5 +9,6 @@ package com.metarhia.metacom.models;
 public enum MessageType {
 
     FILE,
-    TEXT
+    TEXT,
+    INFO
 }
