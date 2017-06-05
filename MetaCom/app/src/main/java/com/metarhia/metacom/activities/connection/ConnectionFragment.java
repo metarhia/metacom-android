@@ -26,16 +26,15 @@ import butterknife.Unbinder;
  */
 public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
-    private Unbinder mUnbinder;
-
     @BindView(R.id.host)
     TextInputEditText mHostEditText;
-
     @BindView(R.id.port)
     TextInputEditText mPortEditText;
-
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
+    private String host;
+    private int port;
+    private Unbinder mUnbinder;
 
     public ConnectionFragment() {
         // Required empty public constructor
@@ -54,8 +53,8 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     public void setButtonSubmitClick() {
         mButtonSubmit.setClickable(false);
 
-        String host = mHostEditText.getText().toString();
-        int port = Integer.valueOf(mPortEditText.getText().toString());
+        host = mHostEditText.getText().toString();
+        port = Integer.valueOf(mPortEditText.getText().toString());
 
         // TODO validate data
 
@@ -68,6 +67,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         mButtonSubmit.setClickable(true);
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
+        intent.putExtra(MainActivity.EXTRA_HOST_NAME, host);
         startActivity(intent);
     }
 

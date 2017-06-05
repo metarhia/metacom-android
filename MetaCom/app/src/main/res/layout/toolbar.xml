@@ -26,6 +26,7 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/small_margin"
             android:fontFamily="sans-serif-light"
+            android:maxLines="1"
             android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/text_size"/>

@@ -32,26 +32,23 @@ public class MainFragment extends Fragment {
 
     public final static String MAIN_FRAGMENT_TAG = "MainFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
-    private Unbinder mUnbinder;
-
+    private static final String KEY_HOST_NAME = "keyHostName";
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
-
     @BindView(R.id.toolbar_back)
     ImageView mToolbarBack;
-
     @BindView(R.id.tab_layout)
     TabLayout mTabLayout;
-
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
-
+    private Unbinder mUnbinder;
     private ArrayList<Fragment> mFragmentArrayList;
     private ArrayList<String> mFragmentTitles;
 
-    public static MainFragment newInstance(int connectionID) {
+    public static MainFragment newInstance(int connectionID, String hostName) {
         Bundle args = new Bundle();
         args.putInt(KEY_CONNECTION_ID, connectionID);
+        args.putString(KEY_HOST_NAME, hostName);
         MainFragment fragment = new MainFragment();
         fragment.setArguments(args);
         return fragment;
@@ -64,11 +61,10 @@ public class MainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-        mToolbarTitle.setText(getString(R.string.hostname));
-
         if (getArguments() != null) {
             int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
             setPages(connectionID);
+            mToolbarTitle.setText(getArguments().getString(KEY_HOST_NAME));
         }
 
         return view;
