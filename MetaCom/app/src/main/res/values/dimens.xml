@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size">16sp</dimen>
+
+    <dimen name="tiny_margin">5dp</dimen>
     <dimen name="small_margin">10dp</dimen>
     <dimen name="big_margin">20dp</dimen>
+
     <dimen name="message_angle">20dp</dimen>
 </resources>

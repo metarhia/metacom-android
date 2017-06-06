@@ -44,7 +44,6 @@
             android:layout_toLeftOf="@id/send"
             android:fontFamily="sans-serif-light"
             android:hint="@string/input_message"
-            android:inputType="text"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="@dimen/text_size"/>

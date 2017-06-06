@@ -225,9 +225,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
             final Message m = messages.get(position);
 
-            View messageRightLayout = ButterKnife.findById(view, R.id.message_right_layout);
-            View messageLeftLayout = ButterKnife.findById(view, R.id.message_left_layout);
-            final TextView messageLeftText = ButterKnife.findById(view, R.id.message_left_text);
+            View messageRightLayout = ButterKnife.findById(view, R.id.message_right_layout_with_spinner);
+            View messageLeftLayout = ButterKnife.findById(view, R.id.message_left_layout_with_spinner);
+            TextView messageLeftText = ButterKnife.findById(view, R.id.message_left_text);
             TextView messageRightText = ButterKnife.findById(view, R.id.message_right_text);
             if (m.isIncoming()) {
                 messageRightLayout.setVisibility(View.GONE);
