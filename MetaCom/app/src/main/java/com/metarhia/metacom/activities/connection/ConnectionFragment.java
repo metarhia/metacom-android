@@ -51,14 +51,14 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
-        mButtonSubmit.setClickable(false);
-
         host = mHostEditText.getText().toString();
         port = Integer.valueOf(mPortEditText.getText().toString());
-
         // TODO validate data
 
-        UserConnectionsManager.get().addConnection(host, port, this);
+        if (!host.isEmpty()) {
+            mButtonSubmit.setClickable(false);
+            UserConnectionsManager.get().addConnection(host, port, this);
+        }
     }
 
 

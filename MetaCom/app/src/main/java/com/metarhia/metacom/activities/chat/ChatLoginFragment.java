@@ -28,14 +28,11 @@ import butterknife.Unbinder;
 public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
-    private Unbinder mUnbinder;
-
     @BindView(R.id.chat_name)
     TextInputEditText mChatNameEditText;
-
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
-
+    private Unbinder mUnbinder;
     private ChatRoomsManager mManager;
     private int mID;
 
@@ -64,10 +61,11 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     @OnClick(R.id.submit)
     public void onButtonSubmitClick() {
-        mButtonSubmit.setClickable(false);
-
         String chatName = mChatNameEditText.getText().toString();
-        mManager.addChatRoom(chatName, this);
+        if (!chatName.isEmpty()) {
+            mButtonSubmit.setClickable(false);
+            mManager.addChatRoom(chatName, this);
+        }
     }
 
     @Override
