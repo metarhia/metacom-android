@@ -1,5 +1,7 @@
 package com.metarhia.metacom.interfaces;
 
+import com.metarhia.metacom.models.Message;
+
 /**
  * Callback after message sending
  *
@@ -10,8 +12,10 @@ public interface MessageSentCallback {
 
     /**
      * Called when message is sent successfully
+     *
+     * @param message message sent by user
      */
-    void onMessageSent();
+    void onMessageSent(Message message);
 
 
     /**

@@ -126,7 +126,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     @Override
-    public void onMessageSent() {
+    public void onMessageSent(Message message) {
         // todo onMessageSent
     }
 

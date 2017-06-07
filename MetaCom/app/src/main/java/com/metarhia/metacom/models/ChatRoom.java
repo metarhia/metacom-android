@@ -79,13 +79,13 @@ public class ChatRoom {
      * @param message  message to be sent
      * @param callback callback after message sending (success and error)
      */
-    public void sendMessage(Message message, final MessageSentCallback callback) {
+    public void sendMessage(final Message message, final MessageSentCallback callback) {
         List<String> args = new ArrayList<>();
         args.add(message.getContent());
         mConnection.cacheCall(Constants.META_COM, "send", args, new JSTPOkErrorHandler() {
             @Override
             public void onOk(List<?> args) {
-                callback.onMessageSent();
+                callback.onMessageSent(message);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class ChatRoom {
             }
         });
 
-        callback.onMessageSent();
+        // callback.onMessageSent(message);
     }
 
     /**
