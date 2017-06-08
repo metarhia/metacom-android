@@ -74,8 +74,14 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @Override
     public void onConnectionError() {
         // todo error message
+        // todo onConnectionError
         mButtonSubmit.setClickable(true);
-        Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

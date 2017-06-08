@@ -78,9 +78,15 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     }
 
     @Override
-    public void onJoinError(String errorMessage) {
+    public void onJoinError(final String errorMessage) {
+        // todo onJoinError
         mButtonSubmit.setClickable(true);
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
