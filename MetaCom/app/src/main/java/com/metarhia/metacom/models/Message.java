@@ -24,6 +24,11 @@ public class Message {
     private final boolean mIsIncoming;
 
     /**
+     * Shows if message is sending or receiving now
+     */
+    private boolean mIsWaiting;
+
+    /**
      * Creates message with specified type and content
      *
      * @param type    message type
@@ -55,5 +60,13 @@ public class Message {
 
     public boolean isIncoming() {
         return mIsIncoming;
+    }
+
+    public boolean isWaiting() {
+        return mIsWaiting;
+    }
+
+    public void setWaiting(boolean isWaiting) {
+        mIsWaiting = isWaiting;
     }
 }

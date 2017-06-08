@@ -80,6 +80,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
             mChatRoom = UserConnectionsManager.get().getConnection(connectionID)
                     .getChatRoomsManager().getChatRoom(chatRoomName);
+            mChatRoom.addMessageListener(this);
+
             mToolbarTitle.setText(chatRoomName);
 
             mMessages = new ArrayList<>();
@@ -103,7 +105,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSent(Message message) {
-        // todo onMessageSent
+        mMessages.get(mMessages.indexOf(message)).setWaiting(false);
+        mMessagesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -126,8 +129,11 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         String messageText = mInputMessage.getText().toString();
         if (!messageText.isEmpty()) {
             Message message = new Message(MessageType.TEXT, messageText, false);
-            // todo send message and display it
-            onMessageReceived(message);
+            message.setWaiting(true);
+
+            mChatRoom.sendMessage(message, this);
+            onMessageReceived(message); // display message
+
             mInputMessage.setText("");
         }
     }
@@ -201,8 +207,13 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         @Override
         public void onBindViewHolder(MessageViewHolder holder, int position) {
-            holder.messageText.setText(messages.get(position).getContent());
-            // spinner
+            Message message = messages.get(position);
+            holder.messageText.setText(message.getContent());
+            if (message.isWaiting()) {
+                holder.messageSpinner.setVisibility(View.VISIBLE);
+            } else {
+                holder.messageSpinner.setVisibility(View.GONE);
+            }
         }
 
         @Override
