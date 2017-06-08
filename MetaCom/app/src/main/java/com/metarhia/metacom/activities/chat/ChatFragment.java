@@ -2,19 +2,18 @@ package com.metarhia.metacom.activities.chat;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.metarhia.metacom.R;
@@ -26,6 +25,7 @@ import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,12 +49,12 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     @BindView(R.id.send)
     ImageView mSendMessage;
     @BindView(R.id.messages_list)
-    ListView mMessagesListView;
+    RecyclerView mMessagesView;
     @BindView(R.id.input_message)
     TextInputEditText mInputMessage;
     private Unbinder mUnbinder;
     private ArrayList<Message> mMessages;
-    private MessageAdapter mMessageAdapter;
+    private MessagesAdapter mMessagesAdapter;
     private ChatRoom mChatRoom;
 
     public static ChatFragment newInstance(int connectionID, String chatRoomName) {
@@ -83,46 +83,22 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             mToolbarTitle.setText(chatRoomName);
 
             mMessages = new ArrayList<>();
-            mMessageAdapter = new MessageAdapter(getActivity(), mMessages);
-            mMessagesListView.setAdapter(mMessageAdapter);
-            mMessagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Message message = mMessages.get(i);
-                    if (message.isIncoming() && message.getType() == MessageType.FILE) {
-                        // todo download file
-                        ((TextView) ButterKnife.findById(view, R.id.message_left_text)).setText(getString(R.string.downloading));
-                    }
-                }
-            });
 
-//            getMessageQueueExamples();
+            LinearLayoutManager llm = new LinearLayoutManager(getContext());
+            mMessagesView.setLayoutManager(llm);
+
+            mMessagesAdapter = new MessagesAdapter(mMessages);
+            mMessagesView.setAdapter(mMessagesAdapter);
 
         }
         return v;
     }
 
-//    private void getMessageQueueExamples() {
-//        for (int i = 0; i < 10; i++) {
-//            String mes = "";
-//            for (int j = 0; j < 10; j++) {
-//                mes = mes.concat(i + "");
-//            }
-//            final Message message = new Message(MessageType.TEXT, mes, (i % 2 == 0));
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    onMessageReceived(message);
-//                }
-//            }, 500 * i);
-//        }
-//    }
-
     @Override
     public void onMessageReceived(Message message) {
         mMessages.add(message);
-        mMessageAdapter.notifyDataSetChanged();
-        mMessagesListView.setSelection(mMessageAdapter.getCount() - 1);
+        mMessagesAdapter.notifyDataSetChanged();
+        mMessagesView.smoothScrollToPosition(mMessages.size());
     }
 
     @Override
@@ -188,58 +164,62 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         }
     }
 
-    public class MessageAdapter extends BaseAdapter {
-        Context ctx;
-        LayoutInflater lInflater;
-        ArrayList<Message> messages;
+    public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
-        public MessageAdapter(Context context, ArrayList<Message> messages) {
-            ctx = context;
+        private List<Message> messages;
+
+        public MessagesAdapter(List<Message> messages) {
             this.messages = messages;
-            lInflater = (LayoutInflater) ctx
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            int messageType = 0; // message_out
+            if (messages.get(position).isIncoming()) {
+                messageType = 1; // message_in
+            }
+            return messageType;
+        }
 
         @Override
-        public int getCount() {
+        public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            int resource = -1;
+            switch (viewType) {
+                case 0: {
+                    resource = R.layout.message_out;
+                    break;
+                }
+                case 1: {
+                    resource = R.layout.message_in;
+                    break;
+                }
+            }
+            View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+            MessageViewHolder mvh = new MessageViewHolder(v);
+            return mvh;
+        }
+
+        @Override
+        public void onBindViewHolder(MessageViewHolder holder, int position) {
+            holder.messageText.setText(messages.get(position).getContent());
+            // spinner
+        }
+
+        @Override
+        public int getItemCount() {
             return messages.size();
         }
 
-        @Override
-        public Object getItem(int i) {
-            return messages.get(i);
-        }
+        public class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
+            private TextView messageText;
+            private ProgressBar messageSpinner;
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            if (view == null) {
-                view = lInflater.inflate(R.layout.message, parent, false);
+            public MessageViewHolder(View itemView) {
+                super(itemView);
+                messageText = ButterKnife.findById(itemView, R.id.message_text);
+                messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
             }
-
-            final Message m = messages.get(position);
-
-            View messageRightLayout = ButterKnife.findById(view, R.id.message_right_layout_with_spinner);
-            View messageLeftLayout = ButterKnife.findById(view, R.id.message_left_layout_with_spinner);
-            TextView messageLeftText = ButterKnife.findById(view, R.id.message_left_text);
-            TextView messageRightText = ButterKnife.findById(view, R.id.message_right_text);
-            if (m.isIncoming()) {
-                messageRightLayout.setVisibility(View.GONE);
-                messageLeftLayout.setVisibility(View.VISIBLE);
-                messageLeftText.setText(m.getContent());
-            } else {
-                messageRightLayout.setVisibility(View.VISIBLE);
-                messageLeftLayout.setVisibility(View.GONE);
-                messageRightText.setText(m.getContent());
-            }
-
-            return view;
         }
     }
 }

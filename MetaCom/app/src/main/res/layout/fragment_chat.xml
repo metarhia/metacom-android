@@ -50,13 +50,11 @@
 
     </RelativeLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/messages_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/input_message_layout"
         android:layout_below="@id/toolbar_layout"
-        android:layout_margin="@dimen/small_margin"
-        android:divider="@null"
-        android:dividerHeight="@dimen/small_margin"/>
+        android:layout_margin="@dimen/small_margin"/>
 </RelativeLayout>
