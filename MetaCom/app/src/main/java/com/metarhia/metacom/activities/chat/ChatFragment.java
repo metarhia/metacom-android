@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.MessageListener;
@@ -98,6 +99,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageReceived(Message message) {
+        displayNewMessage(message);
+    }
+
+    private void displayNewMessage(Message message) {
         mMessages.add(message);
         mMessagesAdapter.notifyDataSetChanged();
         mMessagesView.smoothScrollToPosition(mMessages.size());
@@ -105,13 +110,21 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSent(Message message) {
+        stopSpinner(message);
+    }
+
+    private void stopSpinner(Message message) {
         mMessages.get(mMessages.indexOf(message)).setWaiting(false);
         mMessagesAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onMessageSentError(String message) {
-        // todo onMessageSentError
+        displayError(message);
+    }
+
+    private void displayError(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.toolbar_back)
@@ -132,7 +145,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             message.setWaiting(true);
 
             mChatRoom.sendMessage(message, this);
-            onMessageReceived(message); // display message
+            displayNewMessage(message);
 
             mInputMessage.setText("");
         }
