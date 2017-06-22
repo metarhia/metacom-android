@@ -32,9 +32,12 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
+            android:autoLink="web"
             android:fontFamily="sans-serif-light"
+            android:linksClickable="true"
             android:text="Lorem ipsum ipsum "
             android:textColor="@color/black"
+            android:textColorLink="@color/colorAccent"
             android:textSize="@dimen/text_size"/>
 
     </RelativeLayout>
