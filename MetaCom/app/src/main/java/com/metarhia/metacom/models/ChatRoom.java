@@ -93,8 +93,6 @@ public class ChatRoom {
                 callback.onMessageSentError(Errors.getErrorByCode(errorCode));
             }
         });
-
-        // callback.onMessageSent(message);
     }
 
     /**
