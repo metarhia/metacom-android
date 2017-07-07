@@ -1,13 +1,17 @@
 package com.metarhia.metacom.utils;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
+import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,9 +47,9 @@ public class FileUtils {
     /**
      * Uploads file to server
      *
-     * @param is       file to upload
+     * @param is            file to upload
      * @param sendInterface send and end sending methods specific for uploading
-     * @param callback         callback after file upload (success and error)
+     * @param callback      callback after file upload (success and error)
      */
     public static void uploadSplitFile(InputStream is, final FileUploadingInterface sendInterface,
                                        final FileUploadedCallback callback) {
@@ -112,6 +116,72 @@ public class FileUtils {
     }
 
     /**
+     * Gets downloads storage
+     *
+     * @return downloads storage
+     */
+    public static void saveFileInDownloads(String extension, ArrayList<byte[]> buffer,
+                                           final FileDownloadedCallback callback) {
+        try {
+            final File file = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + "." + extension);
+            file.createNewFile();
+
+            FileUtils.writeChunksToFile(file, buffer,
+                    new FileUtils.FileWritingCallback() {
+                        @Override
+                        public void onWrittenToFile() {
+                            MainExecutor.get().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFileDownloaded(file.getAbsolutePath());
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onWriteError(Exception e) {
+                            callback.onFileDownloadError();
+                        }
+                    });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.onFileDownloadError();
+        }
+    }
+
+    /**
+     * Writes file chunks to file
+     *
+     * @param file   file to be written
+     * @param chunks file chunks
+     */
+    public static void writeChunksToFile(final File file, final ArrayList<byte[]> chunks,
+                                         final FileWritingCallback callback) {
+        sFileHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                FileOutputStream stream;
+                try {
+                    stream = new FileOutputStream(file);
+                    for (byte[] chunk : chunks) {
+                        stream.write(chunk);
+                    }
+                    stream.flush();
+                    stream.close();
+
+                    callback.onWrittenToFile();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    callback.onWriteError(e);
+                }
+            }
+        });
+    }
+
+    /**
      * Callback for splitting files
      */
     private interface FileContentsCallback {
@@ -128,6 +198,24 @@ public class FileUtils {
          * @param e exception thrown while splitting
          */
         void onSplitError(Exception e);
+    }
+
+    /**
+     * Callback for writing into file
+     */
+    public interface FileWritingCallback {
+
+        /**
+         * Called when content was written successfully
+         */
+        void onWrittenToFile();
+
+        /**
+         * Called when writing failed
+         *
+         * @param e exception thrown while writing
+         */
+        void onWriteError(Exception e);
     }
 
     /**

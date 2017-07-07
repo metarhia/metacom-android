@@ -187,7 +187,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileUploaded(String fileCode) {
-        // TODO process fileCode
+        // TODO process successful file uploading
 
 //        String fileName = fileUri.toString();
 //        fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length());

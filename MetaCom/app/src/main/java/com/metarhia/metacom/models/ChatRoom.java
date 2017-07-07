@@ -7,6 +7,7 @@ import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
+import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
@@ -41,6 +42,15 @@ public class ChatRoom {
      */
     private final List<MessageListener> mMessageListeners;
 
+    /**
+     * Current downloaded file chunks
+     */
+    private ArrayList<byte[]> mCurrentFileBuffer;
+
+    /**
+     * Current downloaded file extension
+     */
+    private String mCurrentExtension;
 
     /**
      * Creates new chat room by name
@@ -51,9 +61,12 @@ public class ChatRoom {
         mChatRoomName = chatRoomName;
         mConnection = connection;
         mMessageListeners = new ArrayList<>();
+        mCurrentFileBuffer = new ArrayList<>();
+
         initIncomingMessagesListener();
         initChatJoinListener();
         initChatLeaveListener();
+        initChatTransferListener();
     }
 
     /**
@@ -161,6 +174,40 @@ public class ChatRoom {
                 });
     }
 
+    private void initChatTransferListener() {
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferStart",
+                new ExecutableHandler(MainExecutor.get()) {
+
+                    @Override
+                    public void run() {
+                        List messagePayload = (List) (message).get("chatFileTransferStart");
+                        String type = (String) messagePayload.get(0);
+                        mCurrentExtension = (type.contains("text")) ? "txt" : type.split("/")[1];
+
+                        mCurrentFileBuffer = new ArrayList<>();
+
+                    }
+                });
+
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferChunk",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        List messagePayload = (List) (message).get("chatFileTransferChunk");
+                        String fileChunk = (String) messagePayload.get(0);
+                        if (mCurrentFileBuffer != null)
+                            mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.DEFAULT));
+                    }
+                });
+
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferEnd",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        saveFile();
+                    }
+                });
+    }
 
     /**
      * Uploads file in chat
@@ -227,13 +274,40 @@ public class ChatRoom {
                 new JSTPOkErrorHandler(MainExecutor.get()) {
                     @Override
                     public void onOk(List<?> args) {
-                        String fileCode = (String) args.get(0);
-                        callback.onFileUploaded(fileCode);
+                        callback.onFileUploaded(null);
                     }
 
                     @Override
                     public void onError(Integer errorCode) {
                         callback.onFileUploadError(Errors.getErrorByCode(errorCode));
+                    }
+                });
+    }
+
+    /**
+     * Saves currently downloaded file to downloads folder
+     */
+    private void saveFile() {
+        FileUtils.saveFileInDownloads(mCurrentExtension, mCurrentFileBuffer,
+                new FileDownloadedCallback() {
+                    @Override
+                    public void onFileDownloaded(String path) {
+                        mCurrentExtension = null;
+
+                        String info = Constants.composeFilePathInfo(path);
+                        Message message = new Message(MessageType.INFO, info, true);
+                        for (MessageListener listener : mMessageListeners) {
+                            listener.onMessageReceived(message);
+                        }
+                    }
+
+                    @Override
+                    public void onFileDownloadError() {
+                        String info = Constants.DOWNLOAD_FAILED;
+                        Message message = new Message(MessageType.INFO, info, true);
+                        for (MessageListener listener : mMessageListeners) {
+                            listener.onMessageReceived(message);
+                        }
                     }
                 });
     }

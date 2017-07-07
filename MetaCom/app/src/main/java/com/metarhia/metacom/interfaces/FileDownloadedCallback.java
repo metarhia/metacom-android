@@ -10,8 +10,10 @@ public interface FileDownloadedCallback {
 
     /**
      * Called when file is downloaded successfully
+     *
+     * @param path absolute path to file
      */
-    void onFileDownloaded();
+    void onFileDownloaded(String path);
 
     /**
      * Called when server responds error

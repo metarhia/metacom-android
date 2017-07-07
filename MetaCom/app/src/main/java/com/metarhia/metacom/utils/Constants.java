@@ -19,6 +19,7 @@ public class Constants {
 
         EVENT_CHAT_JOIN = sResources.getString(R.string.event_chat_join);
         EVENT_CHAT_LEAVE = sResources.getString(R.string.event_chat_leave);
+        DOWNLOAD_FAILED = sResources.getString(R.string.download_failed);
     }
 
     public static final String APPLICATION_NAME = "metarhia.com";
@@ -30,5 +31,17 @@ public class Constants {
 
     public static String EVENT_CHAT_JOIN;
     public static String EVENT_CHAT_LEAVE;
+    public static String DOWNLOAD_FAILED;
+
+
+    /**
+     * Creates info message about file path
+     *
+     * @param filePath file path
+     * @return info message about file path
+     */
+    public static String composeFilePathInfo(String filePath) {
+        return String.format(sResources.getString(R.string.file_path), filePath);
+    }
 
 }

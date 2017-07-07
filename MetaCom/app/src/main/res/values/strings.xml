@@ -44,4 +44,6 @@
     <!-- Event description -->
     <string name="event_chat_join">Somebody joined chat</string>
     <string name="event_chat_leave">Somebody left chat</string>
+    <string name="file_path">Your file is saved here: %s</string>
+    <string name="download_failed">Download failed</string>
 </resources>

@@ -115,7 +115,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     }
 
     @Override
-    public void onFileDownloaded() {
+    public void onFileDownloaded(String filePath) {
         setBottomNoticeMessage(getString(R.string.complete));
         setBottomNoticeOnClick(new View.OnClickListener() {
             @Override
@@ -156,7 +156,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                onFileDownloaded();
+                onFileDownloaded("stub");
             }
         }, 1000);
     }
