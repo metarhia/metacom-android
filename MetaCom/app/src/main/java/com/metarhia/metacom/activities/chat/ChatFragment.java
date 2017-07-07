@@ -103,12 +103,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageReceived(final Message message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                displayNewMessage(message);
-            }
-        });
+        displayNewMessage(message);
     }
 
     private void displayNewMessage(Message message) {
@@ -119,12 +114,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSent(final Message message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                stopSpinner(message);
-            }
-        });
+        stopSpinner(message);
     }
 
     private void stopSpinner(Message message) {
@@ -134,12 +124,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSentError(final String message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                displayError(message);
-            }
-        });
+        displayError(message);
     }
 
     private void displayError(String message) {

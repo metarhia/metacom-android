@@ -11,6 +11,7 @@ import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.FileUtils;
+import com.metarhia.metacom.utils.MainExecutor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class FilesManager {
      */
     private void endFileUpload(final FileUploadedCallback callback) {
         mConnection.cacheCall(Constants.META_COM, "endFileUpload", new ArrayList<>(),
-                new JSTPOkErrorHandler() {
+                new JSTPOkErrorHandler(MainExecutor.get()) {
                     @Override
                     public void onOk(List<?> args) {
                         String fileCode = (String) args.get(0);

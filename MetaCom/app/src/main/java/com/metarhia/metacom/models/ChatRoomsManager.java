@@ -6,6 +6,7 @@ import com.metarhia.metacom.connection.JSTPOkErrorHandler;
 import com.metarhia.metacom.interfaces.JoinRoomCallback;
 import com.metarhia.metacom.interfaces.LeaveRoomCallback;
 import com.metarhia.metacom.utils.Constants;
+import com.metarhia.metacom.utils.MainExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,19 +47,20 @@ public class ChatRoomsManager {
         List args = new ArrayList();
         args.add(roomName);
 
-        mConnection.cacheCall(Constants.META_COM, "join", args, new JSTPOkErrorHandler() {
-            @Override
-            public void onOk(List args) {
-                ChatRoom room = new ChatRoom(roomName, mConnection);
-                mChatRooms.add(room);
-                callback.onJoinedRoom();
-            }
+        mConnection.cacheCall(Constants.META_COM, "join", args,
+                new JSTPOkErrorHandler(MainExecutor.get()) {
+                    @Override
+                    public void onOk(List args) {
+                        ChatRoom room = new ChatRoom(roomName, mConnection);
+                        mChatRooms.add(room);
+                        callback.onJoinedRoom();
+                    }
 
-            @Override
-            public void onError(Integer errorCode) {
-                callback.onJoinError(Errors.getErrorByCode(errorCode));
-            }
-        });
+                    @Override
+                    public void onError(Integer errorCode) {
+                        callback.onJoinError(Errors.getErrorByCode(errorCode));
+                    }
+                });
 
     }
 
@@ -83,18 +85,19 @@ public class ChatRoomsManager {
      * @param chatRoom chatRoom to be removed
      */
     public void leaveChatRoom(final ChatRoom chatRoom, final LeaveRoomCallback callback) {
-        mConnection.cacheCall(Constants.META_COM, "leave", new ArrayList<>(), new JSTPOkErrorHandler() {
-            @Override
-            public void onOk(List<?> args) {
-                mChatRooms.remove(chatRoom);
-                callback.onLeavedRoom();
-            }
+        mConnection.cacheCall(Constants.META_COM, "leave", new ArrayList<>(),
+                new JSTPOkErrorHandler(MainExecutor.get()) {
+                    @Override
+                    public void onOk(List<?> args) {
+                        mChatRooms.remove(chatRoom);
+                        callback.onLeavedRoom();
+                    }
 
-            @Override
-            public void onError(Integer errorCode) {
-                callback.onLeaveError(Errors.getErrorByCode(errorCode));
-            }
-        });
+                    @Override
+                    public void onError(Integer errorCode) {
+                        callback.onLeaveError(Errors.getErrorByCode(errorCode));
+                    }
+                });
     }
 
 }

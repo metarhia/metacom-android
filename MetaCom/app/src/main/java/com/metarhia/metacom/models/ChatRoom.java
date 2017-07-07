@@ -3,8 +3,7 @@ package com.metarhia.metacom.models;
 import android.util.Base64;
 
 import com.metarhia.jstp.compiler.annotations.handlers.Array;
-import com.metarhia.jstp.core.Handlers.ManualHandler;
-import com.metarhia.jstp.core.JSInterfaces.JSObject;
+import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -13,6 +12,7 @@ import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.FileUtils;
+import com.metarhia.metacom.utils.MainExecutor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -77,16 +77,16 @@ public class ChatRoom {
     /**
      * Sends message to chat room
      *
-     * @param message  message to be sent
-     * @param callback callback after message sending (success and error)
+     * @param sentMessage message to be sent
+     * @param callback    callback after message sending (success and error)
      */
-    public void sendMessage(final Message message, final MessageSentCallback callback) {
+    public void sendMessage(final Message sentMessage, final MessageSentCallback callback) {
         List<String> args = new ArrayList<>();
-        args.add(message.getContent());
-        mConnection.cacheCall(Constants.META_COM, "send", args, new JSTPOkErrorHandler() {
+        args.add(sentMessage.getContent());
+        mConnection.cacheCall(Constants.META_COM, "send", args, new JSTPOkErrorHandler(MainExecutor.get()) {
             @Override
             public void onOk(List<?> args) {
-                callback.onMessageSent(message);
+                callback.onMessageSent(sentMessage);
             }
 
             @Override
@@ -118,44 +118,47 @@ public class ChatRoom {
      * Adds message event handler to JSTP connection
      */
     private void initIncomingMessagesListener() {
-        mConnection.addEventHandler(Constants.META_COM, "message", new ManualHandler() {
-            @Override
-            public void handle(JSObject jsValue) {
-                List messagePayload = (List) (jsValue).get("message");
-                String messageContent = (String) messagePayload.get(0);
+        mConnection.addEventHandler(Constants.META_COM, "message",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        List messagePayload = (List) (message).get("message");
+                        String messageContent = (String) messagePayload.get(0);
 
-                Message message = new Message(MessageType.TEXT, messageContent, true);
-                for (MessageListener listener : mMessageListeners) {
-                    listener.onMessageReceived(message);
-                }
-            }
-        });
+                        Message message = new Message(MessageType.TEXT, messageContent, true);
+                        for (MessageListener listener : mMessageListeners) {
+                            listener.onMessageReceived(message);
+                        }
+                    }
+                });
     }
 
     private void initChatJoinListener() {
-        mConnection.addEventHandler(Constants.META_COM, "chatJoin", new ManualHandler() {
-            @Override
-            public void handle(JSObject jsObject) {
-                String infoText = Constants.EVENT_CHAT_JOIN;
-                Message message = new Message(MessageType.INFO, infoText, true);
-                for (MessageListener listener : mMessageListeners) {
-                    listener.onMessageReceived(message);
-                }
-            }
-        });
+        mConnection.addEventHandler(Constants.META_COM, "chatJoin",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        String infoText = Constants.EVENT_CHAT_JOIN;
+                        Message message = new Message(MessageType.INFO, infoText, true);
+                        for (MessageListener listener : mMessageListeners) {
+                            listener.onMessageReceived(message);
+                        }
+                    }
+                });
     }
 
     private void initChatLeaveListener() {
-        mConnection.addEventHandler(Constants.META_COM, "chatLeave", new ManualHandler() {
-            @Override
-            public void handle(JSObject jsObject) {
-                String infoText = Constants.EVENT_CHAT_LEAVE;
-                Message message = new Message(MessageType.INFO, infoText, true);
-                for (MessageListener listener : mMessageListeners) {
-                    listener.onMessageReceived(message);
-                }
-            }
-        });
+        mConnection.addEventHandler(Constants.META_COM, "chatLeave",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        String infoText = Constants.EVENT_CHAT_LEAVE;
+                        Message message = new Message(MessageType.INFO, infoText, true);
+                        for (MessageListener listener : mMessageListeners) {
+                            listener.onMessageReceived(message);
+                        }
+                    }
+                });
     }
 
 
@@ -167,7 +170,7 @@ public class ChatRoom {
      */
     public void uploadFile(final InputStream fileStream, String mimeType,
                            final FileUploadedCallback callback) {
-        startFileUpload(mimeType, new JSTPOkErrorHandler() {
+        startFileUpload(mimeType, new JSTPOkErrorHandler(MainExecutor.get()) {
             @Override
             public void onOk(List<?> args) {
                 FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
@@ -194,7 +197,7 @@ public class ChatRoom {
      * Starts file upload to server
      *
      * @param mimeType mime type of the sent file
-     * @param handler JSTP handler
+     * @param handler  JSTP handler
      */
     private void startFileUpload(String mimeType, JSTPOkErrorHandler handler) {
         List<String> args = new ArrayList<>();
@@ -221,7 +224,7 @@ public class ChatRoom {
      */
     private void endFileUpload(final FileUploadedCallback callback) {
         mConnection.cacheCall(Constants.META_COM, "endChatFileTransfer", new ArrayList<>(),
-                new JSTPOkErrorHandler() {
+                new JSTPOkErrorHandler(MainExecutor.get()) {
                     @Override
                     public void onOk(List<?> args) {
                         String fileCode = (String) args.get(0);
@@ -234,4 +237,5 @@ public class ChatRoom {
                     }
                 });
     }
+
 }

@@ -4,6 +4,7 @@ import com.metarhia.jstp.compiler.annotations.handlers.Array;
 import com.metarhia.jstp.compiler.annotations.handlers.Handler;
 import com.metarhia.jstp.compiler.annotations.handlers.NotNull;
 import com.metarhia.jstp.compiler.annotations.handlers.Object;
+import com.metarhia.jstp.handlers.ExecutableHandler;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author lidaamber
  */
 
-@Handler
+@Handler(ExecutableHandler.class)
 public interface OkErrorHandler {
 
     @NotNull

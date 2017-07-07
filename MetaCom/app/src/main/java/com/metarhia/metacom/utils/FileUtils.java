@@ -43,25 +43,25 @@ public class FileUtils {
     /**
      * Uploads file to server
      *
-     * @param fileStream       file to upload
-     * @param sendingInterface send and end sending methods specific for uploading
+     * @param is       file to upload
+     * @param sendInterface send and end sending methods specific for uploading
      * @param callback         callback after file upload (success and error)
      */
-    public static void uploadSplitFile(InputStream fileStream, final FileUploadingInterface sendingInterface,
+    public static void uploadSplitFile(InputStream is, final FileUploadingInterface sendInterface,
                                        final FileUploadedCallback callback) {
-        splitFile(fileStream, FILE_CHUNK_SIZE, new FileUtils.FileContentsCallback() {
+        splitFile(is, FILE_CHUNK_SIZE, new FileUtils.FileContentsCallback() {
             @Override
             public void onSplitToChunks(List<byte[]> chunks) {
                 final Iterator<byte[]> chunkIterator = chunks.iterator();
                 if (chunkIterator.hasNext()) {
                     byte[] chunk = chunkIterator.next();
-                    final JSTPOkErrorHandler handler = new JSTPOkErrorHandler() {
+                    final JSTPOkErrorHandler handler = new JSTPOkErrorHandler(MainExecutor.get()) {
                         @Override
                         public void onOk(List<?> args) {
                             if (chunkIterator.hasNext()) {
-                                sendingInterface.sendChunk(chunkIterator.next(), this);
+                                sendInterface.sendChunk(chunkIterator.next(), this);
                             } else {
-                                sendingInterface.endFileUpload(callback);
+                                sendInterface.endFileUpload(callback);
                             }
                         }
 
@@ -70,7 +70,7 @@ public class FileUtils {
                             callback.onFileUploadError(Errors.getErrorByCode(errorCode));
                         }
                     };
-                    sendingInterface.sendChunk(chunk, handler);
+                    sendInterface.sendChunk(chunk, handler);
                 }
             }
 
