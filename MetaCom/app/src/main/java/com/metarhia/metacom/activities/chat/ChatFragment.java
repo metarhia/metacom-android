@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.models.ChatRoom;
@@ -25,6 +26,8 @@ import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,8 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback {
+public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
+        FileUploadedCallback {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
@@ -186,16 +190,36 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri fileUri = data.getData();
 
-            // TODO use stream from fileUri to upload file
-            String fileName = fileUri.toString();
-            fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length());
-            final Message message = new Message(MessageType.FILE, String.format(getString(R.string.uploaded_file), fileName), false);
-            onMessageReceived(message);
-
-            // todo remove
-            final Message message1 = new Message(MessageType.FILE, String.format(getString(R.string.uploaded_file), fileName), true);
-            onMessageReceived(message1);
+            try {
+                InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
+                String mimeType = getActivity().getContentResolver().getType(fileUri);
+                mChatRoom.uploadFile(is, mimeType, this);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    @Override
+    public void onFileUploaded(String fileCode) {
+        // TODO process fileCode
+
+//        String fileName = fileUri.toString();
+//        fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length());
+//
+//        final Message message = new Message(MessageType.FILE,
+//                String.format(getString(R.string.uploaded_file), fileName), false);
+//        onMessageReceived(message);
+//
+//        // todo remove
+//        final Message message1 = new Message(MessageType.FILE,
+//                String.format(getString(R.string.uploaded_file), fileName), true);
+//        onMessageReceived(message1);
+    }
+
+    @Override
+    public void onFileUploadError(String message) {
+        // TODO process error message
     }
 
     public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {

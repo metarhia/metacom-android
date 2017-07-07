@@ -2,6 +2,7 @@ package com.metarhia.metacom.models;
 
 import android.util.Base64;
 
+import com.metarhia.jstp.compiler.annotations.handlers.Array;
 import com.metarhia.jstp.core.Handlers.ManualHandler;
 import com.metarhia.jstp.core.JSInterfaces.JSObject;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
@@ -164,18 +165,41 @@ public class ChatRoom {
      * @param fileStream file to upload
      * @param callback   callback after file upload (success and error)
      */
-    public void uploadFile(InputStream fileStream, FileUploadedCallback callback) {
-        FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
+    public void uploadFile(final InputStream fileStream, String mimeType,
+                           final FileUploadedCallback callback) {
+        startFileUpload(mimeType, new JSTPOkErrorHandler() {
             @Override
-            public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
-                ChatRoom.this.sendChunk(chunk, handler);
+            public void onOk(List<?> args) {
+                FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
+                    @Override
+                    public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
+                        ChatRoom.this.sendChunk(chunk, handler);
+                    }
+
+                    @Override
+                    public void endFileUpload(FileUploadedCallback callback) {
+                        ChatRoom.this.endFileUpload(callback);
+                    }
+                }, callback);
             }
 
             @Override
-            public void endFileUpload(FileUploadedCallback callback) {
-                ChatRoom.this.endFileUpload(callback);
+            public void onError(@Array(0) Integer errorCode) {
+                callback.onFileUploadError(Errors.getErrorByCode(errorCode));
             }
-        }, callback);
+        });
+    }
+
+    /**
+     * Starts file upload to server
+     *
+     * @param mimeType mime type of the sent file
+     * @param handler JSTP handler
+     */
+    private void startFileUpload(String mimeType, JSTPOkErrorHandler handler) {
+        List<String> args = new ArrayList<>();
+        args.add(mimeType);
+        mConnection.cacheCall(Constants.META_COM, "startChatFileTransfer", args, handler);
     }
 
     /**
