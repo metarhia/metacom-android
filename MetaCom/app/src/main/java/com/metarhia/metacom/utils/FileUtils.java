@@ -38,7 +38,7 @@ public class FileUtils {
     /**
      * Size of chunk to split file
      */
-    private static final int FILE_CHUNK_SIZE = 4 * 1024 * 1024;
+    private static final int FILE_CHUNK_SIZE = 1 * 1024 * 1024;
 
     /**
      * Uploads file to server
