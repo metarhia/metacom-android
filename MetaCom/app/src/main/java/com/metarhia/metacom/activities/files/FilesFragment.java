@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -165,13 +164,14 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     public void downloadByCode(String code) {
         fileCode = code;
         setBottomNoticeMessage(getString(R.string.downloading));
-        // todo download file
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                onFileDownloaded("stub");
-            }
-        }, 1000);
+
+        mFilesManager.downloadFile(fileCode, this);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                onFileDownloaded("stub");
+//            }
+//        }, 1000);
     }
 
     @Override

@@ -2,8 +2,8 @@ package com.metarhia.metacom.models;
 
 import android.util.Base64;
 
-import com.metarhia.jstp.core.Handlers.ManualHandler;
-import com.metarhia.jstp.core.JSInterfaces.JSObject;
+import com.metarhia.jstp.compiler.annotations.handlers.Array;
+import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -31,10 +31,27 @@ public class FilesManager {
     private final AndroidJSTPConnection mConnection;
 
     /**
+     * Current downloaded file chunks
+     */
+    private ArrayList<byte[]> mCurrentFileBuffer;
+
+    /**
+     * Current downloaded file extension
+     */
+    private String mCurrentExtension;
+
+    /**
+     * Current downloading file callback
+     */
+    private FileDownloadedCallback mCurrentCallback;
+
+    /**
      * Creates new files manager
      */
     FilesManager(AndroidJSTPConnection connection) {
         mConnection = connection;
+
+        initTransferListener();
     }
 
     /**
@@ -63,18 +80,58 @@ public class FilesManager {
      * @param fileCode code of file to download
      * @param callback callback after file download (success and error)
      */
-    public void downloadFile(String fileCode, FileDownloadedCallback callback) {
+    public void downloadFile(String fileCode, final FileDownloadedCallback callback) {
+        List<String> args = new ArrayList<>();
+        args.add(fileCode);
+        mConnection.cacheCall(Constants.META_COM, "downloadFile", args,
+                new JSTPOkErrorHandler(MainExecutor.get()) {
+                    @Override
+                    public void onOk(List<?> args) {
+                        mCurrentCallback = callback;
+                    }
 
+                    @Override
+                    public void onError(@Array(0) Integer errorCode) {
+                        callback.onFileDownloadError();
+                    }
+                });
     }
 
-    private void addSendChunkEventHandler() {
-        mConnection.addEventHandler(Constants.META_COM, "downloadFileChunk", new ManualHandler() {
-            @Override
-            public void handle(JSObject jsValue) {
-                List args = (List) (jsValue).get("downloadFileChunk");
-                String chunk = (String) args.get(0);
-            }
-        });
+    private void initTransferListener() {
+        mConnection.addEventHandler(Constants.META_COM, "downloadFileStart",
+                new ExecutableHandler(MainExecutor.get()) {
+
+                    @Override
+                    public void run() {
+                        List messagePayload = (List) (message).get("downloadFileStart");
+                        String type = (String) messagePayload.get(0);
+                        mCurrentExtension = (type == null || type.contains("text")) ?
+                                "txt" : type.split("/")[1];
+
+                        mCurrentFileBuffer = new ArrayList<>();
+
+                    }
+                });
+
+        mConnection.addEventHandler(Constants.META_COM, "downloadFileChunk",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        List messagePayload = (List) (message).get("downloadFileChunk");
+                        String fileChunk = (String) messagePayload.get(0);
+                        if (mCurrentFileBuffer != null)
+                            mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.DEFAULT));
+                    }
+                });
+
+        mConnection.addEventHandler(Constants.META_COM, "downloadFileEnd",
+                new ExecutableHandler(MainExecutor.get()) {
+                    @Override
+                    public void run() {
+                        FileUtils.saveFileInDownloads(mCurrentExtension, mCurrentFileBuffer,
+                                mCurrentCallback);
+                    }
+                });
     }
 
     /**
