@@ -1,13 +1,13 @@
 package com.metarhia.metacom.activities.connection;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.metarhia.metacom.activities.MainActivity;
 import com.metarhia.metacom.R;
-import com.metarhia.metacom.interfaces.ConnectionCallback;
 
+/**
+ * @author MariaKokshaikina
+ */
 public class ConnectionActivity extends AppCompatActivity {
 
     @Override

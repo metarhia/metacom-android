@@ -20,6 +20,8 @@ import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class UploadFileDialog extends DialogFragment {
 

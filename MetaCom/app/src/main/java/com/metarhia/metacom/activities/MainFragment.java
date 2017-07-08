@@ -27,6 +27,8 @@ import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class MainFragment extends Fragment {
 

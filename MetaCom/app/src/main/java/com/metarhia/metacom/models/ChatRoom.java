@@ -57,7 +57,7 @@ public class ChatRoom {
      *
      * @param chatRoomName chat name
      */
-    public ChatRoom(String chatRoomName, AndroidJSTPConnection connection) {
+    ChatRoom(String chatRoomName, AndroidJSTPConnection connection) {
         mChatRoomName = chatRoomName;
         mConnection = connection;
         mMessageListeners = new ArrayList<>();
@@ -76,15 +76,6 @@ public class ChatRoom {
      */
     public String getChatRoomName() {
         return mChatRoomName;
-    }
-
-    /**
-     * Sets chat room name
-     *
-     * @param chatRoomName chat room name
-     */
-    public void setChatRoomName(String chatRoomName) {
-        mChatRoomName = chatRoomName;
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.metarhia.metacom.models;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
@@ -29,63 +28,47 @@ public class UserConnectionsManager {
     private final List<UserConnection> mUserConnections;
 
     /**
-     * Context used for connections
-     */
-    private final Context mContext;
-
-    /**
-     * Gets user connection manager instance, if null, creates it
+     * Gets user connection manager instance
      *
-     * @param context application context
      * @return user connection manager instance
      */
-    public static UserConnectionsManager get(Context context) {
+    public static UserConnectionsManager get() {
         if (instance == null) {
-            instance = new UserConnectionsManager(context);
+            instance = new UserConnectionsManager();
         }
 
         return instance;
     }
 
     /**
-     * Gets user connection manager instance
-     *
-     * @return user connection manager instance
-     */
-    @Nullable
-    public static UserConnectionsManager get() {
-        return instance;
-    }
-
-    /**
      * Creates new user connections manager
      */
-    private UserConnectionsManager(Context context) {
-        mContext = context;
+    private UserConnectionsManager() {
         mUserConnections = new ArrayList<>();
     }
 
     /**
      * Adds new connection with required server host and port
      *
-     * @param host     required server host
-     * @param port     required server port
-     * @param callback callback after attempt to create connection (success and error)
+     * @param context application context
+     * @param host    required server host
+     * @param port    required server port
+     * @param cb      callback after attempt to create connection (success and error)
      */
-    public void addConnection(String host, int port, final ConnectionCallback callback) {
-        AndroidJSTPConnection connection = new AndroidJSTPConnection(host, port, true, mContext);
+    public void addConnection(Context context, String host, int port, final ConnectionCallback cb) {
+        AndroidJSTPConnection connection = new AndroidJSTPConnection(host, port, true, context);
         connection.addListener(new AndroidJSTPConnection.AndroidJSTPConnectionListener() {
             @Override
             public void onConnectionEstablished(AndroidJSTPConnection connection) {
                 UserConnection uc = new UserConnection(mUserConnections.size(), connection);
                 mUserConnections.add(uc);
-                callback.onConnectionEstablished(uc.getId());
+                cb.onConnectionEstablished(uc.getId());
                 connection.removeListener(this);
             }
 
             @Override
             public void onConnectionLost() {
-                callback.onConnectionError();
+                cb.onConnectionError();
             }
         });
         connection.openConnection(Constants.APPLICATION_NAME);

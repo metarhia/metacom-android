@@ -10,7 +10,6 @@ import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,7 @@ public class FileUtils {
     /**
      * Size of chunk to split file
      */
-    private static final int FILE_CHUNK_SIZE = 1 * 1024 * 1024;
+    private static final int FILE_CHUNK_SIZE = 1024 * 1024;
 
     /**
      * Uploads file to server
@@ -106,9 +105,7 @@ public class FileUtils {
                     fileStream.close();
 
                     callback.onSplitToChunks(chunks);
-                } catch (FileNotFoundException e) {
-                    callback.onSplitError(e);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     callback.onSplitError(e);
                 }
             }
@@ -117,33 +114,32 @@ public class FileUtils {
 
     /**
      * Gets downloads storage
-     *
-     * @return downloads storage
      */
     public static void saveFileInDownloads(String extension, ArrayList<byte[]> buffer,
                                            final FileDownloadedCallback callback) {
         try {
             final File file = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + "." + extension);
-            file.createNewFile();
+            if (file.createNewFile()) {
 
-            FileUtils.writeChunksToFile(file, buffer,
-                    new FileUtils.FileWritingCallback() {
-                        @Override
-                        public void onWrittenToFile() {
-                            MainExecutor.get().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onFileDownloaded(file.getAbsolutePath());
-                                }
-                            });
-                        }
+                FileUtils.writeChunksToFile(file, buffer,
+                        new FileUtils.FileWritingCallback() {
+                            @Override
+                            public void onWrittenToFile() {
+                                MainExecutor.get().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onFileDownloaded(file.getAbsolutePath());
+                                    }
+                                });
+                            }
 
-                        @Override
-                        public void onWriteError(Exception e) {
-                            callback.onFileDownloadError();
-                        }
-                    });
+                            @Override
+                            public void onWriteError(Exception e) {
+                                callback.onFileDownloadError();
+                            }
+                        });
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -157,8 +153,8 @@ public class FileUtils {
      * @param file   file to be written
      * @param chunks file chunks
      */
-    public static void writeChunksToFile(final File file, final ArrayList<byte[]> chunks,
-                                         final FileWritingCallback callback) {
+    private static void writeChunksToFile(final File file, final ArrayList<byte[]> chunks,
+                                          final FileWritingCallback callback) {
         sFileHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -203,7 +199,7 @@ public class FileUtils {
     /**
      * Callback for writing into file
      */
-    public interface FileWritingCallback {
+    private interface FileWritingCallback {
 
         /**
          * Called when content was written successfully

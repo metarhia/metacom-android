@@ -38,6 +38,8 @@ import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
         FileUploadedCallback {
@@ -207,11 +209,11 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         // TODO process error message
     }
 
-    public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
+    class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
         private List<Message> messages;
 
-        public MessagesAdapter(List<Message> messages) {
+        MessagesAdapter(List<Message> messages) {
             this.messages = messages;
         }
 
@@ -238,8 +240,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 }
             }
             View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-            MessageViewHolder mvh = new MessageViewHolder(v);
-            return mvh;
+            return new MessageViewHolder(v);
         }
 
         @Override
@@ -258,12 +259,12 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             return messages.size();
         }
 
-        public class MessageViewHolder extends RecyclerView.ViewHolder {
+        class MessageViewHolder extends RecyclerView.ViewHolder {
 
             private TextView messageText;
             private ProgressBar messageSpinner;
 
-            public MessageViewHolder(View itemView) {
+            MessageViewHolder(View itemView) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
                 messageSpinner = ButterKnife.findById(itemView, R.id.spinner);

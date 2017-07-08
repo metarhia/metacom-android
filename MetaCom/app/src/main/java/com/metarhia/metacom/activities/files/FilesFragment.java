@@ -30,6 +30,8 @@ import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileD
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class FilesFragment extends Fragment implements FileDownloadedCallback, FileUploadedCallback, DownloadFileByCodeListener {
 

@@ -1,7 +1,7 @@
 package com.metarhia.metacom.interfaces;
 
 /**
- * Created by masha on 5/24/17.
+ * @author MariaKokshaikina
  */
 
 public interface DownloadFileByCodeListener {

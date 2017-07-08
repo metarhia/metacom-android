@@ -33,7 +33,7 @@ public class FilesManager {
     /**
      * Creates new files manager
      */
-    public FilesManager(AndroidJSTPConnection connection) {
+    FilesManager(AndroidJSTPConnection connection) {
         mConnection = connection;
     }
 

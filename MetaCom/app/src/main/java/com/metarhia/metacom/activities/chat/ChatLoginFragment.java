@@ -24,6 +24,8 @@ import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
@@ -47,7 +49,6 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_login, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 

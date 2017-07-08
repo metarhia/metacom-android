@@ -3,7 +3,6 @@ package com.metarhia.metacom.activities;
 import android.app.Application;
 
 import com.metarhia.metacom.connection.Errors;
-import com.metarhia.metacom.models.UserConnectionsManager;
 import com.metarhia.metacom.utils.Constants;
 
 /**
@@ -18,7 +17,6 @@ public class MetaComApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        UserConnectionsManager.get(getApplicationContext());
         Errors.initResources(getResources());
         Constants.initResources(getResources());
     }

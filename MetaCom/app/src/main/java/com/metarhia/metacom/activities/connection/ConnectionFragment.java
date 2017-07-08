@@ -23,6 +23,8 @@ import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
+ *
+ * @author MariaKokshaikina
  */
 public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
@@ -33,17 +35,11 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
     private String host;
-    private int port;
     private Unbinder mUnbinder;
-
-    public ConnectionFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_connection, container, false);
         mUnbinder = ButterKnife.bind(this, v);
         return v;
@@ -52,12 +48,12 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
         host = mHostEditText.getText().toString();
-        port = Integer.valueOf(mPortEditText.getText().toString());
+        int port = Integer.valueOf(mPortEditText.getText().toString());
         // TODO validate data
 
         if (!host.isEmpty()) {
             mButtonSubmit.setClickable(false);
-            UserConnectionsManager.get().addConnection(host, port, this);
+            UserConnectionsManager.get().addConnection(getActivity(), host, port, this);
         }
     }
 

@@ -32,7 +32,7 @@ public class ChatRoomsManager {
     /**
      * Creates new chat rooms manager
      */
-    public ChatRoomsManager(AndroidJSTPConnection connection) {
+    ChatRoomsManager(AndroidJSTPConnection connection) {
         mConnection = connection;
         mChatRooms = new ArrayList<>();
     }
@@ -44,7 +44,7 @@ public class ChatRoomsManager {
      * @param callback callback after attempt to create chat (success and error)
      */
     public void addChatRoom(final String roomName, final JoinRoomCallback callback) {
-        List args = new ArrayList();
+        List<String> args = new ArrayList<>();
         args.add(roomName);
 
         mConnection.cacheCall(Constants.META_COM, "join", args,

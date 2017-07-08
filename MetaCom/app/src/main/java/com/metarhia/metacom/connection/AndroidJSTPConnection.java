@@ -133,11 +133,11 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
                 || isConnectedFast();
     }
 
-    public void sendCachedCalls() {
+    private void sendCachedCalls() {
         sendCachedCalls(DEFAULT_CACHE);
     }
 
-    public void sendCachedCalls(final String tag) {
+    private void sendCachedCalls(final String tag) {
         ConcurrentHashMap<UUID, CacheCallData> cacheCalls = mTaggedCacheCalls.get(tag);
         if (cacheCalls == null) return;
 
@@ -159,13 +159,8 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
                 });
     }
 
-    public boolean isConnected() {
+    private boolean isConnected() {
         return mConnectionState == STATE_CONNECTED;
-    }
-
-    public Connection getJSTPConnection() {
-        if (isConnected()) return mConnection;
-        return null;
     }
 
     @Override
@@ -175,21 +170,11 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         else if (needsConnection()) notifyNeedsConnection();
     }
 
-    public boolean isCached(UUID uuid) {
-        return isCached(DEFAULT_CACHE, uuid);
-    }
-
-    public boolean isCached(String cacheName, UUID uuid) {
-        if (uuid == null) return false;
-        ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheName);
-        return cachedCalls != null && cachedCalls.containsKey(uuid);
-    }
-
     public boolean removeCachedCall(UUID uuid) {
         return removeCachedCall(DEFAULT_CACHE, uuid);
     }
 
-    public boolean removeCachedCall(String cacheName, UUID uuid) {
+    private boolean removeCachedCall(String cacheName, UUID uuid) {
         if (uuid == null) return false;
         ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheName);
         return cachedCalls != null && cachedCalls.remove(uuid) != null;
@@ -211,7 +196,7 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         return cacheCall(DEFAULT_CACHE, interfaceName, methodName, args, handler);
     }
 
-    public UUID cacheCall(final String cacheTag, String interfaceName, final String methodName,
+    private UUID cacheCall(final String cacheTag, String interfaceName, final String methodName,
                           List<?> args, final ManualHandler handler) {
         ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheTag);
         if (cachedCalls == null) {
@@ -236,15 +221,15 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         }
     }
 
-    public void notifyNeedsConnection() {
+    private void notifyNeedsConnection() {
         mBroadcastManager.sendBroadcast(new Intent(Constants.ACTION_NEEDS_CONNECTION));
     }
 
-    public void notifyHasConnection() {
+    private void notifyHasConnection() {
         mBroadcastManager.sendBroadcast(new Intent(Constants.ACTION_HAS_CONNECTION));
     }
 
-    public boolean needsConnection() {
+    private boolean needsConnection() {
         for (Map.Entry<String, ConcurrentHashMap<UUID, CacheCallData>> me :
                 mTaggedCacheCalls.entrySet()) {
             if (me.getValue().size() != 0) return true;
@@ -291,12 +276,12 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
 
     private static class CacheCallData {
 
-        public final String mInterfaceName;
-        public final String mMethodName;
-        public final List<?> mArgs;
-        public final ManualHandler mManualHandler;
+        final String mInterfaceName;
+        final String mMethodName;
+        final List<?> mArgs;
+        final ManualHandler mManualHandler;
 
-        public CacheCallData(String interfaceName, String methodName, List<?> args,
+        CacheCallData(String interfaceName, String methodName, List<?> args,
                              ManualHandler manualHandler) {
             this.mArgs = args;
             this.mInterfaceName = interfaceName;

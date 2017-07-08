@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.metarhia.metacom.R;
 
+/**
+ * @author MariaKokshaikina
+ */
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_CONNECTION_ID = "extraConnectionId";

@@ -3,7 +3,6 @@ package com.metarhia.metacom.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.telephony.TelephonyManager;
 
 /**
  * Check device's network NetworkUtils and speed
@@ -13,8 +12,9 @@ import android.telephony.TelephonyManager;
  */
 public class NetworkUtils {
 
-    public static NetworkInfo getNetworkInfo(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    private static NetworkInfo getNetworkInfo(Context context) {
+        ConnectivityManager cm = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
 
@@ -25,60 +25,11 @@ public class NetworkUtils {
 
     public static boolean isConnectedWifi(Context context) {
         NetworkInfo info = NetworkUtils.getNetworkInfo(context);
-        return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
-    }
-
-    public static boolean isConnectedMobile(Context context) {
-        NetworkInfo info = NetworkUtils.getNetworkInfo(context);
-        return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
+        return (info != null && info.isConnected() &&
+                info.getType() == ConnectivityManager.TYPE_WIFI);
     }
 
     public static boolean isConnectedFast(Context context) {
         return isConnected(context);
-//        NetworkInfo info = NetworkUtils.getNetworkInfo(context);
-//        return (info != null && info.isConnected() && NetworkUtils.isConnectionFast(info.getType(), info.getSubtype()));
-    }
-
-    public static boolean isConnectionFast(int type, int subType) {
-        if (type == ConnectivityManager.TYPE_WIFI) return true;
-
-        if (type == ConnectivityManager.TYPE_MOBILE) {
-            switch (subType) {
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                    return false; // ~ 50-100 KBps
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                    return false; // ~ 14-64 KBps
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                    return false; // ~ 50-100 KBps
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                    return false; // ~ 400-1000 KBps
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                    return false; // ~ 600-1400 KBps
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                    return false; // ~ 100 KBps
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                    return true; // ~ 2-14 MBps
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                    return false; // ~ 700-1700 KBps
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                    return true; // ~ 1-23 MBps
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                    return true; // ~ 400-7000 KBps
-                case TelephonyManager.NETWORK_TYPE_EHRPD: // API level 11
-                    return true; // ~ 1-2 MBps
-                case TelephonyManager.NETWORK_TYPE_EVDO_B: // API level 9
-                    return true; // ~ 5 MBps
-                case TelephonyManager.NETWORK_TYPE_HSPAP: // API level 13
-                    return true; // ~ 10-20 MBps
-                case TelephonyManager.NETWORK_TYPE_IDEN: // API level 8
-                    return false; // ~25 KBps
-                case TelephonyManager.NETWORK_TYPE_LTE: // API level 11
-                    return true; // ~ 10+ MBps
-                case TelephonyManager.NETWORK_TYPE_UNKNOWN:
-                default:
-                    return false;
-            }
-        }
-        return false;
     }
 }

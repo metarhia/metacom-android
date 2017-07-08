@@ -28,7 +28,7 @@ public class UserConnection {
     /**
      * Creates new user connection
      */
-    public UserConnection(int id, AndroidJSTPConnection connection) {
+    UserConnection(int id, AndroidJSTPConnection connection) {
         mId = id;
         mChatRoomsManager = new ChatRoomsManager(connection);
         mFilesManager = new FilesManager(connection);

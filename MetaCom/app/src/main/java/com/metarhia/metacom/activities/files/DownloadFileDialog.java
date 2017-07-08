@@ -40,8 +40,9 @@ public class DownloadFileDialog extends DialogFragment {
                 .setPositiveButton(getResources().getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                String code = ((TextInputEditText) ButterKnife.findById(view, R.id.file_code)).getText().toString();
-                                mListener.downloadByCode(code);
+                                TextInputEditText code = ButterKnife.findById(view, R.id.file_code);
+                                String fileCode = code.getText().toString();
+                                mListener.downloadByCode(fileCode);
                             }
                         }
                 )
