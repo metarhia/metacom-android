@@ -98,9 +98,16 @@ public class FileUtils {
             public void run() {
                 List<byte[]> chunks = new ArrayList<>();
                 try {
-                    final byte[] buf = new byte[chunkSize];
-                    while (fileStream.read(buf) != -1) {
+                    int available = fileStream.available();
+                    int currentBufferSize = available < chunkSize ? available : chunkSize;
+                    byte[] buf = new byte[available < chunkSize ? available : chunkSize];
+
+                    while (fileStream.read(buf, 0, currentBufferSize) != -1) {
                         chunks.add(buf);
+                        available -= buf.length;
+                        currentBufferSize = available < chunkSize ? available : chunkSize;
+                        if (currentBufferSize <= 0) break;
+                        buf = new byte[currentBufferSize];
                     }
                     fileStream.close();
 
