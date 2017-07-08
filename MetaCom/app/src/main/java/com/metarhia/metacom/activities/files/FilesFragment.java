@@ -18,6 +18,11 @@ import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
 import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
+import com.metarhia.metacom.models.FilesManager;
+import com.metarhia.metacom.models.UserConnectionsManager;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +61,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     private String fileCode = null;
     private Unbinder mUnbinder;
     private static final int PICK_IMAGE = 0;
+    private FilesManager mFilesManager;
 
     public static FilesFragment newInstance(int connectionID) {
         Bundle args = new Bundle();
@@ -68,9 +74,14 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_files, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+
+        if (getArguments() != null) {
+            int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
+            mFilesManager = UserConnectionsManager.get().getConnection(connectionID)
+                    .getFilesManager();
+        }
 
         return view;
     }
@@ -170,7 +181,12 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri fileUri = data.getData();
 
-            // TODO use stream from fileUri to upload file
+            try {
+                InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
+                mFilesManager.uploadFile(is, this);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
