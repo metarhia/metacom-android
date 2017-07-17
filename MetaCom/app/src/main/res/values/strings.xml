@@ -29,6 +29,8 @@
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
+    <string name="exit">Exit</string>
+    <string name="confirm_exit">Confirm exit, please</string>
 
     <string name="hello_blank_fragment">hello_blank_fragment</string>
 
