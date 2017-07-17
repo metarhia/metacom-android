@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -49,6 +52,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
     private static final int PICK_IMAGE = 0;
+    private static final int TAKE_PHOTO = 1;
+    private static final int FILE_EXPLORER = 2;
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
     @BindView(R.id.toolbar_back)
@@ -81,6 +86,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         mUnbinder = ButterKnife.bind(this, v);
+
+        registerForContextMenu(mFileAttach);
 
         if (getArguments() != null) {
 
@@ -184,10 +191,36 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("*/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE);
+
+        getActivity().openContextMenu(mFileAttach);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId() == mFileAttach.getId()) {
+            menu.add(0, TAKE_PHOTO, 0, R.string.take_photo);
+            menu.add(0, FILE_EXPLORER, 0, R.string.file_explorer);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case TAKE_PHOTO:
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, PICK_IMAGE);
+                }
+                return true;
+            case FILE_EXPLORER:
+                Intent intent = new Intent();
+                intent.setType("*/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override

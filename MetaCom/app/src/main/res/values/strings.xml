@@ -16,6 +16,8 @@
     <string name="downloading">Downloading… %d\%%</string>
     <string name="complete">Complete!</string>
     <string name="upload_code">Your file code is %s</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="file_explorer">Open file explorer</string>
 
     <!--Chat Login-->
     <string name="input_chat_name">Input chat name</string>
