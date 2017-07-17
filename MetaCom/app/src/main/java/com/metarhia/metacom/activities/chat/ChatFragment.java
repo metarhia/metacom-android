@@ -2,6 +2,9 @@ package com.metarhia.metacom.activities.chat;
 
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -275,7 +278,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             int messageType = 0; // message_out
             if (messages.get(position).isIncoming()) {
                 messageType = 1; // message_in
-            }
+            } // or file
             return messageType;
         }
 
@@ -293,7 +296,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 }
             }
             View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-            return new MessageViewHolder(v);
+            return new MessageViewHolder(v); // or FileViewHolder
         }
 
         @Override
@@ -321,6 +324,21 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
                 messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
+                messageText.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("copy", messageText.getText());
+                        clipboard.setPrimaryClip(clip);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), "Text was copied", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        return true;
+                    }
+                });
             }
         }
     }
