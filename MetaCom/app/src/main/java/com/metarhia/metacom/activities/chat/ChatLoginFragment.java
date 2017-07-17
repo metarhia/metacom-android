@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
@@ -34,7 +35,12 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     TextInputEditText mChatNameEditText;
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
+    @BindView(R.id.cancel)
+    AppCompatButton mButtonCancel;
+    @BindView(R.id.spinner)
+    ProgressBar mSpinner;
     private Unbinder mUnbinder;
+
     private ChatRoomsManager mManager;
     private int mID;
 
@@ -64,14 +70,34 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     public void onButtonSubmitClick() {
         String chatName = mChatNameEditText.getText().toString();
         if (!chatName.isEmpty()) {
-            mButtonSubmit.setClickable(false);
+            mButtonSubmit.setVisibility(View.GONE);
+            mButtonCancel.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.VISIBLE);
+            mChatNameEditText.setEnabled(false);
             mManager.addChatRoom(chatName, this);
         }
     }
 
+    @OnClick(R.id.cancel)
+    public void onButtonCancelClick() {
+        // todo cancel joining room
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mButtonCancel.setVisibility(View.GONE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mChatNameEditText.setEnabled(true);
+    }
+
     @Override
     public void onJoinedRoom() {
-        mButtonSubmit.setClickable(true);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mButtonSubmit.setVisibility(View.VISIBLE);
+                mButtonCancel.setVisibility(View.GONE);
+                mSpinner.setVisibility(View.INVISIBLE);
+                mChatNameEditText.setEnabled(true);
+            }
+        });
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(ChatActivity.EXTRA_CONNECTION_ID, mID);
         intent.putExtra(ChatActivity.EXTRA_CHAT_ROOM_NAME, mChatNameEditText.getText().toString());
@@ -81,10 +107,13 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     @Override
     public void onJoinError(final String errorMessage) {
         // todo onJoinError
-        mButtonSubmit.setClickable(true);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mButtonSubmit.setVisibility(View.VISIBLE);
+                mButtonCancel.setVisibility(View.GONE);
+                mSpinner.setVisibility(View.INVISIBLE);
+                mChatNameEditText.setEnabled(true);
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });

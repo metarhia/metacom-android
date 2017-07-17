@@ -4,7 +4,6 @@
     <!--Connection Screen-->
     <string name="connection_host">server host</string>
     <string name="connection_port">port</string>
-    <string name="connection_submit">submit</string>
 
     <!-- Main screen -->
     <string name="hostname">HostName</string>
@@ -27,6 +26,7 @@
     <string name="uploaded_file">File: %s</string>
 
     <!--Common-->
+    <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
@@ -34,8 +35,14 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     TextInputEditText mPortEditText;
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
-    private String host;
+    @BindView(R.id.cancel)
+    AppCompatButton mButtonCancel;
+    @BindView(R.id.spinner)
+    ProgressBar mSpinner;
     private Unbinder mUnbinder;
+
+    private String host;
+    private int port;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,19 +55,41 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
         host = mHostEditText.getText().toString();
-        int port = Integer.valueOf(mPortEditText.getText().toString());
+        port = Integer.valueOf(mPortEditText.getText().toString());
         // TODO validate data
-
         if (!host.isEmpty()) {
-            mButtonSubmit.setClickable(false);
+            mButtonSubmit.setVisibility(View.GONE);
+            mButtonCancel.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.VISIBLE);
+            mHostEditText.setEnabled(false);
+            mPortEditText.setEnabled(false);
             UserConnectionsManager.get().addConnection(getActivity(), host, port, this);
         }
+    }
+
+    @OnClick(R.id.cancel)
+    public void setButtonCancelClick() {
+        // todo cancel connection
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mButtonCancel.setVisibility(View.GONE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mHostEditText.setEnabled(true);
+        mPortEditText.setEnabled(true);
     }
 
 
     @Override
     public void onConnectionEstablished(int connectionID) {
-        mButtonSubmit.setClickable(true);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mButtonSubmit.setVisibility(View.VISIBLE);
+                mButtonCancel.setVisibility(View.GONE);
+                mSpinner.setVisibility(View.INVISIBLE);
+                mHostEditText.setEnabled(true);
+                mPortEditText.setEnabled(true);
+            }
+        });
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
         intent.putExtra(MainActivity.EXTRA_HOST_NAME, host);
@@ -70,11 +99,14 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @Override
     public void onConnectionError() {
         // todo error message
-        // todo onConnectionError
-        mButtonSubmit.setClickable(true);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mButtonSubmit.setVisibility(View.VISIBLE);
+                mButtonCancel.setVisibility(View.GONE);
+                mSpinner.setVisibility(View.INVISIBLE);
+                mHostEditText.setEnabled(true);
+                mPortEditText.setEnabled(true);
                 Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
             }
         });
