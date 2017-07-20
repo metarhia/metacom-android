@@ -27,9 +27,11 @@ import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
+import com.metarhia.metacom.interfaces.LeaveRoomCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.models.ChatRoom;
+import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
@@ -50,7 +52,7 @@ import butterknife.Unbinder;
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
-        FileUploadedCallback {
+        FileUploadedCallback, LeaveRoomCallback {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
@@ -73,6 +75,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private ArrayList<Message> mMessages;
     private MessagesAdapter mMessagesAdapter;
     private ChatRoom mChatRoom;
+    private ChatRoomsManager mChatRoomsManager;
 
     public static ChatFragment newInstance(int connectionID, String chatRoomName) {
         Bundle args = new Bundle();
@@ -100,6 +103,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             mChatRoom = UserConnectionsManager.get().getConnection(connectionID)
                     .getChatRoomsManager().getChatRoom(chatRoomName);
             mChatRoom.addMessageListener(this);
+
+            mChatRoomsManager = UserConnectionsManager.get().getConnection(connectionID).getChatRoomsManager();
 
             mToolbarTitle.setText(chatRoomName);
 
@@ -161,11 +166,15 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().finish();
+                        leaveRoom();
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void leaveRoom() {
+        mChatRoomsManager.leaveChatRoom(mChatRoom, this);
     }
 
     @OnClick(R.id.attach)
@@ -194,7 +203,6 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void showFileChooser() {
-
         getActivity().openContextMenu(mFileAttach);
     }
 
@@ -263,6 +271,22 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     @Override
     public void onFileUploadError(String message) {
         // TODO process error message
+    }
+
+    @Override
+    public void onLeavedRoom() {
+        getActivity().finish();
+    }
+
+    @Override
+    public void onLeaveError(final String errorMessage) {
+        // todo onLeaveError
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
