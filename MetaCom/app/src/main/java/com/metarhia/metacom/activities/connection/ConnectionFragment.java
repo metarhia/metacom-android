@@ -35,8 +35,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     TextInputEditText mPortEditText;
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
-    @BindView(R.id.cancel)
-    AppCompatButton mButtonCancel;
     @BindView(R.id.spinner)
     ProgressBar mSpinner;
     private Unbinder mUnbinder;
@@ -59,7 +57,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         // TODO validate data
         if (!host.isEmpty()) {
             mButtonSubmit.setVisibility(View.GONE);
-            mButtonCancel.setVisibility(View.VISIBLE);
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
             mPortEditText.setEnabled(false);
@@ -67,24 +64,12 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         }
     }
 
-    @OnClick(R.id.cancel)
-    public void setButtonCancelClick() {
-        // todo cancel connection
-        mButtonSubmit.setVisibility(View.VISIBLE);
-        mButtonCancel.setVisibility(View.GONE);
-        mSpinner.setVisibility(View.INVISIBLE);
-        mHostEditText.setEnabled(true);
-        mPortEditText.setEnabled(true);
-    }
-
-
     @Override
     public void onConnectionEstablished(int connectionID) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mButtonSubmit.setVisibility(View.VISIBLE);
-                mButtonCancel.setVisibility(View.GONE);
                 mSpinner.setVisibility(View.INVISIBLE);
                 mHostEditText.setEnabled(true);
                 mPortEditText.setEnabled(true);
@@ -103,7 +88,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
             @Override
             public void run() {
                 mButtonSubmit.setVisibility(View.VISIBLE);
-                mButtonCancel.setVisibility(View.GONE);
                 mSpinner.setVisibility(View.INVISIBLE);
                 mHostEditText.setEnabled(true);
                 mPortEditText.setEnabled(true);

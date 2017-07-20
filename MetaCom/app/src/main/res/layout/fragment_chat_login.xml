@@ -25,18 +25,6 @@
         android:text="@string/submit"
         android:textSize="@dimen/text_size"/>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/cancel"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_margin="@dimen/small_margin"
-        android:clickable="true"
-        android:enabled="true"
-        android:fontFamily="sans-serif-light"
-        android:text="@string/cancel"
-        android:textSize="@dimen/text_size"
-        android:visibility="gone"/>
-
     <ProgressBar
         android:id="@+id/spinner"
         android:layout_width="15dp"

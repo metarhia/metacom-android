@@ -35,8 +35,6 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     TextInputEditText mChatNameEditText;
     @BindView(R.id.submit)
     AppCompatButton mButtonSubmit;
-    @BindView(R.id.cancel)
-    AppCompatButton mButtonCancel;
     @BindView(R.id.spinner)
     ProgressBar mSpinner;
     private Unbinder mUnbinder;
@@ -71,20 +69,10 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
         String chatName = mChatNameEditText.getText().toString();
         if (!chatName.isEmpty()) {
             mButtonSubmit.setVisibility(View.GONE);
-            mButtonCancel.setVisibility(View.VISIBLE);
             mSpinner.setVisibility(View.VISIBLE);
             mChatNameEditText.setEnabled(false);
             mManager.addChatRoom(chatName, this);
         }
-    }
-
-    @OnClick(R.id.cancel)
-    public void onButtonCancelClick() {
-        // todo cancel joining room
-        mButtonSubmit.setVisibility(View.VISIBLE);
-        mButtonCancel.setVisibility(View.GONE);
-        mSpinner.setVisibility(View.INVISIBLE);
-        mChatNameEditText.setEnabled(true);
     }
 
     @Override
@@ -93,7 +81,6 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
             @Override
             public void run() {
                 mButtonSubmit.setVisibility(View.VISIBLE);
-                mButtonCancel.setVisibility(View.GONE);
                 mSpinner.setVisibility(View.INVISIBLE);
                 mChatNameEditText.setEnabled(true);
             }
@@ -111,7 +98,6 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
             @Override
             public void run() {
                 mButtonSubmit.setVisibility(View.VISIBLE);
-                mButtonCancel.setVisibility(View.GONE);
                 mSpinner.setVisibility(View.INVISIBLE);
                 mChatNameEditText.setEnabled(true);
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
