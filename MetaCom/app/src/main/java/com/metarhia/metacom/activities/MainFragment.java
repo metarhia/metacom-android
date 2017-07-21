@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
+import com.metarhia.metacom.models.UserConnectionsManager;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,7 @@ public class MainFragment extends Fragment {
     private Unbinder mUnbinder;
     private ArrayList<Fragment> mFragmentArrayList;
     private ArrayList<String> mFragmentTitles;
+    private int mConnectionID;
 
     public static MainFragment newInstance(int connectionID, String hostName) {
         Bundle args = new Bundle();
@@ -66,8 +68,8 @@ public class MainFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this, view);
 
         if (getArguments() != null) {
-            int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
-            setPages(connectionID);
+            mConnectionID = getArguments().getInt(KEY_CONNECTION_ID);
+            setPages();
             mToolbarTitle.setText(getArguments().getString(KEY_HOST_NAME));
         }
 
@@ -76,7 +78,6 @@ public class MainFragment extends Fragment {
 
     @OnClick(R.id.toolbar_back)
     public void onBackClick() {
-        // todo close connection to server
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.exit)
                 .setMessage(R.string.confirm_exit)
@@ -90,17 +91,22 @@ public class MainFragment extends Fragment {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().finish();
+                        leaveServer();
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
     }
 
-    private void setPages(int connectionID) {
+    private void leaveServer() {
+        UserConnectionsManager.get().removeConnection(UserConnectionsManager.get().getConnection(mConnectionID));
+        getActivity().finish();
+    }
+
+    private void setPages() {
         mFragmentArrayList = new ArrayList<>();
-        mFragmentArrayList.add(FilesFragment.newInstance(connectionID));
-        mFragmentArrayList.add(ChatLoginFragment.newInstance(connectionID));
+        mFragmentArrayList.add(FilesFragment.newInstance(mConnectionID));
+        mFragmentArrayList.add(ChatLoginFragment.newInstance(mConnectionID));
 
         PagerAdapter pagerAdapter = new FragmentPagerAdapter(getFragmentManager()) {
 

@@ -152,7 +152,6 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @OnClick(R.id.toolbar_back)
     public void onToolbarBackClick() {
-        // todo close connection to room
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.exit)
                 .setMessage(R.string.confirm_exit)
