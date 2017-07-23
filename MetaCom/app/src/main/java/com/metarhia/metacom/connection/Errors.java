@@ -24,6 +24,8 @@ public class Errors {
     private static final int ERR_NOT_IN_CHAT = 31;
     private static final int ERR_NO_INTERLOCUTOR = 32;
     private static final int ERR_NO_SUCH_FILE = 33;
+    private static final int ERR_UPLOAD_NOT_STARTED = 34;
+    private static final int ERR_PREVIOUS_UPLOAD_NOT_FINISHED = 35;
 
     /**
      * Application resources
@@ -57,6 +59,10 @@ public class Errors {
                 return sResources.getString(R.string.err_no_such_file);
             case ERR_FILE_LOAD:
                 return sResources.getString(R.string.err_file_load);
+            case ERR_UPLOAD_NOT_STARTED:
+                return sResources.getString(R.string.err_upload_not_started);
+            case ERR_PREVIOUS_UPLOAD_NOT_FINISHED:
+                return sResources.getString(R.string.err_previous_upload_not_finished);
             default:
                 return null;
         }
