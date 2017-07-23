@@ -120,7 +120,7 @@ public class FilesManager {
                         List messagePayload = (List) (message).get("downloadFileChunk");
                         String fileChunk = (String) messagePayload.get(0);
                         if (mCurrentFileBuffer != null)
-                            mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.DEFAULT));
+                            mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.NO_WRAP));
                     }
                 });
 
@@ -142,7 +142,7 @@ public class FilesManager {
      */
     private void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
         List<String> args = new ArrayList<>();
-        args.add(Base64.encodeToString(chunk, Base64.DEFAULT));
+        args.add(Base64.encodeToString(chunk, Base64.NO_WRAP));
 
         mConnection.cacheCall(Constants.META_COM, "uploadFileChunk", args, handler);
     }
