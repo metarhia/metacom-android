@@ -5,13 +5,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
@@ -20,6 +25,7 @@ import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.models.FilesManager;
 import com.metarhia.metacom.models.UserConnectionsManager;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -42,24 +48,22 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
-
+    private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
+    private static final int PICK_IMAGE_FROM_EXPLORER = 0;
+    private static final int PICK_IMAGE_FROM_CAMERA = 1;
+    private static final int TAKE_PHOTO = 2;
+    private static final int FILE_EXPLORER = 3;
     public final int DIALOG_FRAGMENT_DONWLOAD = 1;
-
     @BindView(R.id.bottom_notice_text)
     TextView mBottomNoticeText;
-
     @BindView(R.id.bottom_notice_layout)
     View mBottomNoticeLayout;
-
     @BindView(R.id.download_file)
     ImageView mDownloadFile;
-
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
-
     private String fileCode = null;
     private Unbinder mUnbinder;
-    private static final int PICK_IMAGE = 0;
     private FilesManager mFilesManager;
 
     public static FilesFragment newInstance(int connectionID) {
@@ -75,6 +79,8 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_files, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+
+        registerForContextMenu(mUploadFile);
 
         if (getArguments() != null) {
             int connectionID = getArguments().getInt(KEY_CONNECTION_ID);
@@ -114,16 +120,7 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 
     @OnClick(R.id.upload_file)
     public void onUploadFileClick() {
-        // todo open file browser to choose file
-
         showFileChooser();
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                onFileUploaded("123");
-//            }
-//        }, 2000);
     }
 
     @Override
@@ -150,8 +147,14 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     }
 
     @Override
-    public void onFileUploadError(String message) {
+    public void onFileUploadError(final String message) {
         // todo onFileUploadError
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -178,9 +181,18 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            Uri fileUri = data.getData();
-
+        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) && resultCode == Activity.RESULT_OK) {
+            Uri fileUri = null;
+            switch (requestCode) {
+                case PICK_IMAGE_FROM_EXPLORER: {
+                    fileUri = data.getData();
+                    break;
+                }
+                case PICK_IMAGE_FROM_CAMERA: {
+                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                    break;
+                }
+            }
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 mFilesManager.uploadFile(is, this);
@@ -191,9 +203,38 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     }
 
     private void showFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("*/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE);
+        getActivity().openContextMenu(mUploadFile);
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId() == mUploadFile.getId()) {
+            menu.add(0, TAKE_PHOTO, 0, R.string.take_photo);
+            menu.add(0, FILE_EXPLORER, 0, R.string.file_explorer);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case TAKE_PHOTO:
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, PICK_IMAGE_FROM_CAMERA);
+                }
+                return true;
+            case FILE_EXPLORER:
+                Intent intent = new Intent();
+                intent.setType("*/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE_FROM_EXPLORER);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+
 }
