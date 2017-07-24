@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,13 +125,17 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     }
 
     @Override
-    public void onFileDownloaded(String filePath) {
+    public void onFileDownloaded(final String filePath) {
         setBottomNoticeMessage(getString(R.string.complete));
         setBottomNoticeOnClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // todo choose app to open the file
-//                Toast.makeText(getContext(), "choose app to open", Toast.LENGTH_SHORT).show();
+                Uri selectedUri = Uri.parse("file:///" + filePath);
+                String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(selectedUri, mimeType);
+                startActivity(Intent.createChooser(intent, "Open File..."));
             }
         });
     }
@@ -138,10 +143,17 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     @Override
     public void onFileDownloadError() {
         // todo onFileDownloadError
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), "download error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void onFileUploaded(String fileCode) {
+        hideBottomNotice();
         DialogFragment dialog = UploadFileDialog.newInstance(fileCode);
         dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
     }
@@ -166,15 +178,8 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
     @Override
     public void downloadByCode(String code) {
         fileCode = code;
-        setBottomNoticeMessage(getString(R.string.downloading));
-
+        setBottomNoticeMessage(String.format(getString(R.string.downloading), code));
         mFilesManager.downloadFile(fileCode, this);
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                onFileDownloaded("stub");
-//            }
-//        }, 1000);
     }
 
     @Override
@@ -196,6 +201,12 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 mFilesManager.uploadFile(is, this);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setBottomNoticeMessage("uploading ...");
+                    }
+                });
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

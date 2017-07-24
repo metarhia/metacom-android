@@ -13,7 +13,7 @@
     <!-- Files fragment-->
     <string name="enter_download_code">Enter file code to download</string>
     <string name="download_code">File code</string>
-    <string name="downloading">Downloading… %d\%%</string>
+    <string name="downloading">Downloading… %s</string>
     <string name="complete">Complete!</string>
     <string name="upload_code">Your file code is %s</string>
     <string name="take_photo">Take a photo</string>
