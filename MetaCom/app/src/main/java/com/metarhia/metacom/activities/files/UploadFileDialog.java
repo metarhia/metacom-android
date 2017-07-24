@@ -2,6 +2,9 @@ package com.metarhia.metacom.activities.files;
 
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 
@@ -48,7 +52,23 @@ public class UploadFileDialog extends DialogFragment {
 
         View view = layoutInflater.inflate(R.layout.fragment_upload_file_dialog, null);
         mUnbinder = ButterKnife.bind(this, view);
-        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_code), getArguments().getString(KEY_UPLOAD_FILE_CODE)));
+        final String code = getArguments().getString(KEY_UPLOAD_FILE_CODE);
+        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_code), code));
+        mUploadResultString.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("copy", code);
+                clipboard.setPrimaryClip(clip);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getContext(), "Code was copied", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return true;
+            }
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setView(view)
