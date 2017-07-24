@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -56,9 +58,13 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
-    private static final int PICK_IMAGE = 0;
-    private static final int TAKE_PHOTO = 1;
-    private static final int FILE_EXPLORER = 2;
+
+    private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
+    private static final int PICK_IMAGE_FROM_EXPLORER = 0;
+    private static final int PICK_IMAGE_FROM_CAMERA = 1;
+    private static final int TAKE_PHOTO = 2;
+    private static final int FILE_EXPLORER = 3;
+
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
     @BindView(R.id.toolbar_back)
@@ -218,15 +224,17 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         switch (item.getItemId()) {
             case TAKE_PHOTO:
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, PICK_IMAGE);
+                    startActivityForResult(takePictureIntent, PICK_IMAGE_FROM_CAMERA);
                 }
                 return true;
             case FILE_EXPLORER:
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -237,9 +245,18 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            Uri fileUri = data.getData();
-
+        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) && resultCode == Activity.RESULT_OK) {
+            Uri fileUri = null;
+            switch (requestCode) {
+                case PICK_IMAGE_FROM_EXPLORER: {
+                    fileUri = data.getData();
+                    break;
+                }
+                case PICK_IMAGE_FROM_CAMERA: {
+                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                    break;
+                }
+            }
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 String mimeType = getActivity().getContentResolver().getType(fileUri);
@@ -254,22 +271,21 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onFileUploaded(String fileCode) {
         // TODO process successful file uploading
 
-//        String fileName = fileUri.toString();
-//        fileName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.length());
-//
-//        final Message message = new Message(MessageType.FILE,
-//                String.format(getString(R.string.uploaded_file), fileName), false);
-//        onMessageReceived(message);
-//
-//        // todo remove
-//        final Message message1 = new Message(MessageType.FILE,
-//                String.format(getString(R.string.uploaded_file), fileName), true);
-//        onMessageReceived(message1);
+        // todo remove
+        final Message message = new Message(MessageType.TEXT,
+                String.format(getString(R.string.uploaded_file), fileCode), false);
+        onMessageReceived(message);
     }
 
     @Override
-    public void onFileUploadError(String message) {
+    public void onFileUploadError(final String message) {
         // TODO process error message
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
