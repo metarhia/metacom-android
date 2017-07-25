@@ -286,7 +286,7 @@ public class ChatRoom {
                         mCurrentExtension = null;
 
                         String info = Constants.composeFilePathInfo(path);
-                        Message message = new Message(MessageType.INFO, info, true);
+                        Message message = new Message(MessageType.FILE, info, true);
                         for (MessageListener listener : mMessageListeners) {
                             listener.onMessageReceived(message);
                         }
@@ -295,7 +295,7 @@ public class ChatRoom {
                     @Override
                     public void onFileDownloadError() {
                         String info = Constants.DOWNLOAD_FAILED;
-                        Message message = new Message(MessageType.INFO, info, true);
+                        Message message = new Message(MessageType.FILE, info, true);
                         for (MessageListener listener : mMessageListeners) {
                             listener.onMessageReceived(message);
                         }
