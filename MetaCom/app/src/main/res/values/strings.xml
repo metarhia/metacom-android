@@ -25,7 +25,7 @@
     <!--Chat-->
     <string name="chatname">ChatName</string>
     <string name="input_message">Input message</string>
-    <string name="uploaded_file">File: %s</string>
+    <string name="uploaded_file">File was sent</string>
 
     <!--Common-->
     <string name="submit">Submit</string>

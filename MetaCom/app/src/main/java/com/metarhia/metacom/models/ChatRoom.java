@@ -285,7 +285,7 @@ public class ChatRoom {
                     public void onFileDownloaded(String path) {
                         mCurrentExtension = null;
 
-                        String info = Constants.composeFilePathInfo(path);
+                        String info = path;
                         Message message = new Message(MessageType.FILE, info, true);
                         for (MessageListener listener : mMessageListeners) {
                             listener.onMessageReceived(message);

@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,7 +35,6 @@ import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.models.ChatRoom;
 import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
-import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
 import com.metarhia.metacom.utils.PermissionUtils;
 
@@ -48,6 +48,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.metarhia.metacom.models.MessageType.TEXT;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -201,7 +203,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onSendMessageClick() {
         String messageText = mInputMessage.getText().toString();
         if (!messageText.isEmpty()) {
-            Message message = new Message(MessageType.TEXT, messageText, false);
+            Message message = new Message(TEXT, messageText, false);
             message.setWaiting(true);
 
             mChatRoom.sendMessage(message, this);
@@ -279,11 +281,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileUploaded(String fileCode) {
-        // TODO process successful file uploading
-
-        // todo remove
-        final Message message = new Message(MessageType.TEXT,
-                String.format(getString(R.string.uploaded_file), fileCode), false);
+        final Message message = new Message(TEXT,
+                getResources().getString(R.string.uploaded_file), false);
         onMessageReceived(message);
     }
 
@@ -314,6 +313,15 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         });
     }
 
+    private void openFile(String filePath) {
+        Uri selectedUri = Uri.parse("file:///" + filePath);
+        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(selectedUri, mimeType);
+        startActivity(Intent.createChooser(intent, "Open File..."));
+    }
+
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
         private List<Message> messages;
@@ -324,17 +332,37 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         @Override
         public int getItemViewType(int position) {
-            int messageType = 0; // message_out
-            if (messages.get(position).isIncoming()) {
-                messageType = 1; // message_in
-            } // or file
+            Message message = messages.get(position);
+            /*
+            0   text    out
+            1   text    in
+            2   file    out
+            3   file    in
+            4   info    out
+            5   info    in
+             */
+            int messageType = -1;
+            switch (message.getType()) {
+                case TEXT: {
+                    messageType = message.isIncoming() ? 1 : 0;
+                    break;
+                }
+                case FILE: {
+                    messageType = message.isIncoming() ? 3 : 2;
+                    break;
+                }
+                case INFO: {
+                    messageType = message.isIncoming() ? 5 : 4;
+                    break;
+                }
+            }
             return messageType;
         }
 
         @Override
         public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             int resource = -1;
-            switch (viewType) {
+            switch (viewType % 2) {
                 case 0: {
                     resource = R.layout.message_out;
                     break;
@@ -345,7 +373,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 }
             }
             View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-            return new MessageViewHolder(v); // or FileViewHolder
+            return new MessageViewHolder(v, viewType == 3);
         }
 
         @Override
@@ -369,7 +397,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             private TextView messageText;
             private ProgressBar messageSpinner;
 
-            MessageViewHolder(View itemView) {
+            MessageViewHolder(View itemView, boolean isIncomingFile) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
                 messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
@@ -388,6 +416,14 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                         return true;
                     }
                 });
+                if (isIncomingFile) {
+                    messageText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ChatFragment.this.openFile(messageText.getText().toString());
+                        }
+                    });
+                }
             }
         }
     }
