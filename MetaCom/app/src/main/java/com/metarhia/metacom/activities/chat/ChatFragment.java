@@ -36,6 +36,7 @@ import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.MessageType;
 import com.metarhia.metacom.models.UserConnectionsManager;
+import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -185,7 +186,15 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @OnClick(R.id.attach)
     public void onFileAttachClick() {
-        showFileChooser();
+        if (PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+            showFileChooser();
+        } else {
+            showForbidDialog();
+        }
+    }
+
+    private void showForbidDialog() {
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.send)

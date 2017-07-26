@@ -19,6 +19,7 @@ import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
 import com.metarhia.metacom.models.UserConnectionsManager;
+import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.util.ArrayList;
 
@@ -73,7 +74,28 @@ public class MainFragment extends Fragment {
             mToolbarTitle.setText(getArguments().getString(KEY_HOST_NAME));
         }
 
+        if (PermissionUtils.checkVersion()) {
+            if (!PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+                showRequestDialog();
+            }
+        }
+
         return view;
+    }
+
+    private void showRequestDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.permissions)
+                .setMessage(R.string.permissions_info)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        PermissionUtils.requestForSpecificPermission(getActivity());
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @OnClick(R.id.toolbar_back)

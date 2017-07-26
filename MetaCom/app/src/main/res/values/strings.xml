@@ -53,4 +53,9 @@
     <string name="file_path">Your file is saved here: %s</string>
     <string name="download_failed">Download failed</string>
 
+    <!-- Permissions -->
+    <string name="permissions">Permissions</string>
+    <string name="permissions_info">We need your permission because of bla bla bla</string>
+    <string name="permissions_are_not_granted">sorry you shall not pass</string>
+
 </resources>

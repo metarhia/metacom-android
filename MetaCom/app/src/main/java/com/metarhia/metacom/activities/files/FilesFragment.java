@@ -25,6 +25,7 @@ import com.metarhia.metacom.interfaces.FileDownloadedCallback;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.models.FilesManager;
 import com.metarhia.metacom.models.UserConnectionsManager;
+import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -114,14 +115,26 @@ public class FilesFragment extends Fragment implements FileDownloadedCallback, F
 
     @OnClick(R.id.download_file)
     public void onDownloadFileClick() {
-        DownloadFileDialog dialog = new DownloadFileDialog();
-        dialog.setDownloadFileByCodeListener(this);
-        dialog.show(getActivity().getSupportFragmentManager(), DownloadFileDialogTag);
+        if (PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+            DownloadFileDialog dialog = new DownloadFileDialog();
+            dialog.setDownloadFileByCodeListener(this);
+            dialog.show(getActivity().getSupportFragmentManager(), DownloadFileDialogTag);
+        } else {
+            showForbidDialog();
+        }
     }
 
     @OnClick(R.id.upload_file)
     public void onUploadFileClick() {
-        showFileChooser();
+        if (PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+            showFileChooser();
+        } else {
+            showForbidDialog();
+        }
+    }
+
+    private void showForbidDialog() {
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast.LENGTH_SHORT).show();
     }
 
     @Override
