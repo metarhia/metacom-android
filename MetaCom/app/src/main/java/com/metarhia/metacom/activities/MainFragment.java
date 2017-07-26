@@ -98,7 +98,7 @@ public class MainFragment extends Fragment {
         alert.show();
     }
 
-    private void leaveServer() {
+    public void leaveServer() {
         UserConnectionsManager.get().removeConnection(UserConnectionsManager.get().getConnection(mConnectionID));
         getActivity().finish();
     }

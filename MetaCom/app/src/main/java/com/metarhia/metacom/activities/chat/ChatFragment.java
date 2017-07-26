@@ -179,6 +179,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     public void leaveRoom() {
+        mChatRoom.removeMessageListener(this);
         mChatRoomsManager.leaveChatRoom(mChatRoom, this);
     }
 
