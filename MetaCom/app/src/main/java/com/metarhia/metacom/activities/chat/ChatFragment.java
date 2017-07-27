@@ -37,6 +37,7 @@ import com.metarhia.metacom.models.ChatRoom;
 import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.UserConnectionsManager;
+import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.io.File;
@@ -50,6 +51,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.metarhia.metacom.models.MessageType.FILE;
 import static com.metarhia.metacom.models.MessageType.TEXT;
 
 /**
@@ -315,15 +317,20 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         });
     }
 
-
     @Override
     public void onFileDownloaded(String path) {
-        // TODO implement
+        Message message = new Message(FILE, Constants.composeFilePathInfo(path), true);
+        displayNewMessage(message);
     }
 
     @Override
     public void onFileDownloadError() {
-        // TODO implement
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), R.string.downloading_error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void openFile(String filePath) {
@@ -433,7 +440,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     messageText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ChatFragment.this.openFile(messageText.getText().toString());
+                            String message = messageText.getText().toString();
+                            String path = message.substring(message.indexOf('/'));
+                            ChatFragment.this.openFile(path);
                         }
                     });
                 }
