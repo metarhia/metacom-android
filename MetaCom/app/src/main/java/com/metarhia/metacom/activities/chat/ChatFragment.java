@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -249,8 +250,11 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         switch (item.getItemId()) {
             case TAKE_PHOTO:
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
+                Uri uri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, PICK_IMAGE_FROM_CAMERA);
                 }
@@ -278,7 +282,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     break;
                 }
                 case PICK_IMAGE_FROM_CAMERA: {
-                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+                    File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
+                    fileUri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
                     break;
                 }
             }
