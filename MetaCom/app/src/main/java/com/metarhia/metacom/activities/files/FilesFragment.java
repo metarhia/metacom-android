@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
-import com.metarhia.metacom.interfaces.FileDownloadedCallback;
+import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.models.FilesManager;
 import com.metarhia.metacom.models.UserConnectionsManager;
@@ -45,7 +45,7 @@ import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileD
  *
  * @author MariaKokshaikina
  */
-public class FilesFragment extends Fragment implements FileDownloadedCallback, FileUploadedCallback, DownloadFileByCodeListener {
+public class FilesFragment extends Fragment implements FileDownloadedListener, FileUploadedCallback, DownloadFileByCodeListener {
 
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 

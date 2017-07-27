@@ -7,7 +7,7 @@ import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
-import com.metarhia.metacom.interfaces.FileDownloadedCallback;
+import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.FileUtils;
@@ -43,7 +43,7 @@ public class FilesManager {
     /**
      * Current downloading file callback
      */
-    private FileDownloadedCallback mCurrentCallback;
+    private FileDownloadedListener mCurrentCallback;
 
     /**
      * Creates new files manager
@@ -80,7 +80,7 @@ public class FilesManager {
      * @param fileCode code of file to download
      * @param callback callback after file download (success and error)
      */
-    public void downloadFile(String fileCode, final FileDownloadedCallback callback) {
+    public void downloadFile(String fileCode, final FileDownloadedListener callback) {
         List<String> args = new ArrayList<>();
         args.add(fileCode);
         mConnection.cacheCall(Constants.META_COM, "downloadFile", args,

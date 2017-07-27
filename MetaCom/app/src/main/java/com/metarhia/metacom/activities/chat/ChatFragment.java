@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.LeaveRoomCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
@@ -57,7 +58,7 @@ import static com.metarhia.metacom.models.MessageType.TEXT;
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
-        FileUploadedCallback, LeaveRoomCallback {
+        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
@@ -113,6 +114,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     .getChatRoomsManager().getChatRoom(chatRoomName);
             mChatRoom.addMessageListener(this);
 
+            mChatRoom.setFileDownloadedListener(this);
             mChatRoomsManager = UserConnectionsManager.get().getConnection(connectionID).getChatRoomsManager();
 
             mToolbarTitle.setText(chatRoomName);
@@ -311,6 +313,17 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    @Override
+    public void onFileDownloaded(String path) {
+        // TODO implement
+    }
+
+    @Override
+    public void onFileDownloadError() {
+        // TODO implement
     }
 
     private void openFile(String filePath) {

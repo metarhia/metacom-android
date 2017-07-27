@@ -7,7 +7,7 @@ import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
-import com.metarhia.metacom.interfaces.FileDownloadedCallback;
+import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
 import com.metarhia.metacom.interfaces.MessageSentCallback;
@@ -51,6 +51,11 @@ public class ChatRoom {
      * Current downloaded file extension
      */
     private String mCurrentExtension;
+
+    /**
+     * Callback for file downloaded
+     */
+    private FileDownloadedListener mFileDownloadedListener;
 
     /**
      * Creates new chat room by name
@@ -280,27 +285,31 @@ public class ChatRoom {
      */
     private void saveFile() {
         FileUtils.saveFileInDownloads(mCurrentExtension, mCurrentFileBuffer,
-                new FileDownloadedCallback() {
+                new FileDownloadedListener() {
                     @Override
                     public void onFileDownloaded(String path) {
                         mCurrentExtension = null;
 
-                        String info = path;
-                        Message message = new Message(MessageType.FILE, info, true);
-                        for (MessageListener listener : mMessageListeners) {
-                            listener.onMessageReceived(message);
+                        if (mFileDownloadedListener != null) {
+                            mFileDownloadedListener.onFileDownloaded(path);
                         }
                     }
 
                     @Override
                     public void onFileDownloadError() {
-                        String info = Constants.DOWNLOAD_FAILED;
-                        Message message = new Message(MessageType.FILE, info, true);
-                        for (MessageListener listener : mMessageListeners) {
-                            listener.onMessageReceived(message);
+                        if (mFileDownloadedListener != null) {
+                            mFileDownloadedListener.onFileDownloadError();
                         }
                     }
                 });
     }
 
+    /**
+     * Sets listener on file downloaded event
+     *
+     * @param fileDownloadedListener file downloaded listener
+     */
+    public void setFileDownloadedListener(FileDownloadedListener fileDownloadedListener) {
+        mFileDownloadedListener = fileDownloadedListener;
+    }
 }

@@ -1,12 +1,12 @@
 package com.metarhia.metacom.interfaces;
 
 /**
- * Callback after file downloading
+ * Listener for file downloaded event
  *
  * @author lidaamber
  */
 
-public interface FileDownloadedCallback {
+public interface FileDownloadedListener {
 
     /**
      * Called when file is downloaded successfully

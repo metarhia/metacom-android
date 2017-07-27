@@ -6,7 +6,7 @@ import android.os.HandlerThread;
 
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
-import com.metarhia.metacom.interfaces.FileDownloadedCallback;
+import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
 import java.io.File;
@@ -123,7 +123,7 @@ public class FileUtils {
      * Gets downloads storage
      */
     public static void saveFileInDownloads(String extension, ArrayList<byte[]> buffer,
-                                           final FileDownloadedCallback callback) {
+                                           final FileDownloadedListener callback) {
         try {
             final File file = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + "." + extension);
