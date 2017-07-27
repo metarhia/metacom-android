@@ -88,6 +88,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private MessagesAdapter mMessagesAdapter;
     private ChatRoom mChatRoom;
     private ChatRoomsManager mChatRoomsManager;
+    private boolean isUIVisible = true;
 
     public static ChatFragment newInstance(int connectionID, String chatRoomName) {
         Bundle args = new Bundle();
@@ -140,6 +141,12 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     private void displayNewMessage(Message message) {
         mMessages.add(message);
+        if (isUIVisible) {
+            updateMessagesView();
+        }
+    }
+
+    private void updateMessagesView() {
         mMessagesAdapter.notifyDataSetChanged();
         mMessagesView.smoothScrollToPosition(mMessages.size());
     }
@@ -151,7 +158,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     private void stopSpinner(Message message) {
         mMessages.get(mMessages.indexOf(message)).setWaiting(false);
-        mMessagesAdapter.notifyDataSetChanged();
+        if (isUIVisible) {
+            updateMessagesView();
+        }
     }
 
     @Override
@@ -340,6 +349,19 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(selectedUri, mimeType);
         startActivity(Intent.createChooser(intent, "Open File..."));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUIVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUIVisible = true;
+        updateMessagesView();
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
