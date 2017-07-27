@@ -67,6 +67,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
 
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
+    private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
     private static final int PICK_IMAGE_FROM_CAMERA = 1;
     private static final int TAKE_PHOTO = 2;
@@ -85,6 +86,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     @BindView(R.id.input_message)
     TextInputEditText mInputMessage;
     private Unbinder mUnbinder;
+
     private ArrayList<Message> mMessages;
     private MessagesAdapter mMessagesAdapter;
     private ChatRoom mChatRoom;
@@ -252,7 +254,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
                 File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
-                Uri uri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
+                Uri uri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
                 takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -263,7 +265,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE_FROM_EXPLORER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file)), PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -284,7 +286,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 case PICK_IMAGE_FROM_CAMERA: {
 //                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
                     File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
-                    fileUri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
+                    fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
                 }
             }
@@ -307,7 +309,6 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileUploadError(final String message) {
-        // TODO process error message
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -323,7 +324,6 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onLeaveError(final String errorMessage) {
-        // todo onLeaveError
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -354,7 +354,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(selectedUri, mimeType);
-        startActivity(Intent.createChooser(intent, "Open File..."));
+        startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
     }
 
     @Override
@@ -458,7 +458,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getContext(), "Text was copied", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getString(R.string.copied_message), Toast.LENGTH_SHORT).show();
                             }
                         });
                         return true;

@@ -31,12 +31,12 @@ public class UploadFileDialog extends DialogFragment {
 
     public final static String UploadFileDialogTag = "UploadFileDialogTag";
     public final static String KEY_UPLOAD_FILE_CODE = "KEY_UPLOAD_FILE_CODE";
+
     @BindView(R.id.upload_result_string)
     TextView mUploadResultString;
     private Unbinder mUnbinder;
 
     public static UploadFileDialog newInstance(String fileCode) {
-
         Bundle args = new Bundle();
         args.putString(KEY_UPLOAD_FILE_CODE, fileCode);
 
@@ -63,7 +63,7 @@ public class UploadFileDialog extends DialogFragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getContext(), "Code was copied", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT).show();
                     }
                 });
                 return true;

@@ -54,7 +54,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     public void setButtonSubmitClick() {
         host = mHostEditText.getText().toString();
         port = Integer.valueOf(mPortEditText.getText().toString());
-        // TODO validate data
         if (!host.isEmpty()) {
             mButtonSubmit.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);
@@ -83,7 +82,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionError() {
-        // todo error message
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -91,7 +89,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
                 mSpinner.setVisibility(View.INVISIBLE);
                 mHostEditText.setEnabled(true);
                 mPortEditText.setEnabled(true);
-                Toast.makeText(getContext(), "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
             }
         });
     }

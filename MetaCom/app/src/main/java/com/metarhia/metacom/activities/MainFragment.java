@@ -39,6 +39,7 @@ public class MainFragment extends Fragment {
     public final static String MAIN_FRAGMENT_TAG = "MainFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_HOST_NAME = "keyHostName";
+
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
     @BindView(R.id.toolbar_back)
@@ -48,6 +49,7 @@ public class MainFragment extends Fragment {
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
     private Unbinder mUnbinder;
+
     private ArrayList<Fragment> mFragmentArrayList;
     private ArrayList<String> mFragmentTitles;
     private int mConnectionID;

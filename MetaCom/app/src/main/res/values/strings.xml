@@ -4,6 +4,7 @@
     <!--Connection Screen-->
     <string name="connection_host">server host</string>
     <string name="connection_port">port</string>
+    <string name="connection_error">connection error</string>
 
     <!-- Main screen -->
     <string name="hostname">HostName</string>
@@ -14,12 +15,16 @@
     <string name="enter_download_code">Enter file code to download</string>
     <string name="download_code">File code</string>
     <string name="downloading">Downloading… %s</string>
+    <string name="uploading">Uploading…</string>
     <string name="complete">Complete!</string>
     <string name="upload_code">Your file code is %s</string>
     <string name="take_photo">Take a photo</string>
     <string name="file_explorer">Open file explorer</string>
     <string name="downloading_error">downloading error</string>
     <string name="uploading_error">uploading error</string>
+    <string name="select_file">Select file…</string>
+    <string name="open_file">Open file…</string>
+    <string name="copied_code">Code was copied</string>
 
     <!--Chat Login-->
     <string name="input_chat_name">Input chat name</string>
@@ -28,15 +33,14 @@
     <string name="chatname">ChatName</string>
     <string name="input_message">Input message</string>
     <string name="uploaded_file">File was sent</string>
+    <string name="copied_message">Message was copied</string>
 
     <!--Common-->
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="exit">Exit</string>
     <string name="confirm_exit">Confirm exit, please</string>
-
-    <string name="hello_blank_fragment">hello_blank_fragment</string>
 
     <!-- API error descriptions -->
     <string name="err_room_taken">Room is already taken</string>
@@ -57,7 +61,7 @@
 
     <!-- Permissions -->
     <string name="permissions">Permissions</string>
-    <string name="permissions_info">We need your permission because of bla bla bla</string>
+    <string name="permissions_info">We need your permission because of blablabla</string>
     <string name="permissions_are_not_granted">sorry you shall not pass</string>
 
 </resources>

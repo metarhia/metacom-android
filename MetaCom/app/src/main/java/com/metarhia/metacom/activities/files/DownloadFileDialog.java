@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 public class DownloadFileDialog extends DialogFragment {
 
     public final static String DownloadFileDialogTag = "DownloadFileDialogTag";
-    public final static String KEY_DOWNLOAD_FILE_CODE = "KEY_DOWNLOAD_FILE_CODE";
+
     private DownloadFileByCodeListener mListener = null;
 
     @NonNull

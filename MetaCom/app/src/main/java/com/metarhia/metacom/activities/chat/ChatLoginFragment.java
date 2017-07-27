@@ -31,6 +31,7 @@ import butterknife.Unbinder;
 public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
+
     @BindView(R.id.chat_name)
     TextInputEditText mChatNameEditText;
     @BindView(R.id.submit)
@@ -93,7 +94,6 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     @Override
     public void onJoinError(final String errorMessage) {
-        // todo onJoinError
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

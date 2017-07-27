@@ -51,12 +51,14 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
 //    public final static String FilesFragmentTag = "FilesFragmentTag";
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
+
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
+    private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
     private static final int PICK_IMAGE_FROM_CAMERA = 1;
     private static final int TAKE_PHOTO = 2;
     private static final int FILE_EXPLORER = 3;
-    public final int DIALOG_FRAGMENT_DONWLOAD = 1;
+
     @BindView(R.id.bottom_notice_text)
     TextView mBottomNoticeText;
     @BindView(R.id.bottom_notice_layout)
@@ -65,8 +67,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
     ImageView mDownloadFile;
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
-    private String fileCode = null;
     private Unbinder mUnbinder;
+
+    private String fileCode = null;
     private FilesManager mFilesManager;
 
     public static FilesFragment newInstance(int connectionID) {
@@ -149,18 +152,17 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(selectedUri, mimeType);
-                startActivity(Intent.createChooser(intent, "Open File..."));
+                startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
             }
         });
     }
 
     @Override
     public void onFileDownloadError() {
-        // todo onFileDownloadError
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getContext(), "download error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.downloading_error), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -174,7 +176,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
 
     @Override
     public void onFileUploadError(final String message) {
-        // todo onFileUploadError
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -210,7 +211,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 case PICK_IMAGE_FROM_CAMERA: {
 //                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
                     File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
-                    fileUri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
+                    fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
                 }
             }
@@ -220,7 +221,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setBottomNoticeMessage("uploading ...");
+                        setBottomNoticeMessage(getString(R.string.uploading));
                     }
                 });
             } catch (FileNotFoundException e) {
@@ -248,7 +249,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
                 File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
-                Uri uri = FileProvider.getUriForFile(getContext(), "com.metarhia.metacom.fileprovider", f);
+                Uri uri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
                 takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -259,7 +260,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select file"), PICK_IMAGE_FROM_EXPLORER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file)), PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);
