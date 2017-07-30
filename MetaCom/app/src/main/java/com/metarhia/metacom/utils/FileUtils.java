@@ -3,6 +3,7 @@ package com.metarhia.metacom.utils;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.webkit.MimeTypeMap;
 
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -26,6 +27,8 @@ import java.util.List;
 public class FileUtils {
 
     private static final String FILE_HANDLER_THREAD = "fileHandlerThread";
+
+    public static MimeTypeMap sMimeTypeMap = MimeTypeMap.getSingleton();
 
     static {
         HandlerThread fileHandlerThread = new HandlerThread(FILE_HANDLER_THREAD);

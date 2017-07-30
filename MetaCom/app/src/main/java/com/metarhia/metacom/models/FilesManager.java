@@ -105,8 +105,8 @@ public class FilesManager {
                     public void run() {
                         List messagePayload = (List) (message).get("downloadFileStart");
                         String type = (String) messagePayload.get(0);
-                        mCurrentExtension = (type == null || type.contains("text")) ?
-                                "txt" : type.split("/")[1];
+                        mCurrentExtension = (type == null) ? "txt" :
+                                FileUtils.sMimeTypeMap.getExtensionFromMimeType(type);
 
                         mCurrentFileBuffer = new ArrayList<>();
 
