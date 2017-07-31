@@ -2,9 +2,6 @@ package com.metarhia.metacom.activities.files;
 
 
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +18,8 @@ import com.metarhia.metacom.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,15 +56,8 @@ public class UploadFileDialog extends DialogFragment {
         mUploadResultString.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("copy", code);
-                clipboard.setPrimaryClip(clip);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                copyToClipboard(getActivity(), code);
+                Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });

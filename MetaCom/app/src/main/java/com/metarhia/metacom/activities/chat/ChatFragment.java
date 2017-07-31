@@ -2,9 +2,6 @@ package com.metarhia.metacom.activities.chat;
 
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -55,6 +52,7 @@ import butterknife.Unbinder;
 
 import static com.metarhia.metacom.models.MessageType.FILE;
 import static com.metarhia.metacom.models.MessageType.TEXT;
+import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -385,17 +383,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             holder.messageText.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    ClipboardManager clipboard = (ClipboardManager) getActivity()
-                            .getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText("copy", messageContent);
-                    clipboard.setPrimaryClip(clip);
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), getString(R.string.copied_message),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    copyToClipboard(getActivity(), messageContent);
+                    Toast.makeText(getContext(), getString(R.string.copied_message), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
