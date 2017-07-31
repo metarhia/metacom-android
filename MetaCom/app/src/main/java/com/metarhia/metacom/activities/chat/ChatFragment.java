@@ -382,58 +382,47 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         @Override
         public int getItemViewType(int position) {
-            Message message = messages.get(position);
-            /*
-            0   text    out
-            1   text    in
-            2   file    out
-            3   file    in
-            4   info    out
-            5   info    in
-             */
-            int messageType = -1;
-            switch (message.getType()) {
-                case TEXT: {
-                    messageType = message.isIncoming() ? 1 : 0;
-                    break;
-                }
-                case FILE: {
-                    messageType = message.isIncoming() ? 3 : 2;
-                    break;
-                }
-                case INFO: {
-                    messageType = message.isIncoming() ? 5 : 4;
-                    break;
-                }
-            }
-            return messageType;
+            return messages.get(position).isIncoming() ? 1 : 0;
         }
 
         @Override
         public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            int resource = -1;
-            switch (viewType % 2) {
-                case 0: {
-                    resource = R.layout.message_out;
-                    break;
-                }
-                case 1: {
-                    resource = R.layout.message_in;
-                    break;
-                }
-            }
+            int resource = (viewType == 0) ? R.layout.message_out : R.layout.message_in;
             View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-            return new MessageViewHolder(v, viewType == 3);
+            return new MessageViewHolder(v);
         }
 
         @Override
         public void onBindViewHolder(MessageViewHolder holder, int position) {
-            Message message = messages.get(position);
-            holder.messageText.setText(message.getContent());
-            if (message.isWaiting()) {
-                holder.messageSpinner.setVisibility(View.VISIBLE);
-            } else {
-                holder.messageSpinner.setVisibility(View.GONE);
+            final Message message = messages.get(position);
+            final String messageContent = message.getContent();
+            holder.messageText.setText(messageContent);
+            holder.messageText.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    ClipboardManager clipboard = (ClipboardManager) getActivity()
+                            .getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("copy", messageContent);
+                    clipboard.setPrimaryClip(clip);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), getString(R.string.copied_message),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return true;
+                }
+            });
+            holder.messageSpinner.setVisibility(message.isWaiting() ? View.VISIBLE : View.GONE);
+            if (message.getType() == FILE && message.isIncoming()) {
+                holder.messageText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String path = messageContent.substring(messageContent.indexOf('/'));
+                        ChatFragment.this.openFile(path);
+                    }
+                });
             }
         }
 
@@ -447,35 +436,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             private TextView messageText;
             private ProgressBar messageSpinner;
 
-            MessageViewHolder(View itemView, boolean isIncomingFile) {
+            MessageViewHolder(View itemView) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
                 messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
-                messageText.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("copy", messageText.getText());
-                        clipboard.setPrimaryClip(clip);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getContext(), getString(R.string.copied_message), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        return true;
-                    }
-                });
-                if (isIncomingFile) {
-                    messageText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            String message = messageText.getText().toString();
-                            String path = message.substring(message.indexOf('/'));
-                            ChatFragment.this.openFile(path);
-                        }
-                    });
-                }
             }
         }
     }
