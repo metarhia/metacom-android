@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
+import com.metarhia.metacom.interfaces.BackPressedHandler;
 import com.metarhia.metacom.models.UserConnectionsManager;
 import com.metarhia.metacom.utils.PermissionUtils;
 
@@ -34,7 +35,7 @@ import butterknife.Unbinder;
  *
  * @author MariaKokshaikina
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements BackPressedHandler {
 
     public final static String MAIN_FRAGMENT_TAG = "MainFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
@@ -102,29 +103,11 @@ public class MainFragment extends Fragment {
 
     @OnClick(R.id.toolbar_back)
     public void onBackClick() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.exit)
-                .setMessage(R.string.confirm_exit)
-                .setCancelable(false)
-                .setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        leaveServer();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+        handleBackPress();
     }
 
     public void leaveServer() {
         UserConnectionsManager.get().removeConnection(UserConnectionsManager.get().getConnection(mConnectionID));
-        getActivity().finish();
     }
 
     private void setPages() {
@@ -163,5 +146,28 @@ public class MainFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void handleBackPress() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.exit)
+                .setMessage(R.string.confirm_exit)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        leaveServer();
+                        getActivity().finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

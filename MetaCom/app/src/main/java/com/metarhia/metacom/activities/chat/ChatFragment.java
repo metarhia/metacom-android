@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
+import com.metarhia.metacom.interfaces.BackPressedHandler;
 import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.LeaveRoomCallback;
@@ -61,11 +62,11 @@ import static com.metarhia.metacom.models.MessageType.TEXT;
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
-        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener {
+        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener, BackPressedHandler {
 
+    public static final String CHAT_FRAGMENT_TAG = "ChatFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
-
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
     private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
@@ -177,24 +178,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @OnClick(R.id.toolbar_back)
     public void onToolbarBackClick() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.exit)
-                .setMessage(R.string.confirm_exit)
-                .setCancelable(false)
-                .setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        leaveRoom();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+        handleBackPress();
     }
 
     public void leaveRoom() {
@@ -368,6 +352,28 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         super.onResume();
         isUIVisible = true;
         updateMessagesView();
+    }
+
+    @Override
+    public void handleBackPress() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.exit)
+                .setMessage(R.string.confirm_exit)
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        leaveRoom();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {

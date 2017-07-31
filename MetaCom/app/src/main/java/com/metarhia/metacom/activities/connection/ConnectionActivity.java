@@ -14,9 +14,12 @@ public class ConnectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new ConnectionFragment())
-                .commit();
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new ConnectionFragment())
+                    .commit();
+        }
     }
 
 }
