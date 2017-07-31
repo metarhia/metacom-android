@@ -78,14 +78,9 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     @Override
     public void onJoinedRoom() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mButtonSubmit.setVisibility(View.VISIBLE);
-                mSpinner.setVisibility(View.INVISIBLE);
-                mChatNameEditText.setEnabled(true);
-            }
-        });
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mChatNameEditText.setEnabled(true);
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra(ChatActivity.EXTRA_CONNECTION_ID, mID);
         intent.putExtra(ChatActivity.EXTRA_CHAT_ROOM_NAME, mChatNameEditText.getText().toString());
@@ -94,15 +89,10 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     @Override
     public void onJoinError(final String errorMessage) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mButtonSubmit.setVisibility(View.VISIBLE);
-                mSpinner.setVisibility(View.INVISIBLE);
-                mChatNameEditText.setEnabled(true);
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mChatNameEditText.setEnabled(true);
+        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override

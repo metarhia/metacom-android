@@ -65,15 +65,10 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionEstablished(int connectionID) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mButtonSubmit.setVisibility(View.VISIBLE);
-                mSpinner.setVisibility(View.INVISIBLE);
-                mHostEditText.setEnabled(true);
-                mPortEditText.setEnabled(true);
-            }
-        });
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mHostEditText.setEnabled(true);
+        mPortEditText.setEnabled(true);
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
         intent.putExtra(MainActivity.EXTRA_HOST_NAME, host);
@@ -82,16 +77,11 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionError() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mButtonSubmit.setVisibility(View.VISIBLE);
-                mSpinner.setVisibility(View.INVISIBLE);
-                mHostEditText.setEnabled(true);
-                mPortEditText.setEnabled(true);
-                Toast.makeText(getContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
-            }
-        });
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mHostEditText.setEnabled(true);
+        mPortEditText.setEnabled(true);
+        Toast.makeText(getContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override

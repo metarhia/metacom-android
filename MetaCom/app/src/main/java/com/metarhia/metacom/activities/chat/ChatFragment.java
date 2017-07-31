@@ -289,12 +289,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileUploadError(final String message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -304,12 +299,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onLeaveError(final String errorMessage) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -320,12 +310,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileDownloadError() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), R.string.downloading_error, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(getContext(), R.string.downloading_error, Toast.LENGTH_SHORT).show();
     }
 
     private void openFile(String filePath) {
