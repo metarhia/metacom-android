@@ -30,8 +30,6 @@ import butterknife.Unbinder;
 
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author MariaKokshaikina
  */
 public class MainFragment extends Fragment implements BackPressedHandler {
@@ -64,7 +62,6 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
@@ -104,7 +101,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     }
 
     public void leaveServer() {
-        UserConnectionsManager.get().removeConnection(UserConnectionsManager.get().getConnection(mConnectionID));
+        UserConnectionsManager.get().removeConnection(UserConnectionsManager.get().getConnection
+                (mConnectionID));
     }
 
     private void setPages() {

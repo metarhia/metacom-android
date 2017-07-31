@@ -42,11 +42,10 @@ import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileD
 
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author MariaKokshaikina
  */
-public class FilesFragment extends Fragment implements FileDownloadedListener, FileUploadedCallback, DownloadFileByCodeListener {
+public class FilesFragment extends Fragment implements FileDownloadedListener,
+        FileUploadedCallback, DownloadFileByCodeListener {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
 
@@ -65,7 +64,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
     ImageView mUploadFile;
     private Unbinder mUnbinder;
 
-    private String fileCode = null;
     private FilesManager mFilesManager;
 
     public static FilesFragment newInstance(int connectionID) {
@@ -134,7 +132,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast
+                .LENGTH_SHORT).show();
     }
 
     @Override
@@ -145,7 +144,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
             public void onClick(View view) {
                 Uri selectedUri = Uri.parse("file:///" + filePath);
                 String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
+                        (fileExtension);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(selectedUri, mimeType);
                 startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
@@ -155,7 +155,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
 
     @Override
     public void onFileDownloadError() {
-        Toast.makeText(getContext(), getString(R.string.downloading_error), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.downloading_error), Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -178,16 +179,16 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
 
     @Override
     public void downloadByCode(String code) {
-        fileCode = code;
         setBottomNoticeMessage(String.format(getString(R.string.downloading), code));
-        mFilesManager.downloadFile(fileCode, this);
+        mFilesManager.downloadFile(code, this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) &&
+                resultCode == Activity.RESULT_OK) {
             Uri fileUri = null;
             switch (requestCode) {
                 case PICK_IMAGE_FROM_EXPLORER: {
@@ -195,7 +196,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                     break;
                 }
                 case PICK_IMAGE_FROM_CAMERA: {
-//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
+// TMP_METACOM_JPG));
                     File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                     fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
@@ -221,7 +223,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo
+            menuInfo) {
         if (v.getId() == mUploadFile.getId()) {
             menu.add(0, TAKE_PHOTO, 0, R.string.take_photo);
             menu.add(0, FILE_EXPLORER, 0, R.string.file_explorer);
@@ -233,7 +236,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
         switch (item.getItemId()) {
             case TAKE_PHOTO:
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
+// TMP_METACOM_JPG));
                 File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                 Uri uri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
@@ -246,7 +250,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file)), PICK_IMAGE_FROM_EXPLORER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string
+                        .select_file)), PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);

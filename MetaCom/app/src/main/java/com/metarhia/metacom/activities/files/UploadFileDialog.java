@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +21,6 @@ import butterknife.Unbinder;
 import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author MariaKokshaikina
  */
 public class UploadFileDialog extends DialogFragment {
@@ -52,12 +49,14 @@ public class UploadFileDialog extends DialogFragment {
         View view = layoutInflater.inflate(R.layout.fragment_upload_file_dialog, null);
         mUnbinder = ButterKnife.bind(this, view);
         final String code = getArguments().getString(KEY_UPLOAD_FILE_CODE);
-        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_code), code));
+        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_code),
+                code));
         mUploadResultString.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 copyToClipboard(getActivity(), code);
-                Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT)
+                        .show();
                 return true;
             }
         });

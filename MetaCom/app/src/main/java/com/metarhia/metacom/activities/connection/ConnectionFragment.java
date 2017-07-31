@@ -23,8 +23,6 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author MariaKokshaikina
  */
 public class ConnectionFragment extends Fragment implements ConnectionCallback {
@@ -40,7 +38,6 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     private Unbinder mUnbinder;
 
     private String host;
-    private int port;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +50,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
         host = mHostEditText.getText().toString();
-        port = Integer.valueOf(mPortEditText.getText().toString());
+        int port = Integer.valueOf(mPortEditText.getText().toString());
         if (!host.isEmpty()) {
             mButtonSubmit.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);
@@ -77,11 +74,19 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionError() {
-        mButtonSubmit.setVisibility(View.VISIBLE);
-        mSpinner.setVisibility(View.INVISIBLE);
-        mHostEditText.setEnabled(true);
-        mPortEditText.setEnabled(true);
-        Toast.makeText(getContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        // todo remove wrapper
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mButtonSubmit.setVisibility(View.VISIBLE);
+                mSpinner.setVisibility(View.INVISIBLE);
+                mHostEditText.setEnabled(true);
+                mPortEditText.setEnabled(true);
+                Toast.makeText(getContext(), getString(R.string.connection_error), Toast
+                        .LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

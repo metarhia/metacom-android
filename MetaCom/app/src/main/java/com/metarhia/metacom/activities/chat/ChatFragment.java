@@ -55,8 +55,6 @@ import static com.metarhia.metacom.models.MessageType.TEXT;
 import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
 
 /**
- * A simple {@link Fragment} subclass.
- *
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
@@ -116,7 +114,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             mChatRoom.addMessageListener(this);
 
             mChatRoom.setFileDownloadedListener(this);
-            mChatRoomsManager = UserConnectionsManager.get().getConnection(connectionID).getChatRoomsManager();
+            mChatRoomsManager = UserConnectionsManager.get().getConnection(connectionID)
+                    .getChatRoomsManager();
 
             mToolbarTitle.setText(chatRoomName);
 
@@ -190,7 +189,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast
+                .LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.send)
@@ -218,7 +218,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo
+            menuInfo) {
         if (v.getId() == mFileAttach.getId()) {
             menu.add(0, TAKE_PHOTO, 0, R.string.take_photo);
             menu.add(0, FILE_EXPLORER, 0, R.string.file_explorer);
@@ -230,7 +231,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         switch (item.getItemId()) {
             case TAKE_PHOTO:
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
+// TMP_METACOM_JPG));
                 File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                 Uri uri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
@@ -243,7 +245,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 Intent intent = new Intent();
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, getString(R.string.select_file)), PICK_IMAGE_FROM_EXPLORER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string
+                        .select_file)), PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -254,7 +257,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) && resultCode == Activity.RESULT_OK) {
+        if ((requestCode == PICK_IMAGE_FROM_EXPLORER || requestCode == PICK_IMAGE_FROM_CAMERA) &&
+                resultCode == Activity.RESULT_OK) {
             Uri fileUri = null;
             switch (requestCode) {
                 case PICK_IMAGE_FROM_EXPLORER: {
@@ -262,7 +266,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     break;
                 }
                 case PICK_IMAGE_FROM_CAMERA: {
-//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG));
+//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
+// TMP_METACOM_JPG));
                     File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                     fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
@@ -384,7 +389,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 @Override
                 public boolean onLongClick(View view) {
                     copyToClipboard(getActivity(), messageContent);
-                    Toast.makeText(getContext(), getString(R.string.copied_message), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.copied_message), Toast
+                            .LENGTH_SHORT).show();
                     return true;
                 }
             });
