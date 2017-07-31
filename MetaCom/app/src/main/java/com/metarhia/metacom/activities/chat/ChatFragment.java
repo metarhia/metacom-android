@@ -76,12 +76,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
-    @BindView(R.id.toolbar_back)
-    ImageView mToolbarBack;
     @BindView(R.id.attach)
     ImageView mFileAttach;
-    @BindView(R.id.send)
-    ImageView mSendMessage;
     @BindView(R.id.messages_list)
     RecyclerView mMessagesView;
     @BindView(R.id.input_message)

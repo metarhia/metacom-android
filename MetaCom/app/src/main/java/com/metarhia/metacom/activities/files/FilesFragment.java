@@ -48,8 +48,6 @@ import static com.metarhia.metacom.activities.files.UploadFileDialog.UploadFileD
  */
 public class FilesFragment extends Fragment implements FileDownloadedListener, FileUploadedCallback, DownloadFileByCodeListener {
 
-//    public final static String FilesFragmentTag = "FilesFragmentTag";
-
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
 
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
@@ -63,8 +61,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener, F
     TextView mBottomNoticeText;
     @BindView(R.id.bottom_notice_layout)
     View mBottomNoticeLayout;
-    @BindView(R.id.download_file)
-    ImageView mDownloadFile;
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
     private Unbinder mUnbinder;
