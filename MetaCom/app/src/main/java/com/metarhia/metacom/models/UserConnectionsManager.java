@@ -5,6 +5,7 @@ import android.content.Context;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
 import com.metarhia.metacom.utils.Constants;
+import com.metarhia.metacom.utils.MainExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,16 +60,27 @@ public class UserConnectionsManager {
         AndroidJSTPConnection connection = new AndroidJSTPConnection(host, port, true, context);
         connection.addListener(new AndroidJSTPConnection.AndroidJSTPConnectionListener() {
             @Override
-            public void onConnectionEstablished(AndroidJSTPConnection connection) {
-                UserConnection uc = new UserConnection(mUserConnections.size(), connection);
-                mUserConnections.add(uc);
-                cb.onConnectionEstablished(uc.getId());
-                connection.removeListener(this);
+            public void onConnectionEstablished(final AndroidJSTPConnection connection) {
+                final AndroidJSTPConnection.AndroidJSTPConnectionListener listener = this;
+                MainExecutor.get().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        UserConnection uc = new UserConnection(mUserConnections.size(), connection);
+                        mUserConnections.add(uc);
+                        cb.onConnectionEstablished(uc.getId());
+                        connection.removeListener(listener);
+                    }
+                });
             }
 
             @Override
             public void onConnectionLost() {
-                cb.onConnectionError();
+                MainExecutor.get().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        cb.onConnectionError();
+                    }
+                });
             }
         });
         connection.openConnection(Constants.APPLICATION_NAME);
