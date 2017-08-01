@@ -368,7 +368,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     @Override
-    public void onRejoinSuccess() {
+    public void onRejoinSuccess(boolean hasInterlocutor) {
         // TODO implement
     }
 

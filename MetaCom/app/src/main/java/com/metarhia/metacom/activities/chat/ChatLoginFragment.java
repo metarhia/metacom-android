@@ -75,7 +75,7 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     }
 
     @Override
-    public void onJoinedRoom() {
+    public void onJoinedRoom(boolean hasInterlocutor) {
         mButtonSubmit.setVisibility(View.VISIBLE);
         mSpinner.setVisibility(View.INVISIBLE);
         mChatNameEditText.setEnabled(true);

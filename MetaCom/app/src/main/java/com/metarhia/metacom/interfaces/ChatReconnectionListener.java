@@ -16,7 +16,7 @@ public interface ChatReconnectionListener {
     /**
      * Emitted when rejoin passes successfully
      */
-    void onRejoinSuccess();
+    void onRejoinSuccess(boolean hasInterlocutor);
 
     /**
      * Emitted when rejoin passes with error

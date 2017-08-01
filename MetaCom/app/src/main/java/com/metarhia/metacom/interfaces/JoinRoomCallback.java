@@ -11,7 +11,7 @@ public interface JoinRoomCallback {
     /**
      * Called when chat is established successfully
      */
-    void onJoinedRoom();
+    void onJoinedRoom(boolean hasInterlocutor);
 
     /**
      * Called when server responds error

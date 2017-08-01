@@ -50,9 +50,12 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
         joinRoom(roomName, new JSTPOkErrorHandler(MainExecutor.get()) {
             @Override
             public void onOk(List args) {
+
+                Boolean hasInterlocutor = (Boolean) args.get(0);
+
                 ChatRoom room = new ChatRoom(roomName, mConnection);
                 mChatRooms.add(room);
-                callback.onJoinedRoom();
+                callback.onJoinedRoom(hasInterlocutor);
             }
 
             @Override
@@ -112,7 +115,8 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
             joinRoom(room.getChatRoomName(), new JSTPOkErrorHandler(MainExecutor.get()) {
                 @Override
                 public void onOk(List<?> args) {
-                    room.reportRejoinSuccess();
+                    Boolean hasInterlocutor = (Boolean) args.get(0);
+                    room.reportRejoinSuccess(hasInterlocutor);
                 }
 
                 @Override

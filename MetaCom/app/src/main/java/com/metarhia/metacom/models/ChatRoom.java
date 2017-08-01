@@ -320,9 +320,9 @@ public class ChatRoom {
         mFileDownloadedListener = fileDownloadedListener;
     }
 
-    void reportRejoinSuccess() {
+    void reportRejoinSuccess(boolean hasInterlocutor) {
         if (mChatReconnectionListener != null) {
-            mChatReconnectionListener.onRejoinSuccess();
+            mChatReconnectionListener.onRejoinSuccess(hasInterlocutor);
         }
     }
 
