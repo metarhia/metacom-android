@@ -7,6 +7,7 @@ import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
+import com.metarhia.metacom.interfaces.ChatReconnectionListener;
 import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.MessageListener;
@@ -56,6 +57,11 @@ public class ChatRoom {
      * Callback for file downloaded
      */
     private FileDownloadedListener mFileDownloadedListener;
+
+    /**
+     * Chat reconnection listener
+     */
+    private ChatReconnectionListener mChatReconnectionListener;
 
     /**
      * Creates new chat room by name
@@ -312,5 +318,41 @@ public class ChatRoom {
      */
     public void setFileDownloadedListener(FileDownloadedListener fileDownloadedListener) {
         mFileDownloadedListener = fileDownloadedListener;
+    }
+
+    void reportRejoinSuccess() {
+        if (mChatReconnectionListener != null) {
+            mChatReconnectionListener.onRejoinSuccess();
+        }
+    }
+
+    void reportRejoinError(Integer errorCode) {
+        if (mChatReconnectionListener != null) {
+            mChatReconnectionListener.onRejoinError(Errors.getErrorByCode(errorCode));
+        }
+    }
+
+    void reportConnectionLost() {
+        if (mChatReconnectionListener != null) {
+            mChatReconnectionListener.onConnectionLost();
+        }
+    }
+
+    /**
+     * Gets chat reconnection listener
+     *
+     * @return chat reconnection listener
+     */
+    public ChatReconnectionListener getChatReconnectionListener() {
+        return mChatReconnectionListener;
+    }
+
+    /**
+     * Sets chat reconnection listener to specified listener
+     *
+     * @param chatReconnectionListener chat reconnection listener
+     */
+    public void setChatReconnectionListener(ChatReconnectionListener chatReconnectionListener) {
+        mChatReconnectionListener = chatReconnectionListener;
     }
 }

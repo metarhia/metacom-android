@@ -80,7 +80,6 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
             public void onReceive(Context context, Intent intent) {
                 if (mApplicationName == null) return;
 
-                if (!isConnectedFast()) reportConnectionLost();
                 else if (!isConnected()) openConnection(mApplicationName);
             }
         };
@@ -197,7 +196,7 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
     }
 
     private UUID cacheCall(final String cacheTag, String interfaceName, final String methodName,
-                          List<?> args, final ManualHandler handler) {
+                           List<?> args, final ManualHandler handler) {
         ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheTag);
         if (cachedCalls == null) {
             cachedCalls = new ConcurrentHashMap<>();
@@ -282,7 +281,7 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         final ManualHandler mManualHandler;
 
         CacheCallData(String interfaceName, String methodName, List<?> args,
-                             ManualHandler manualHandler) {
+                      ManualHandler manualHandler) {
             this.mArgs = args;
             this.mInterfaceName = interfaceName;
             this.mMethodName = methodName;

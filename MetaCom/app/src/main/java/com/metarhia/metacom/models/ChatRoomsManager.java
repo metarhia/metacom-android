@@ -1,5 +1,6 @@
 package com.metarhia.metacom.models;
 
+import com.metarhia.jstp.compiler.annotations.handlers.Array;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
 import com.metarhia.metacom.connection.JSTPOkErrorHandler;
@@ -17,7 +18,7 @@ import java.util.List;
  * @author lidaamber
  */
 
-public class ChatRoomsManager {
+public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnectionListener {
 
     /**
      * List of user chat rooms
@@ -35,6 +36,8 @@ public class ChatRoomsManager {
     ChatRoomsManager(AndroidJSTPConnection connection) {
         mConnection = connection;
         mChatRooms = new ArrayList<>();
+
+        mConnection.addListener(this);
     }
 
     /**
@@ -44,24 +47,26 @@ public class ChatRoomsManager {
      * @param callback callback after attempt to create chat (success and error)
      */
     public void addChatRoom(final String roomName, final JoinRoomCallback callback) {
+        joinRoom(roomName, new JSTPOkErrorHandler(MainExecutor.get()) {
+            @Override
+            public void onOk(List args) {
+                ChatRoom room = new ChatRoom(roomName, mConnection);
+                mChatRooms.add(room);
+                callback.onJoinedRoom();
+            }
+
+            @Override
+            public void onError(Integer errorCode) {
+                callback.onJoinError(Errors.getErrorByCode(errorCode));
+            }
+        });
+
+    }
+
+    private void joinRoom(String roomName, JSTPOkErrorHandler handler) {
         List<String> args = new ArrayList<>();
         args.add(roomName);
-
-        mConnection.cacheCall(Constants.META_COM, "join", args,
-                new JSTPOkErrorHandler(MainExecutor.get()) {
-                    @Override
-                    public void onOk(List args) {
-                        ChatRoom room = new ChatRoom(roomName, mConnection);
-                        mChatRooms.add(room);
-                        callback.onJoinedRoom();
-                    }
-
-                    @Override
-                    public void onError(Integer errorCode) {
-                        callback.onJoinError(Errors.getErrorByCode(errorCode));
-                    }
-                });
-
+        mConnection.cacheCall(Constants.META_COM, "join", args, handler);
     }
 
     /**
@@ -100,4 +105,32 @@ public class ChatRoomsManager {
                 });
     }
 
+    @Override
+    public void onConnectionEstablished(AndroidJSTPConnection connection) {
+        if (mChatRooms.isEmpty()) return;
+        for (final ChatRoom room : mChatRooms) {
+            joinRoom(room.getChatRoomName(), new JSTPOkErrorHandler(MainExecutor.get()) {
+                @Override
+                public void onOk(List<?> args) {
+                    room.reportRejoinSuccess();
+                }
+
+                @Override
+                public void onError(@Array(0) Integer errorCode) {
+                    room.reportRejoinError(errorCode);
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onConnectionLost() {
+        if (mChatRooms.isEmpty()) return;
+
+        for (ChatRoom room : mChatRooms) {
+            room.reportConnectionLost();
+        }
+
+    }
 }

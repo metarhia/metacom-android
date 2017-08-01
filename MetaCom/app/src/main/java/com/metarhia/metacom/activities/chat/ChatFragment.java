@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.BackPressedHandler;
+import com.metarhia.metacom.interfaces.ChatReconnectionListener;
 import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 import com.metarhia.metacom.interfaces.LeaveRoomCallback;
@@ -58,7 +59,7 @@ import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
-        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener, BackPressedHandler {
+        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener, BackPressedHandler, ChatReconnectionListener {
 
     public static final String CHAT_FRAGMENT_TAG = "ChatFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
@@ -112,6 +113,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             mChatRoom = UserConnectionsManager.get().getConnection(connectionID)
                     .getChatRoomsManager().getChatRoom(chatRoomName);
             mChatRoom.addMessageListener(this);
+            mChatRoom.setChatReconnectionListener(this);
 
             mChatRoom.setFileDownloadedListener(this);
             mChatRoomsManager = UserConnectionsManager.get().getConnection(connectionID)
@@ -358,6 +360,21 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void onConnectionLost() {
+        // TODO implement
+    }
+
+    @Override
+    public void onRejoinSuccess() {
+        // TODO implement
+    }
+
+    @Override
+    public void onRejoinError(String errorMessage) {
+        // TODO implement
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
