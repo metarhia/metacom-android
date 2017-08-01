@@ -54,6 +54,8 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
                 Boolean hasInterlocutor = (Boolean) args.get(0);
 
                 ChatRoom room = new ChatRoom(roomName, mConnection);
+                room.setHasInterlocutor(hasInterlocutor);
+
                 mChatRooms.add(room);
                 callback.onJoinedRoom(hasInterlocutor);
             }

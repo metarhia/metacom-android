@@ -64,6 +64,11 @@ public class ChatRoom {
     private ChatReconnectionListener mChatReconnectionListener;
 
     /**
+     * Has interlocutor state
+     */
+    private boolean mHasInterlocutor;
+
+    /**
      * Creates new chat room by name
      *
      * @param chatRoomName chat name
@@ -153,6 +158,8 @@ public class ChatRoom {
                 new ExecutableHandler(MainExecutor.get()) {
                     @Override
                     public void run() {
+                        mHasInterlocutor = true;
+
                         String infoText = Constants.EVENT_CHAT_JOIN;
                         Message message = new Message(MessageType.INFO, infoText, true);
                         for (MessageListener listener : mMessageListeners) {
@@ -167,6 +174,8 @@ public class ChatRoom {
                 new ExecutableHandler(MainExecutor.get()) {
                     @Override
                     public void run() {
+                        mHasInterlocutor = false;
+
                         String infoText = Constants.EVENT_CHAT_LEAVE;
                         Message message = new Message(MessageType.INFO, infoText, true);
                         for (MessageListener listener : mMessageListeners) {
@@ -321,6 +330,7 @@ public class ChatRoom {
     }
 
     void reportRejoinSuccess(boolean hasInterlocutor) {
+        mHasInterlocutor = hasInterlocutor;
         if (mChatReconnectionListener != null) {
             mChatReconnectionListener.onRejoinSuccess(hasInterlocutor);
         }
@@ -354,5 +364,23 @@ public class ChatRoom {
      */
     public void setChatReconnectionListener(ChatReconnectionListener chatReconnectionListener) {
         mChatReconnectionListener = chatReconnectionListener;
+    }
+
+    /**
+     * Checks if there is any interlocutor in chat
+     *
+     * @return has interlocutor
+     */
+    public boolean hasInterlocutor() {
+        return mHasInterlocutor;
+    }
+
+    /**
+     * Sets if there is any interlocutor in chat
+     *
+     * @param hasInterlocutor has interlocutor
+     */
+    public void setHasInterlocutor(boolean hasInterlocutor) {
+        this.mHasInterlocutor = hasInterlocutor;
     }
 }
