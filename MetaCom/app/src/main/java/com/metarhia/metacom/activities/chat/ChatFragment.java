@@ -131,6 +131,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             mMessagesAdapter = new MessagesAdapter(mMessages);
             mMessagesView.setAdapter(mMessagesAdapter);
 
+            String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor() ? R.string
+                    .has_interlocutor : R.string.err_no_interlocutor);
+            displayNewMessage(new Message(INFO, hasInterlocutorMessage, true));
+
         }
         return v;
     }
