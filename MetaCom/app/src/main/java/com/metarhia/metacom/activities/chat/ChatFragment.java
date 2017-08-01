@@ -52,6 +52,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static com.metarhia.metacom.models.MessageType.FILE;
+import static com.metarhia.metacom.models.MessageType.INFO;
 import static com.metarhia.metacom.models.MessageType.TEXT;
 import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
 
@@ -59,7 +60,8 @@ import static com.metarhia.metacom.utils.TextUtils.copyToClipboard;
  * @author MariaKokshaikina
  */
 public class ChatFragment extends Fragment implements MessageListener, MessageSentCallback,
-        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener, BackPressedHandler, ChatReconnectionListener {
+        FileUploadedCallback, LeaveRoomCallback, FileDownloadedListener, BackPressedHandler,
+        ChatReconnectionListener {
 
     public static final String CHAT_FRAGMENT_TAG = "ChatFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
@@ -364,62 +366,88 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onConnectionLost() {
-        // TODO implement
+        Toast.makeText(getContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
     public void onRejoinSuccess(boolean hasInterlocutor) {
-        // TODO implement
+        if (!hasInterlocutor)
+            displayNewMessage(new Message(INFO, getString(R.string.err_no_interlocutor), true));
     }
 
     @Override
     public void onRejoinError(String errorMessage) {
-        // TODO implement
+        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
+        private static final int TYPE_INFO = 0;
+        private static final int TYPE_IN = 1;
+        private static final int TYPE_OUT = 2;
+
         private List<Message> messages;
 
-        MessagesAdapter(List<Message> messages) {
+        public MessagesAdapter(List<Message> messages) {
             this.messages = messages;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return messages.get(position).isIncoming() ? 1 : 0;
+            Message message = messages.get(position);
+            return message.getType() == INFO ? TYPE_INFO : message.isIncoming() ? TYPE_IN :
+                    TYPE_OUT;
         }
 
         @Override
         public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            int resource = (viewType == 0) ? R.layout.message_out : R.layout.message_in;
-            View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-            return new MessageViewHolder(v);
+            int resource = -1;
+            if (viewType == TYPE_INFO) {
+                resource = R.layout.message_info;
+                View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+                return new InfoMessageViewHolder(v);
+            } else {
+                if (viewType == TYPE_IN) resource = R.layout.message_in;
+                if (viewType == TYPE_OUT) resource = R.layout.message_out;
+                View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+                return new TextMessageViewHolder(v);
+            }
         }
 
         @Override
         public void onBindViewHolder(MessageViewHolder holder, int position) {
             final Message message = messages.get(position);
             final String messageContent = message.getContent();
-            holder.messageText.setText(messageContent);
-            holder.messageText.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    copyToClipboard(getActivity(), messageContent);
-                    Toast.makeText(getContext(), getString(R.string.copied_message), Toast
-                            .LENGTH_SHORT).show();
-                    return true;
-                }
-            });
-            holder.messageSpinner.setVisibility(message.isWaiting() ? View.VISIBLE : View.GONE);
-            if (message.getType() == FILE && message.isIncoming()) {
-                holder.messageText.setOnClickListener(new View.OnClickListener() {
+            if (holder instanceof TextMessageViewHolder) {
+                TextMessageViewHolder textMessageViewHolder = (TextMessageViewHolder) holder;
+                textMessageViewHolder.messageText.setText(messageContent);
+                textMessageViewHolder.messageText.setOnLongClickListener(new View
+                        .OnLongClickListener() {
                     @Override
-                    public void onClick(View view) {
-                        String path = messageContent.substring(messageContent.indexOf('/'));
-                        ChatFragment.this.openFile(path);
+                    public boolean onLongClick(View view) {
+                        copyToClipboard(getActivity(), messageContent);
+                        Toast.makeText(getContext(), getString(R.string.copied_message), Toast
+                                .LENGTH_SHORT).show();
+                        return true;
                     }
                 });
+                textMessageViewHolder.messageSpinner.setVisibility(message.isWaiting() ? View
+                        .VISIBLE : View.GONE);
+                if (message.getType() == FILE && message.isIncoming()) {
+                    textMessageViewHolder.messageText.setOnClickListener(new View.OnClickListener
+                            () {
+                        @Override
+                        public void onClick(View view) {
+                            String path = messageContent.substring(messageContent.indexOf('/'));
+                            ChatFragment.this.openFile(path);
+                        }
+                    });
+                }
+            }
+            if (holder instanceof InfoMessageViewHolder) {
+                InfoMessageViewHolder infoMessageViewHolder = (InfoMessageViewHolder) holder;
+                infoMessageViewHolder.messageText.setText(messageContent);
             }
         }
 
@@ -430,13 +458,30 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         class MessageViewHolder extends RecyclerView.ViewHolder {
 
+            public MessageViewHolder(View itemView) {
+                super(itemView);
+            }
+        }
+
+        class TextMessageViewHolder extends MessageViewHolder {
+
             private TextView messageText;
             private ProgressBar messageSpinner;
 
-            MessageViewHolder(View itemView) {
+            public TextMessageViewHolder(View itemView) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
                 messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
+            }
+        }
+
+        class InfoMessageViewHolder extends MessageViewHolder {
+
+            private TextView messageText;
+
+            public InfoMessageViewHolder(View itemView) {
+                super(itemView);
+                messageText = ButterKnife.findById(itemView, R.id.message_text);
             }
         }
     }
