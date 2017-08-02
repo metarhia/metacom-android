@@ -4,15 +4,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@+id/spinner"
+    <ImageView
+        android:id="@+id/send_error"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/tiny_margin"
-        android:indeterminateTint="@color/black"
-        android:indeterminateTintMode="src_atop"
+        android:layout_marginStart="@dimen/tiny_margin"
+        android:src="@drawable/ic_error_black_24dp"
         android:visibility="gone"/>
 
     <RelativeLayout
@@ -20,9 +21,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/big_margin"
         android:layout_marginLeft="@dimen/tiny_margin"
         android:layout_marginRight="@dimen/big_margin"
-        android:layout_toRightOf="@id/spinner"
+        android:layout_marginStart="@dimen/tiny_margin"
+        android:layout_toEndOf="@id/send_error"
+        android:layout_toRightOf="@id/send_error"
         android:background="@drawable/message_in"
         android:orientation="horizontal">
 
@@ -35,7 +39,7 @@
             android:autoLink="web"
             android:fontFamily="sans-serif-light"
             android:linksClickable="true"
-            android:text="Lorem ipsum ipsum "
+            android:text=""
             android:textColor="@color/black"
             android:textColorLink="@color/colorAccent"
             android:textSize="@dimen/text_size"/>

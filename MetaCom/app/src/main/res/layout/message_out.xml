@@ -3,18 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="right">
+    android:gravity="end">
 
-    <ProgressBar
-        android:id="@+id/spinner"
+    <ImageView
+        android:id="@+id/send_error"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/tiny_margin"
         android:layout_marginRight="@dimen/tiny_margin"
-        android:indeterminateTint="@color/black"
-        android:indeterminateTintMode="src_atop"
+        android:src="@drawable/ic_error_black_24dp"
         android:visibility="gone"/>
 
     <RelativeLayout
@@ -22,11 +22,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/tiny_margin"
         android:layout_marginLeft="@dimen/big_margin"
         android:layout_marginRight="@dimen/tiny_margin"
-        android:layout_toLeftOf="@id/spinner"
+        android:layout_marginStart="@dimen/big_margin"
+        android:layout_toLeftOf="@id/send_error"
+        android:layout_toStartOf="@id/send_error"
         android:background="@drawable/message_out"
-        android:gravity="right">
+        android:gravity="end">
 
         <TextView
             android:id="@+id/message_text"
@@ -36,7 +39,7 @@
             android:autoLink="web"
             android:fontFamily="sans-serif-light"
             android:linksClickable="true"
-            android:text="Lorem ipsum Lorem Lorem ipsum Lorem Lorem ipsum Lorem Lorem ipsum Lorem Lorem ipsum Lorem Lorem ipsum Lorem Lorem ipsum Lorem "
+            android:text=""
             android:textColor="@color/white"
             android:textColorLink="@color/black"
             android:textSize="@dimen/text_size"/>

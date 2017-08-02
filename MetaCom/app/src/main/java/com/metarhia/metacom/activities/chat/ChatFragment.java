@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -158,10 +157,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSent(final Message message) {
-        stopSpinner(message);
+        removeErrorIcon(message);
     }
 
-    private void stopSpinner(Message message) {
+    private void removeErrorIcon(Message message) {
         mMessages.get(mMessages.indexOf(message)).setWaiting(false);
         if (isUIVisible) {
             updateMessagesView();
@@ -170,7 +169,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onMessageSentError(final String message) {
-        displayError(message);
+//        displayError(message);
     }
 
     private void displayError(String message) {
@@ -388,20 +387,24 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
 
         private static final int TYPE_INFO = 0;
-        private static final int TYPE_IN = 1;
-        private static final int TYPE_OUT = 2;
+        private static final int TYPE_INCOMING_FILE = 1;
+        private static final int TYPE_TEXT_IN = 2;
+        private static final int TYPE_TEXT_OUT = 3;
 
         private List<Message> messages;
 
-        public MessagesAdapter(List<Message> messages) {
+        MessagesAdapter(List<Message> messages) {
             this.messages = messages;
         }
 
         @Override
         public int getItemViewType(int position) {
             Message message = messages.get(position);
-            return message.getType() == INFO ? TYPE_INFO : message.isIncoming() ? TYPE_IN :
-                    TYPE_OUT;
+            if (message.getType() == INFO) return TYPE_INFO;
+            if (message.getType() == FILE && message.isIncoming()) return TYPE_INCOMING_FILE;
+            if (message.getType() == TEXT)
+                return message.isIncoming() ? TYPE_TEXT_IN : TYPE_TEXT_OUT;
+            return -1;
         }
 
         @Override
@@ -411,12 +414,16 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 resource = R.layout.message_info;
                 View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
                 return new InfoMessageViewHolder(v);
-            } else {
-                if (viewType == TYPE_IN) resource = R.layout.message_in;
-                if (viewType == TYPE_OUT) resource = R.layout.message_out;
-                View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-                return new TextMessageViewHolder(v);
             }
+            if (viewType == TYPE_INCOMING_FILE) {
+                resource = R.layout.message_in;
+                View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+                return new FileMessageViewHolder(v);
+            }
+            if (viewType == TYPE_TEXT_IN) resource = R.layout.message_in;
+            if (viewType == TYPE_TEXT_OUT) resource = R.layout.message_out;
+            View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
+            return new TextMessageViewHolder(v);
         }
 
         @Override
@@ -426,28 +433,48 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             if (holder instanceof TextMessageViewHolder) {
                 TextMessageViewHolder textMessageViewHolder = (TextMessageViewHolder) holder;
                 textMessageViewHolder.messageText.setText(messageContent);
-                textMessageViewHolder.messageText.setOnLongClickListener(new View
-                        .OnLongClickListener() {
+                textMessageViewHolder.errorIcon.setVisibility(message.isWaiting() ? View
+                        .VISIBLE : View.GONE);
+                registerForContextMenu(textMessageViewHolder.messageLayout);
+                textMessageViewHolder.messageLayout.setOnCreateContextMenuListener(new View
+                        .OnCreateContextMenuListener() {
                     @Override
-                    public boolean onLongClick(View view) {
-                        copyToClipboard(getActivity(), messageContent);
-                        Toast.makeText(getContext(), getString(R.string.copied_message), Toast
-                                .LENGTH_SHORT).show();
-                        return true;
+                    public void onCreateContextMenu(ContextMenu contextMenu, View view,
+                                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
+                        contextMenu.add(getString(R.string.copy)).setOnMenuItemClickListener
+                                (new MenuItem.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem menuItem) {
+                                        copyToClipboard(getActivity(), messageContent);
+                                        return false;
+                                    }
+                                });
+                        if (message.isWaiting()) {
+                            contextMenu.add(getString(R.string.resend))
+                                    .setOnMenuItemClickListener(new MenuItem
+                                            .OnMenuItemClickListener() {
+                                        @Override
+                                        public boolean onMenuItemClick(MenuItem menuItem) {
+                                            mMessages.remove(message);
+                                            mChatRoom.sendMessage(message, ChatFragment.this);
+                                            displayNewMessage(message);
+                                            return false;
+                                        }
+                                    });
+                        }
                     }
                 });
-                textMessageViewHolder.messageSpinner.setVisibility(message.isWaiting() ? View
-                        .VISIBLE : View.GONE);
-                if (message.getType() == FILE && message.isIncoming()) {
-                    textMessageViewHolder.messageText.setOnClickListener(new View.OnClickListener
-                            () {
-                        @Override
-                        public void onClick(View view) {
-                            String path = messageContent.substring(messageContent.indexOf('/'));
-                            ChatFragment.this.openFile(path);
-                        }
-                    });
-                }
+            }
+            if (holder instanceof FileMessageViewHolder) {
+                FileMessageViewHolder fileMessageViewHolder = (FileMessageViewHolder) holder;
+                fileMessageViewHolder.messageText.setText(messageContent);
+                fileMessageViewHolder.messageText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String path = messageContent.substring(messageContent.indexOf('/'));
+                        ChatFragment.this.openFile(path);
+                    }
+                });
             }
             if (holder instanceof InfoMessageViewHolder) {
                 InfoMessageViewHolder infoMessageViewHolder = (InfoMessageViewHolder) holder;
@@ -462,7 +489,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         class MessageViewHolder extends RecyclerView.ViewHolder {
 
-            public MessageViewHolder(View itemView) {
+            MessageViewHolder(View itemView) {
                 super(itemView);
             }
         }
@@ -470,12 +497,25 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         class TextMessageViewHolder extends MessageViewHolder {
 
             private TextView messageText;
-            private ProgressBar messageSpinner;
+            private View messageLayout;
+            private ImageView errorIcon;
 
-            public TextMessageViewHolder(View itemView) {
+            TextMessageViewHolder(View itemView) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
-                messageSpinner = ButterKnife.findById(itemView, R.id.spinner);
+                messageLayout = ButterKnife.findById(itemView, R.id.message_layout);
+                errorIcon = ButterKnife.findById(itemView, R.id.send_error);
+            }
+
+        }
+
+        class FileMessageViewHolder extends MessageViewHolder {
+
+            private TextView messageText;
+
+            private FileMessageViewHolder(View itemView) {
+                super(itemView);
+                messageText = ButterKnife.findById(itemView, R.id.message_text);
             }
         }
 
@@ -483,7 +523,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
             private TextView messageText;
 
-            public InfoMessageViewHolder(View itemView) {
+            InfoMessageViewHolder(View itemView) {
                 super(itemView);
                 messageText = ButterKnife.findById(itemView, R.id.message_text);
             }

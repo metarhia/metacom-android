@@ -36,6 +36,9 @@
     <string name="copied_message">Message was copied</string>
     <string name="connection_lost">Connection was lost</string>
     <string name="has_interlocutor">Somebody already in chat</string>
+    <string name="message">Message</string>
+    <string name="copy">Copy</string>
+    <string name="resend">Resend</string>
 
     <!--Common-->
     <string name="submit">Submit</string>
