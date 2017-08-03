@@ -8,12 +8,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -35,6 +37,7 @@ import com.metarhia.metacom.interfaces.MessageSentCallback;
 import com.metarhia.metacom.models.ChatRoom;
 import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
+import com.metarhia.metacom.models.ParcelableMessage;
 import com.metarhia.metacom.models.UserConnectionsManager;
 import com.metarhia.metacom.utils.Constants;
 import com.metarhia.metacom.utils.PermissionUtils;
@@ -65,6 +68,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public static final String CHAT_FRAGMENT_TAG = "ChatFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
+    private static final String KEY_MESSAGES_LIST = "keyMessagesList";
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
     private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
@@ -82,7 +86,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     TextInputEditText mInputMessage;
     private Unbinder mUnbinder;
 
-    private ArrayList<Message> mMessages;
+    private ArrayList<ParcelableMessage> mMessages = new ArrayList<>();
     private MessagesAdapter mMessagesAdapter;
     private ChatRoom mChatRoom;
     private ChatRoomsManager mChatRoomsManager;
@@ -104,6 +108,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
         mUnbinder = ButterKnife.bind(this, v);
 
+        Log.d("metacom-debug", "onCreateView");
+
         registerForContextMenu(mFileAttach);
 
         if (getArguments() != null) {
@@ -121,36 +127,63 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     .getChatRoomsManager();
 
             mToolbarTitle.setText(chatRoomName);
+        }
 
-            mMessages = new ArrayList<>();
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        mMessagesView.setLayoutManager(llm);
 
-            LinearLayoutManager llm = new LinearLayoutManager(getContext());
-            mMessagesView.setLayoutManager(llm);
+        mMessagesAdapter = new MessagesAdapter(mMessages);
+        mMessagesView.setAdapter(mMessagesAdapter);
 
-            mMessagesAdapter = new MessagesAdapter(mMessages);
-            mMessagesView.setAdapter(mMessagesAdapter);
-
+        if (savedInstanceState != null) {
+            mMessages = savedInstanceState.getParcelableArrayList(KEY_MESSAGES_LIST);
+        } else {
             String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor() ? R.string
                     .has_interlocutor : R.string.err_no_interlocutor);
-            displayNewMessage(new Message(INFO, hasInterlocutorMessage, true));
-
+            mMessages.add(new ParcelableMessage(INFO, hasInterlocutorMessage, true));
         }
+        Log.d("metacom-debug", mMessages.toString());
+        Log.d("metacom-debug", mMessages.get(mMessages.size() - 1).getContent());
+        updateMessagesView();
+
         return v;
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d("metacom-debug", "onActivityCreated");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.d("metacom-debug", "onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(KEY_MESSAGES_LIST, mMessages);
+    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        Log.d("metacom-debug", "onViewStateRestored");
+//        super.onViewStateRestored(savedInstanceState);
+//
+//    }
+
+    @Override
     public void onMessageReceived(final Message message) {
-        displayNewMessage(message);
+        ParcelableMessage parcelableMessage = new ParcelableMessage(message);
+        displayNewMessage(parcelableMessage);
     }
 
     private void displayNewMessage(Message message) {
-        mMessages.add(message);
+        mMessages.add((ParcelableMessage) message);
         if (isUIVisible) {
             updateMessagesView();
         }
     }
 
     private void updateMessagesView() {
+        Log.d("metacom-debug", "updateMessagesView");
         mMessagesAdapter.notifyDataSetChanged();
         mMessagesView.smoothScrollToPosition(mMessages.size());
     }
@@ -168,7 +201,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     @Override
-    public void onMessageSentError(final String message) {
+    public void onMessageSentError(final String messageError) {
 //        displayError(message);
     }
 
@@ -204,7 +237,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onSendMessageClick() {
         String messageText = mInputMessage.getText().toString();
         if (!messageText.isEmpty()) {
-            Message message = new Message(TEXT, messageText, false);
+            Message message = new ParcelableMessage(TEXT, messageText, false);
             message.setWaiting(true);
 
             mChatRoom.sendMessage(message, this);
@@ -334,12 +367,14 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onPause() {
+        Log.d("metacom-debug", "onPause");
         super.onPause();
         isUIVisible = false;
     }
 
     @Override
     public void onResume() {
+        Log.d("metacom-debug", "onResume");
         super.onResume();
         isUIVisible = true;
         updateMessagesView();
@@ -391,9 +426,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         private static final int TYPE_TEXT_IN = 2;
         private static final int TYPE_TEXT_OUT = 3;
 
-        private List<Message> messages;
+        private List<ParcelableMessage> messages;
 
-        MessagesAdapter(List<Message> messages) {
+        MessagesAdapter(List<ParcelableMessage> messages) {
             this.messages = messages;
         }
 

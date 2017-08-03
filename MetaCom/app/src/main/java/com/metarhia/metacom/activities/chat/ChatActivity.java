@@ -2,6 +2,7 @@ package com.metarhia.metacom.activities.chat;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.BackPressedHandler;
@@ -21,16 +22,21 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        Log.d("metacom-debug", "onCreate ChatActivity");
+
         int connectionID = getIntent().getIntExtra(EXTRA_CONNECTION_ID, -1);
         String chatRoomName = getIntent().getStringExtra(EXTRA_CHAT_ROOM_NAME);
 
         if (savedInstanceState == null) {
+            Log.d("metacom-debug", "savedInstanceState == null");
             if (connectionID != -1) {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.chat_container, ChatFragment.newInstance(connectionID,
                                 chatRoomName), CHAT_FRAGMENT_TAG)
                         .commit();
             }
+        } else {
+            Log.d("metacom-debug", "savedInstanceState != null");
         }
     }
 
