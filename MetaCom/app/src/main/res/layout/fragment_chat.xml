@@ -24,7 +24,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
-            android:src="@drawable/ic_file_upload_black_24dp"/>
+            android:src="@drawable/ic_attach_file_black_24dp"/>
 
         <ImageView
             android:id="@+id/send"
