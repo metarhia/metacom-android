@@ -381,8 +381,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onRejoinSuccess(boolean hasInterlocutor) {
-        if (!hasInterlocutor)
-            displayNewMessage(new Message(INFO, getString(R.string.err_no_interlocutor), true));
+        Toast.makeText(getContext(), getString(R.string.rejoin_success), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:hint="@string/input_chat_name"
+        android:inputType="text"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
         android:textSize="@dimen/text_size"/>
@@ -29,9 +30,6 @@
         android:id="@+id/spinner"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/tiny_margin"
         android:indeterminateTint="@color/black"
         android:indeterminateTintMode="src_atop"
         android:visibility="invisible"/>

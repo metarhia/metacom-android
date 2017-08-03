@@ -20,6 +20,7 @@
             android:id="@+id/attach"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
@@ -32,6 +33,7 @@
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
             android:layout_toLeftOf="@id/attach"
+            android:layout_toStartOf="@id/attach"
             android:src="@drawable/ic_mail_black_24dp"/>
 
         <android.support.design.widget.TextInputEditText
@@ -39,9 +41,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginStart="@dimen/small_margin"
             android:layout_toLeftOf="@id/send"
+            android:layout_toStartOf="@id/send"
             android:fontFamily="sans-serif-light"
             android:hint="@string/input_message"
             android:textColor="@color/black"
