@@ -132,11 +132,15 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
 
     @Override
     public void onConnectionLost() {
-        if (mChatRooms.isEmpty()) return;
+        MainExecutor.get().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mChatRooms.isEmpty()) return;
 
-        for (ChatRoom room : mChatRooms) {
-            room.reportConnectionLost();
-        }
-
+                for (ChatRoom room : mChatRooms) {
+                    room.reportConnectionLost();
+                }
+            }
+        });
     }
 }
