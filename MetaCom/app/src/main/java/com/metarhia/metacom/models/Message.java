@@ -1,12 +1,14 @@
 package com.metarhia.metacom.models;
 
+import java.io.Serializable;
+
 /**
  * Message structure
  *
  * @author lidaamber
  */
 
-public class Message {
+public class Message implements Serializable {
 
     /**
      * Type of the message
