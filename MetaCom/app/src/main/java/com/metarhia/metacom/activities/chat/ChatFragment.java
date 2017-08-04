@@ -68,6 +68,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_CHAT_ROOM_NAME = "keyChatRoomName";
     private static final String KEY_MESSAGES_LIST = "keyMessagesList";
+    private static final String KEY_EXIT_DIALOG = "keyExitDialog";
+
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
     private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
@@ -90,6 +92,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private ChatRoom mChatRoom;
     private ChatRoomsManager mChatRoomsManager;
     private boolean isUIVisible = true;
+    private boolean mExitDialog;
 
     public static ChatFragment newInstance(int connectionID, String chatRoomName) {
         Bundle args = new Bundle();
@@ -131,6 +134,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         if (savedInstanceState != null) {
             mMessages = (ArrayList<Message>) savedInstanceState.getSerializable(KEY_MESSAGES_LIST);
+            if (savedInstanceState.getBoolean(KEY_EXIT_DIALOG)) {
+                handleBackPress();
+            }
         } else {
             mMessages = new ArrayList<>();
             String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor() ? R.string
@@ -149,6 +155,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_MESSAGES_LIST, mMessages);
+        outState.putBoolean(KEY_EXIT_DIALOG, mExitDialog);
     }
 
     @Override
@@ -359,6 +366,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void handleBackPress() {
+        mExitDialog = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.leave_chat)
                 .setMessage(R.string.leave_chat_desc)

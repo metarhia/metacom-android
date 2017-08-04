@@ -2,7 +2,9 @@ package com.metarhia.metacom.activities;
 
 
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.chat.ChatLoginFragment;
@@ -38,6 +41,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_HOST_NAME = "keyHostName";
     private static final String KEY_PORT = "keyPort";
+    private static final String KEY_EXIT_DIALOG = "keyExitDialog";
+    private static final String KEY_PERMISSIONS_DIALOG = "keyPermissionsDialog";
 
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
@@ -50,6 +55,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     private ArrayList<Fragment> mFragmentArrayList;
     private ArrayList<String> mFragmentTitles;
     private int mConnectionID;
+    private boolean mExitDialog;
+    private boolean mPermissionsDialog;
 
     public static MainFragment newInstance(int connectionID, String hostName, int port) {
         Bundle args = new Bundle();
@@ -79,15 +86,25 @@ public class MainFragment extends Fragment implements BackPressedHandler {
             mToolbarTitle.setText(toolbarTitle);
         }
 
-        if (PermissionUtils.checkVersion() &&
-                !PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
-            showRequestDialog();
+        if (savedInstanceState == null) {
+            if (PermissionUtils.checkVersion() &&
+                    !PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+                showRequestDialog();
+            }
+        } else {
+            if (savedInstanceState.getBoolean(KEY_EXIT_DIALOG)) {
+                handleBackPress();
+            }
+            if (savedInstanceState.getBoolean(KEY_PERMISSIONS_DIALOG)) {
+                showRequestDialog();
+            }
         }
 
         return view;
     }
 
     private void showRequestDialog() {
+        mPermissionsDialog = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.permissions)
                 .setMessage(R.string.permissions_info)
@@ -96,10 +113,29 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         PermissionUtils.requestForStoragePermission(MainFragment.this);
+                        mPermissionsDialog = false;
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.REQUEST_CODE: {
+                if (!(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    showForbidDialog();
+                }
+            }
+        }
+    }
+
+    private void showForbidDialog() {
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.toolbar_back)
@@ -152,6 +188,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
 
     @Override
     public void handleBackPress() {
+        mExitDialog = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.leave_server)
                 .setMessage(R.string.leave_server_desc)
@@ -171,5 +208,12 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_EXIT_DIALOG, mExitDialog);
+        outState.putBoolean(KEY_PERMISSIONS_DIALOG, mPermissionsDialog);
     }
 }
