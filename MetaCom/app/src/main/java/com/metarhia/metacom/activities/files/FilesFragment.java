@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -90,7 +89,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("metacom-debug", "Files Fragment onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_files, container, false);
         mUnbinder = ButterKnife.bind(this, view);
@@ -160,7 +158,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileDownloaded(final String filePath) {
-        Log.d("metacom-debug", "FilesFragment onFileDownloaded");
         setBottomNoticeMessage(getString(R.string.complete));
         mOpenFile = true;
         mFilePath = filePath;
@@ -194,24 +191,15 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileUploaded(final String fileCode) {
-        Log.d("metacom-debug", "FilesFragment onFileUploaded");
         if (isUIVisible) {
-            Log.d("metacom-debug", "true");
             showUploadDialog = false;
             hideBottomNotice();
             DialogFragment dialog = UploadFileDialog.newInstance(fileCode);
             dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
         } else {
-            Log.d("metacom-debug", "false");
             showUploadDialog = true;
             showUploadDialogCode = fileCode;
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d("metacom-debug", "onDetach");
     }
 
     @Override
@@ -339,14 +327,12 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("metacom-debug", "FilesFragment onPause");
         isUIVisible = false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("metacom-debug", "FilesFragment onResume");
         isUIVisible = true;
         if (showUploadDialog) {
             onFileUploaded(showUploadDialogCode);
