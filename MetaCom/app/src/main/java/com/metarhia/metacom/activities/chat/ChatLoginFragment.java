@@ -55,6 +55,8 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
         View view = inflater.inflate(R.layout.fragment_chat_login, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
+        setRetainInstance(true);
+
         if (getArguments() != null && getArguments().containsKey(KEY_CONNECTION_ID)) {
             mID = getArguments().getInt(KEY_CONNECTION_ID);
             mManager = UserConnectionsManager.get().getConnection(mID).getChatRoomsManager();

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -50,9 +51,13 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         FileUploadedCallback, DownloadFileByCodeListener {
 
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
-
+    private static final String KEY_BOTTOM_NOTICE = "keyBottomNotice";
+    private static final String KEY_BOTTOM_MESSAGE = "keyBottomMessage";
+    private static final String KEY_OPEN_FILE = "keyOpenFile";
+    private static final String KEY_FILE_URI = "keyFileUri";
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
     private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
+
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
     private static final int PICK_IMAGE_FROM_CAMERA = 1;
     private static final int TAKE_PHOTO = 2;
@@ -67,6 +72,12 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     private Unbinder mUnbinder;
 
     private FilesManager mFilesManager;
+    private boolean mBottomNotice;
+    private boolean mOpenFile;
+    private String mFilePath;
+    private boolean isUIVisible;
+    private boolean showUploadDialog;
+    private String showUploadDialogCode;
 
     public static FilesFragment newInstance(int connectionID) {
         Bundle args = new Bundle();
@@ -79,8 +90,12 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("metacom-debug", "Files Fragment onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_files, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+
+        setRetainInstance(true);
 
         registerForContextMenu(mUploadFile);
 
@@ -90,27 +105,28 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
                     .getFilesManager();
         }
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(KEY_BOTTOM_NOTICE)) {
+                setBottomNoticeMessage(savedInstanceState.getString(KEY_BOTTOM_MESSAGE));
+            }
+            if (savedInstanceState.getBoolean(KEY_OPEN_FILE)) {
+                String fileUri = savedInstanceState.getString(KEY_FILE_URI);
+                onFileDownloaded(fileUri);
+            }
+        }
+
         return view;
     }
 
     public void hideBottomNotice() {
+        mBottomNotice = false;
         mBottomNoticeLayout.setVisibility(View.GONE);
     }
 
     public void setBottomNoticeMessage(String message) {
+        mBottomNotice = true;
         mBottomNoticeLayout.setVisibility(View.VISIBLE);
         mBottomNoticeText.setText(message);
-    }
-
-    public void setBottomNoticeOnClick(final View.OnClickListener onClickListener) {
-        mBottomNoticeText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickListener.onClick(view);
-                mBottomNoticeLayout.setOnClickListener(null);
-                hideBottomNotice();
-            }
-        });
     }
 
     @OnClick(R.id.download_file)
@@ -144,19 +160,29 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileDownloaded(final String filePath) {
+        Log.d("metacom-debug", "FilesFragment onFileDownloaded");
         setBottomNoticeMessage(getString(R.string.complete));
-        setBottomNoticeOnClick(new View.OnClickListener() {
+        mOpenFile = true;
+        mFilePath = filePath;
+        mBottomNoticeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri selectedUri = Uri.parse("file:///" + filePath);
-                String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
-                        (fileExtension);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(selectedUri, mimeType);
-                startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
+                openFile(mFilePath);
+                mOpenFile = false;
+                mBottomNoticeLayout.setOnClickListener(null);
+                hideBottomNotice();
             }
         });
+    }
+
+    private void openFile(String filePath) {
+        Uri uri = Uri.parse("file:///" + filePath);
+        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
+                (fileExtension);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, mimeType);
+        startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
     }
 
     @Override
@@ -167,10 +193,25 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     }
 
     @Override
-    public void onFileUploaded(String fileCode) {
-        hideBottomNotice();
-        DialogFragment dialog = UploadFileDialog.newInstance(fileCode);
-        dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
+    public void onFileUploaded(final String fileCode) {
+        Log.d("metacom-debug", "FilesFragment onFileUploaded");
+        if (isUIVisible) {
+            Log.d("metacom-debug", "true");
+            showUploadDialog = false;
+            hideBottomNotice();
+            DialogFragment dialog = UploadFileDialog.newInstance(fileCode);
+            dialog.show(getActivity().getSupportFragmentManager(), UploadFileDialogTag);
+        } else {
+            Log.d("metacom-debug", "false");
+            showUploadDialog = true;
+            showUploadDialogCode = fileCode;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("metacom-debug", "onDetach");
     }
 
     @Override
@@ -279,6 +320,36 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
                     showForbidDialog();
                 }
             }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mBottomNotice) {
+            outState.putBoolean(KEY_BOTTOM_NOTICE, mBottomNotice);
+            outState.putString(KEY_BOTTOM_MESSAGE, mBottomNoticeText.getText().toString());
+        }
+        if (mOpenFile) {
+            outState.putBoolean(KEY_OPEN_FILE, mOpenFile);
+            outState.putString(KEY_FILE_URI, mFilePath);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("metacom-debug", "FilesFragment onPause");
+        isUIVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("metacom-debug", "FilesFragment onResume");
+        isUIVisible = true;
+        if (showUploadDialog) {
+            onFileUploaded(showUploadDialogCode);
         }
     }
 }
