@@ -41,9 +41,10 @@ public class ChatRoom {
     private final AndroidJSTPConnection mConnection;
 
     /**
-     * Message listeners for incoming chat room messages
+     * Message listener for incoming chat room messages
      */
-    private final List<MessageListener> mMessageListeners;
+
+    private MessageListener mMessageListener;
 
     /**
      * Current downloaded file chunks
@@ -78,7 +79,6 @@ public class ChatRoom {
     ChatRoom(String chatRoomName, AndroidJSTPConnection connection) {
         mChatRoomName = chatRoomName;
         mConnection = connection;
-        mMessageListeners = new ArrayList<>();
         mCurrentFileBuffer = new ArrayList<>();
 
         initIncomingMessagesListener();
@@ -92,7 +92,7 @@ public class ChatRoom {
      *
      * @return chat room name
      */
-    public String getChatRoomName() {
+    String getChatRoomName() {
         return mChatRoomName;
     }
 
@@ -123,17 +123,8 @@ public class ChatRoom {
      *
      * @param listener incoming messages listener
      */
-    public void addMessageListener(MessageListener listener) {
-        mMessageListeners.add(listener);
-    }
-
-    /**
-     * Removes incoming messages listener
-     *
-     * @param listener incoming messages listener
-     */
-    public void removeMessageListener(MessageListener listener) {
-        mMessageListeners.remove(listener);
+    public void setMessageListener(MessageListener listener) {
+        mMessageListener = listener;
     }
 
     /**
@@ -148,8 +139,8 @@ public class ChatRoom {
                         String messageContent = (String) messagePayload.get(0);
 
                         Message message = new Message(MessageType.TEXT, messageContent, true);
-                        for (MessageListener listener : mMessageListeners) {
-                            listener.onMessageReceived(message);
+                        if (mMessageListener != null) {
+                            mMessageListener.onMessageReceived(message);
                         }
                     }
                 });
@@ -164,8 +155,8 @@ public class ChatRoom {
 
                         String infoText = Constants.EVENT_CHAT_JOIN;
                         Message message = new Message(MessageType.INFO, infoText, true);
-                        for (MessageListener listener : mMessageListeners) {
-                            listener.onMessageReceived(message);
+                        if (mMessageListener != null) {
+                            mMessageListener.onMessageReceived(message);
                         }
                     }
                 });
@@ -180,8 +171,8 @@ public class ChatRoom {
 
                         String infoText = Constants.EVENT_CHAT_LEAVE;
                         Message message = new Message(MessageType.INFO, infoText, true);
-                        for (MessageListener listener : mMessageListeners) {
-                            listener.onMessageReceived(message);
+                        if (mMessageListener != null) {
+                            mMessageListener.onMessageReceived(message);
                         }
                     }
                 });
@@ -350,15 +341,6 @@ public class ChatRoom {
     }
 
     /**
-     * Gets chat reconnection listener
-     *
-     * @return chat reconnection listener
-     */
-    public ChatReconnectionListener getChatReconnectionListener() {
-        return mChatReconnectionListener;
-    }
-
-    /**
      * Sets chat reconnection listener to specified listener
      *
      * @param chatReconnectionListener chat reconnection listener
@@ -381,7 +363,7 @@ public class ChatRoom {
      *
      * @param hasInterlocutor has interlocutor
      */
-    public void setHasInterlocutor(boolean hasInterlocutor) {
+    void setHasInterlocutor(boolean hasInterlocutor) {
         this.mHasInterlocutor = hasInterlocutor;
     }
 }

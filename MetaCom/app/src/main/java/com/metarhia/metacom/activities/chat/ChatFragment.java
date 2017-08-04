@@ -119,7 +119,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
             mChatRoom = UserConnectionsManager.get().getConnection(connectionID)
                     .getChatRoomsManager().getChatRoom(chatRoomName);
-            mChatRoom.addMessageListener(this);
+            mChatRoom.setMessageListener(this);
             mChatRoom.setChatReconnectionListener(this);
 
             mChatRoom.setFileDownloadedListener(this);
@@ -202,7 +202,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     public void leaveRoom() {
-        mChatRoom.removeMessageListener(this);
+        mChatRoom.setMessageListener(null);
         mChatRoomsManager.leaveChatRoom(mChatRoom, this);
     }
 
