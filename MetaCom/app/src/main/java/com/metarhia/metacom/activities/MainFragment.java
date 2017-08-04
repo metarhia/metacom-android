@@ -196,6 +196,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                mExitDialog = false;
                                 dialog.cancel();
                             }
                         })

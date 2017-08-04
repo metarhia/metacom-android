@@ -374,6 +374,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                mExitDialog = false;
                                 dialog.cancel();
                             }
                         })
