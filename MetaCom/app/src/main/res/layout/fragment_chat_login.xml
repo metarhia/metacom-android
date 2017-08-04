@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:hint="@string/input_chat_name"
+        android:imeOptions="actionDone"
         android:inputType="text"
         android:textColor="@color/black"
         android:textColorHint="@color/black"

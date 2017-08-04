@@ -49,6 +49,7 @@
             android:layout_toStartOf="@id/send"
             android:fontFamily="sans-serif-light"
             android:hint="@string/input_message"
+            android:imeOptions="actionDone"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="@dimen/text_size"/>
