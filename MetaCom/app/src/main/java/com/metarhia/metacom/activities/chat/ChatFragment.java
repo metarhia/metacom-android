@@ -395,7 +395,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onRejoinSuccess(boolean hasInterlocutor) {
-        Toast.makeText(getContext(), getString(R.string.connection_established), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.connection_established), Toast
+                .LENGTH_SHORT).show();
     }
 
     @Override
@@ -450,7 +451,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 return new InfoMessageViewHolder(v);
             }
             if (viewType == TYPE_INCOMING_FILE) {
-                resource = R.layout.message_in;
+                resource = R.layout.message_file;
                 View v = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
                 return new FileMessageViewHolder(v);
             }
@@ -501,8 +502,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             }
             if (holder instanceof FileMessageViewHolder) {
                 FileMessageViewHolder fileMessageViewHolder = (FileMessageViewHolder) holder;
-                fileMessageViewHolder.messageText.setText(messageContent);
-                fileMessageViewHolder.messageText.setOnClickListener(new View.OnClickListener() {
+                fileMessageViewHolder.fileImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String path = messageContent.substring(messageContent.indexOf('/'));
@@ -545,11 +545,11 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
         class FileMessageViewHolder extends MessageViewHolder {
 
-            private TextView messageText;
+            private ImageView fileImageView;
 
             private FileMessageViewHolder(View itemView) {
                 super(itemView);
-                messageText = ButterKnife.findById(itemView, R.id.message_text);
+                fileImageView = ButterKnife.findById(itemView, R.id.file);
             }
         }
 
