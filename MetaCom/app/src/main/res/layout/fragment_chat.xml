@@ -2,6 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
                 tools:context=".activities.chat.ChatFragment">
 
     <include
@@ -20,32 +21,32 @@
             android:id="@+id/attach"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
             android:src="@drawable/ic_attach_file_black_24dp"/>
 
-        <ImageView
+        <TextView
             android:id="@+id/send"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/small_margin"
-            android:layout_toLeftOf="@id/attach"
-            android:layout_toStartOf="@id/attach"
-            android:src="@drawable/ic_mail_black_24dp"/>
+            android:text="@string/send"/>
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/input_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/small_margin"
             android:layout_marginStart="@dimen/small_margin"
+            android:layout_toEndOf="@id/attach"
             android:layout_toLeftOf="@id/send"
+            android:layout_toRightOf="@id/attach"
             android:layout_toStartOf="@id/send"
             android:fontFamily="sans-serif-light"
             android:hint="@string/new_message"
