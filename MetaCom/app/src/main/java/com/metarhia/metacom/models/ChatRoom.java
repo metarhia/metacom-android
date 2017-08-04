@@ -3,6 +3,8 @@ package com.metarhia.metacom.models;
 import android.util.Base64;
 
 import com.metarhia.jstp.compiler.annotations.handlers.Array;
+import com.metarhia.jstp.core.Handlers.ManualHandler;
+import com.metarhia.jstp.core.JSInterfaces.JSObject;
 import com.metarhia.jstp.handlers.ExecutableHandler;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 import com.metarhia.metacom.connection.Errors;
@@ -187,25 +189,24 @@ public class ChatRoom {
 
     private void initChatTransferListener() {
         mConnection.addEventHandler(Constants.META_COM, "chatFileTransferStart",
-                new ExecutableHandler(MainExecutor.get()) {
+                new ManualHandler() {
 
                     @Override
-                    public void run() {
-                        List messagePayload = (List) (message).get("chatFileTransferStart");
+                    public void handle(JSObject jsObject) {
+                        List messagePayload = (List) (jsObject).get("chatFileTransferStart");
                         String type = (String) messagePayload.get(0);
                         mCurrentExtension = (type == null) ? "txt" :
                                 FileUtils.sMimeTypeMap.getExtensionFromMimeType(type);
 
                         mCurrentFileBuffer = new ArrayList<>();
-
                     }
                 });
 
         mConnection.addEventHandler(Constants.META_COM, "chatFileTransferChunk",
-                new ExecutableHandler(MainExecutor.get()) {
+                new ManualHandler() {
                     @Override
-                    public void run() {
-                        List messagePayload = (List) (message).get("chatFileTransferChunk");
+                    public void handle(JSObject jsObject) {
+                        List messagePayload = (List) (jsObject).get("chatFileTransferChunk");
                         String fileChunk = (String) messagePayload.get(0);
                         if (mCurrentFileBuffer != null)
                             mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.NO_WRAP));
