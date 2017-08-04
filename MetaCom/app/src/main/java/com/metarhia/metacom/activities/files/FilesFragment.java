@@ -3,10 +3,12 @@ package com.metarhia.metacom.activities.files;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -118,7 +120,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
             dialog.setDownloadFileByCodeListener(this);
             dialog.show(getActivity().getSupportFragmentManager(), DownloadFileDialogTag);
         } else {
-            showForbidDialog();
+            if (PermissionUtils.checkVersion()) {
+                PermissionUtils.requestForStoragePermission(this);
+            }
         }
     }
 
@@ -127,13 +131,15 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         if (PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
             showFileChooser();
         } else {
-            showForbidDialog();
+            if (PermissionUtils.checkVersion()) {
+                PermissionUtils.requestForStoragePermission(this);
+            }
         }
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast
-                .LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -155,7 +161,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileDownloadError() {
-        Toast.makeText(getContext(), getString(R.string.downloading_error), Toast.LENGTH_SHORT)
+        Toast.makeText(getContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT)
                 .show();
     }
 
@@ -168,7 +174,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileUploadError(final String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.err_upload_failed), Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -179,7 +186,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void downloadByCode(String code) {
-        setBottomNoticeMessage(String.format(getString(R.string.downloading), code));
+        setBottomNoticeMessage(getString(R.string.downloading_dots));
         mFilesManager.downloadFile(code, this);
     }
 
@@ -209,7 +216,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setBottomNoticeMessage(getString(R.string.uploading));
+                        setBottomNoticeMessage(getString(R.string.uploading_dots));
                     }
                 });
             } catch (FileNotFoundException e) {
@@ -258,5 +265,18 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         }
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.REQUEST_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showFileChooser();
+                } else {
+                    showForbidDialog();
+                }
+            }
+        }
+    }
 }

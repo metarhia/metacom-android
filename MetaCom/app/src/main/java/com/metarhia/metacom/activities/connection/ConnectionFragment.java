@@ -37,7 +37,8 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     ProgressBar mSpinner;
     private Unbinder mUnbinder;
 
-    private String host;
+    private String mHost;
+    private Integer mPort;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,14 +50,14 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
-        host = mHostEditText.getText().toString();
-        int port = Integer.valueOf(mPortEditText.getText().toString());
-        if (!host.isEmpty()) {
+        mHost = mHostEditText.getText().toString();
+        mPort = Integer.valueOf(mPortEditText.getText().toString());
+        if (!mHost.isEmpty()) {
             mButtonSubmit.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
             mPortEditText.setEnabled(false);
-            UserConnectionsManager.get().addConnection(getActivity(), host, port, this);
+            UserConnectionsManager.get().addConnection(getActivity(), mHost, mPort, this);
         }
     }
 
@@ -68,13 +69,13 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         mPortEditText.setEnabled(true);
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
-        intent.putExtra(MainActivity.EXTRA_HOST_NAME, host);
+        intent.putExtra(MainActivity.EXTRA_HOST_NAME, mHost);
+        intent.putExtra(MainActivity.EXTRA_PORT, mPort);
         startActivity(intent);
     }
 
     @Override
     public void onConnectionError() {
-        // todo remove wrapper
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

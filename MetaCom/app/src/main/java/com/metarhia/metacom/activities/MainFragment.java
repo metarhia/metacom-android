@@ -37,6 +37,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     public final static String MAIN_FRAGMENT_TAG = "MainFragmentTag";
     private static final String KEY_CONNECTION_ID = "keyConnectionId";
     private static final String KEY_HOST_NAME = "keyHostName";
+    private static final String KEY_PORT = "keyPort";
 
     @BindView(R.id.toolbar_title)
     TextView mToolbarTitle;
@@ -50,10 +51,12 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     private ArrayList<String> mFragmentTitles;
     private int mConnectionID;
 
-    public static MainFragment newInstance(int connectionID, String hostName) {
+    public static MainFragment newInstance(int connectionID, String hostName, int port) {
         Bundle args = new Bundle();
         args.putInt(KEY_CONNECTION_ID, connectionID);
         args.putString(KEY_HOST_NAME, hostName);
+        args.putInt(KEY_PORT, port);
+
         MainFragment fragment = new MainFragment();
         fragment.setArguments(args);
         return fragment;
@@ -67,14 +70,18 @@ public class MainFragment extends Fragment implements BackPressedHandler {
 
         if (getArguments() != null) {
             mConnectionID = getArguments().getInt(KEY_CONNECTION_ID);
+
+            String host = getArguments().getString(KEY_HOST_NAME);
+            String port = String.valueOf(getArguments().getInt(KEY_PORT));
+
+            String toolbarTitle = String.format(getString(R.string.title_pattern), host, port);
             setPages();
-            mToolbarTitle.setText(getArguments().getString(KEY_HOST_NAME));
+            mToolbarTitle.setText(toolbarTitle);
         }
 
-        if (PermissionUtils.checkVersion()) {
-            if (!PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
-                showRequestDialog();
-            }
+        if (PermissionUtils.checkVersion() &&
+                !PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
+            showRequestDialog();
         }
 
         return view;
@@ -88,7 +95,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        PermissionUtils.requestForSpecificPermission(getActivity());
+                        PermissionUtils.requestForStoragePermission(MainFragment.this);
                     }
                 });
         AlertDialog alert = builder.create();
@@ -146,8 +153,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     @Override
     public void handleBackPress() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.exit)
-                .setMessage(R.string.confirm_exit)
+        builder.setTitle(R.string.leave_server)
+                .setMessage(R.string.leave_server_desc)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {

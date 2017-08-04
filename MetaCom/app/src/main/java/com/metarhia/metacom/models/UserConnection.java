@@ -3,7 +3,7 @@ package com.metarhia.metacom.models;
 import com.metarhia.metacom.connection.AndroidJSTPConnection;
 
 /**
- * Connection to certain server host and port for chat and file exchange purposes
+ * Connection to certain server mHost and mPort for chat and file exchange purposes
  *
  * @author lidaamber
  */
@@ -30,6 +30,7 @@ public class UserConnection {
      */
     UserConnection(int id, AndroidJSTPConnection connection) {
         mId = id;
+
         mChatRoomsManager = new ChatRoomsManager(connection);
         mFilesManager = new FilesManager(connection);
     }
@@ -60,4 +61,5 @@ public class UserConnection {
     public FilesManager getFilesManager() {
         return mFilesManager;
     }
+
 }

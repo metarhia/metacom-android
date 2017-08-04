@@ -49,7 +49,7 @@ public class UploadFileDialog extends DialogFragment {
         View view = layoutInflater.inflate(R.layout.fragment_upload_file_dialog, null);
         mUnbinder = ButterKnife.bind(this, view);
         final String code = getArguments().getString(KEY_UPLOAD_FILE_CODE);
-        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_code),
+        mUploadResultString.setText(String.format(getResources().getString(R.string.upload_desc),
                 code));
         mUploadResultString.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -63,13 +63,23 @@ public class UploadFileDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setView(view)
+                .setTitle(R.string.upload)
                 .setPositiveButton(getResources().getString(R.string.ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 dismiss();
                             }
                         }
-                );
+                )
+                .setNegativeButton(getString(R.string.copy), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dismiss();
+                        copyToClipboard(getActivity(), code);
+                        Toast.makeText(getContext(), getString(R.string.copied_code),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         return builder.create();
     }

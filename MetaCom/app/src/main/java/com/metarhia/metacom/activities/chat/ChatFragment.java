@@ -4,10 +4,12 @@ package com.metarhia.metacom.activities.chat;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -132,7 +134,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         } else {
             mMessages = new ArrayList<>();
             String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor() ? R.string
-                    .has_interlocutor : R.string.err_no_interlocutor);
+                    .has_interlocutor : R.string.no_interlocutor);
             mMessages.add(new Message(INFO, hasInterlocutorMessage, true));
         }
 
@@ -202,13 +204,15 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         if (PermissionUtils.checkIfAlreadyHavePermission(getContext())) {
             showFileChooser();
         } else {
-            showForbidDialog();
+            if (PermissionUtils.checkVersion()) {
+                PermissionUtils.requestForStoragePermission(this);
+            }
         }
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted), Toast
-                .LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.send)
@@ -262,7 +266,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 intent.setType("*/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, getString(R.string
-                        .select_file)), PICK_IMAGE_FROM_EXPLORER);
+                                .select_file)),
+                        PICK_IMAGE_FROM_EXPLORER);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -327,7 +332,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileDownloadError() {
-        Toast.makeText(getContext(), R.string.downloading_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.err_download_failed,
+                Toast.LENGTH_SHORT).show();
     }
 
     private void openFile(String filePath) {
@@ -354,8 +360,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     @Override
     public void handleBackPress() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.exit)
-                .setMessage(R.string.confirm_exit)
+        builder.setTitle(R.string.leave_chat)
+                .setMessage(R.string.leave_chat_desc)
                 .setCancelable(false)
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
@@ -381,12 +387,27 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onRejoinSuccess(boolean hasInterlocutor) {
-        Toast.makeText(getContext(), getString(R.string.rejoin_success), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.connection_established), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRejoinError(String errorMessage) {
         Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.REQUEST_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showFileChooser();
+                } else {
+                    showForbidDialog();
+                }
+            }
+        }
     }
 
     class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {

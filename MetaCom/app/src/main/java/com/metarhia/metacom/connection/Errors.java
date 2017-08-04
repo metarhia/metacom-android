@@ -54,7 +54,7 @@ public class Errors {
             case ERR_NOT_IN_CHAT:
                 return sResources.getString(R.string.err_not_in_chat);
             case ERR_NO_INTERLOCUTOR:
-                return sResources.getString(R.string.err_no_interlocutor);
+                return sResources.getString(R.string.no_interlocutor);
             case ERR_NO_SUCH_FILE:
                 return sResources.getString(R.string.err_no_such_file);
             case ERR_FILE_LOAD:

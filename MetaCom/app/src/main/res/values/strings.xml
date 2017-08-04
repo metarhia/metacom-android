@@ -2,72 +2,79 @@
     <string name="app_name">MetaCom</string>
 
     <!--Connection Screen-->
-    <string name="connection_host">server host</string>
-    <string name="connection_port">port</string>
-    <string name="connection_error">connection error</string>
+    <string name="connection_host">Host</string>
+    <string name="connection_port">Port</string>
+    <string name="connection_error">Could\'nt connect to server</string>
 
     <!-- Main screen -->
-    <string name="hostname">HostName</string>
+    <string name="title_pattern">%1$s:%2$s</string>
     <string name="files">Files</string>
     <string name="chat">Chat</string>
 
     <!-- Files fragment-->
-    <string name="enter_download_code">Enter file code to download</string>
+    <string name="enter_download_code">Enter download code:</string>
     <string name="download_code">File code</string>
-    <string name="downloading">Downloading… %s</string>
-    <string name="uploading">Uploading…</string>
-    <string name="complete">Complete!</string>
-    <string name="upload_code">Your file code is %s</string>
+    <string name="downloading_dots">Downloading…</string>
+    <string name="uploading_dots">Uploading…</string>
+    <string name="complete">Complete! Click to open file</string>
     <string name="take_photo">Take a photo</string>
     <string name="file_explorer">Open file explorer</string>
-    <string name="downloading_error">downloading error</string>
-    <string name="uploading_error">uploading error</string>
+    <string name="err_download_failed">File download with current code failed</string>
+    <string name="err_upload_failed">File upload failed</string>
     <string name="select_file">Select file…</string>
     <string name="open_file">Open file…</string>
     <string name="copied_code">Code was copied</string>
 
     <!--Chat Login-->
-    <string name="input_chat_name">Input chat name</string>
+    <string name="input_chat_name">Chat name</string>
 
     <!--Chat-->
-    <string name="chatname">ChatName</string>
-    <string name="input_message">Input message</string>
+    <string name="new_message">New Message</string>
     <string name="uploaded_file">File was sent</string>
     <string name="copied_message">Message was copied</string>
-    <string name="connection_lost">Connection was lost</string>
-    <string name="has_interlocutor">Somebody already in chat</string>
+    <string name="connection_lost">Connection lost</string>
+    <string name="has_interlocutor">There is someone in the chat</string>
     <string name="message">Message</string>
     <string name="copy">Copy</string>
     <string name="resend">Resend</string>
-    <string name="rejoin_success">Rejoined successfully</string>
+    <string name="connection_established">Connection established</string>
 
     <!--Common-->
     <string name="submit">Submit</string>
     <string name="cancel">Cancel</string>
+    <string name="download">Download</string>
     <string name="ok">OK</string>
-    <string name="exit">Exit</string>
-    <string name="confirm_exit">Confirm exit, please</string>
+
+    <!--Dialogs-->
+    <string name="leave_chat">Leave chat</string>
+    <string name="leave_chat_desc">Leaving the chat will cause losing conversation history</string>
+
+    <string name="leave_server">Leave server</string>
+    <string name="leave_server_desc">Leaving the server will cause aborting all file transitions</string>
+
+    <string name="upload">Upload</string>
+    <string name="upload_desc">Your file was uploaded. The code is %s</string>
 
     <!-- API error descriptions -->
-    <string name="err_room_taken">Room is already taken</string>
+    <string name="err_room_taken">An error occurred while joining chat room. The room is already taken</string>
     <string name="err_not_in_chat">You are not in chat</string>
-    <string name="err_no_interlocutor">You are the only person in the chat room</string>
+    <string name="no_interlocutor">There is no one in the chat</string>
     <string name="err_no_such_file">No such file</string>
     <string name="err_upload_not_started">Upload not started</string>
     <string name="err_previous_upload_not_finished">Previous upload not finished</string>
 
     <!-- Local error descriptions -->
-    <string name="err_file_load">Could`nt load file</string>
+    <string name="err_file_load">Could\'nt load file</string>
 
     <!-- Event description -->
-    <string name="event_chat_join">Somebody joined chat</string>
-    <string name="event_chat_leave">Somebody left chat</string>
+    <string name="event_chat_join">Somebody has joined the chat</string>
+    <string name="event_chat_leave">Somebody has left the chat</string>
     <string name="file_path">Your file is saved here: %s</string>
     <string name="download_failed">Download failed</string>
 
     <!-- Permissions -->
     <string name="permissions">Permissions</string>
-    <string name="permissions_info">We need your permission because of blablabla</string>
-    <string name="permissions_are_not_granted">sorry you shall not pass</string>
+    <string name="permissions_info">Please, confirm the storage permission to make file transactions.</string>
+    <string name="permissions_are_not_granted">You can\'t make file transactions without confirming permission</string>
 
 </resources>

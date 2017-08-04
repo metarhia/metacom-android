@@ -36,7 +36,7 @@ public class DownloadFileDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.ok),
+                .setPositiveButton(getResources().getString(R.string.download),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 TextInputEditText code = ButterKnife.findById(view, R.id.file_code);
