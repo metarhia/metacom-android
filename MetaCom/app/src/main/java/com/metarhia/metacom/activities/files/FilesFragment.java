@@ -163,6 +163,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     public void onFileDownloadError() {
         Toast.makeText(getContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT)
                 .show();
+        hideBottomNotice();
     }
 
     @Override
@@ -176,6 +177,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     public void onFileUploadError(final String message) {
         Toast.makeText(getContext(), getString(R.string.err_upload_failed), Toast.LENGTH_SHORT)
                 .show();
+        hideBottomNotice();
     }
 
     @Override
