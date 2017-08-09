@@ -62,7 +62,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     }
 
     @Override
-    public void onConnectionEstablished(int connectionID) {
+    public void onConnectionEstablished(final int connectionID) {
         mButtonSubmit.setVisibility(View.VISIBLE);
         mSpinner.setVisibility(View.INVISIBLE);
         mHostEditText.setEnabled(true);
@@ -76,18 +76,12 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionError() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mButtonSubmit.setVisibility(View.VISIBLE);
-                mSpinner.setVisibility(View.INVISIBLE);
-                mHostEditText.setEnabled(true);
-                mPortEditText.setEnabled(true);
-                Toast.makeText(getContext(), getString(R.string.connection_error), Toast
-                        .LENGTH_SHORT).show();
-            }
-        });
-
+        mButtonSubmit.setVisibility(View.VISIBLE);
+        mSpinner.setVisibility(View.INVISIBLE);
+        mHostEditText.setEnabled(true);
+        mPortEditText.setEnabled(true);
+        Toast.makeText(getContext(), getString(R.string.connection_error), Toast
+                .LENGTH_SHORT).show();
     }
 
     @Override

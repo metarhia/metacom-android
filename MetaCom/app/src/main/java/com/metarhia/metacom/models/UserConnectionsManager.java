@@ -57,7 +57,8 @@ public class UserConnectionsManager {
      * @param cb      callback after attempt to create connection (success and error)
      */
     public void addConnection(Context context, String host, int port, final ConnectionCallback cb) {
-        AndroidJSTPConnection connection = new AndroidJSTPConnection(host, port, true, context);
+        final AndroidJSTPConnection connection =
+                new AndroidJSTPConnection(host, port, true, context);
         connection.addListener(new AndroidJSTPConnection.AndroidJSTPConnectionListener() {
             @Override
             public void onConnectionEstablished(final AndroidJSTPConnection connection) {
@@ -75,10 +76,12 @@ public class UserConnectionsManager {
 
             @Override
             public void onConnectionLost() {
+                final AndroidJSTPConnection.AndroidJSTPConnectionListener listener = this;
                 MainExecutor.get().execute(new Runnable() {
                     @Override
                     public void run() {
                         cb.onConnectionError();
+                        connection.removeListener(listener);
                     }
                 });
             }
