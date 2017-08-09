@@ -99,6 +99,7 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
                 new JSTPOkErrorHandler(MainExecutor.get()) {
                     @Override
                     public void onOk(List<?> args) {
+                        chatRoom.removeAllHandlers();
                         mChatRooms.remove(chatRoom);
                         callback.onLeavedRoom();
                     }

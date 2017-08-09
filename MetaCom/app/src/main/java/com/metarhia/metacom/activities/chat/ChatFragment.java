@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -140,7 +139,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
             }
         } else {
             mMessages = new ArrayList<>();
-            String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor() ? R.string
+            String hasInterlocutorMessage = getString(mChatRoom.hasInterlocutor()
+                    ? R.string
                     .has_interlocutor : R.string.no_interlocutor);
             mMessages.add(new Message(INFO, hasInterlocutorMessage, true));
         }
@@ -295,7 +295,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                     break;
                 }
                 case PICK_IMAGE_FROM_CAMERA: {
-                    File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
+                    File f = new File(Environment.getExternalStorageDirectory()
+                            + TMP_METACOM_JPG);
                     fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
                 }
@@ -304,9 +305,6 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 String mimeType = getActivity().getContentResolver().getType(fileUri);
                 mChatRoom.uploadFile(is, mimeType, this);
-                mFileAttach.setEnabled(false);
-                mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R
-                        .drawable.ic_attach_file_grey_24dp, null));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -318,17 +316,11 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         final Message message = new Message(TEXT,
                 getResources().getString(R.string.uploaded_file), false);
         onMessageReceived(message);
-        mFileAttach.setEnabled(true);
-        mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_attach_file_black_24dp, null));
     }
 
     @Override
     public void onFileUploadError(final String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        mFileAttach.setEnabled(true);
-        mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_attach_file_black_24dp, null));
     }
 
     @Override

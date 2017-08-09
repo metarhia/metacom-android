@@ -269,6 +269,9 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         mListeners.add(listener);
     }
 
+    public void removeEventHandler(String interfaceName, String methodName, ManualHandler handler) {
+        mConnection.removeEventHandler(interfaceName, methodName, handler);
+    }
     public void removeListener(AndroidJSTPConnectionListener listener) {
         mListeners.remove(listener);
     }

@@ -20,7 +20,9 @@ import com.metarhia.metacom.utils.MainExecutor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * MetaCom chat room
@@ -72,6 +74,18 @@ public class ChatRoom {
     private boolean mHasInterlocutor;
 
     /**
+     * File upload queue
+     */
+    private Queue<FileUploadData> mFileQueue;
+
+    private ManualHandler mStartHandler;
+    private ManualHandler mChunkHandler;
+    private ExecutableHandler mEndHandler;
+    private ExecutableHandler mChatJoinHandler;
+    private ExecutableHandler mChatLeaveHandler;
+    private ExecutableHandler mMessageHandler;
+
+    /**
      * Creates new chat room by name
      *
      * @param chatRoomName chat name
@@ -80,6 +94,7 @@ public class ChatRoom {
         mChatRoomName = chatRoomName;
         mConnection = connection;
         mCurrentFileBuffer = new ArrayList<>();
+        mFileQueue = new LinkedList<>();
 
         initIncomingMessagesListener();
         initChatJoinListener();
@@ -131,86 +146,102 @@ public class ChatRoom {
      * Adds message event handler to JSTP connection
      */
     private void initIncomingMessagesListener() {
-        mConnection.addEventHandler(Constants.META_COM, "message",
-                new ExecutableHandler(MainExecutor.get()) {
-                    @Override
-                    public void run() {
-                        List messagePayload = (List) (message).get("message");
-                        String messageContent = (String) messagePayload.get(0);
+        mMessageHandler = new ExecutableHandler(MainExecutor.get()) {
+            @Override
+            public void run() {
+                List messagePayload = (List) (message).get("message");
+                String messageContent = (String) messagePayload.get(0);
 
-                        Message message = new Message(MessageType.TEXT, messageContent, true);
-                        if (mMessageListener != null) {
-                            mMessageListener.onMessageReceived(message);
-                        }
-                    }
-                });
+                Message message = new Message(MessageType.TEXT, messageContent, true);
+                if (mMessageListener != null) {
+                    mMessageListener.onMessageReceived(message);
+                }
+            }
+        };
+        mConnection.addEventHandler(Constants.META_COM, "message", mMessageHandler);
     }
 
     private void initChatJoinListener() {
-        mConnection.addEventHandler(Constants.META_COM, "chatJoin",
-                new ExecutableHandler(MainExecutor.get()) {
-                    @Override
-                    public void run() {
-                        mHasInterlocutor = true;
+        mChatJoinHandler = new ExecutableHandler(MainExecutor.get()) {
+            @Override
+            public void run() {
+                mHasInterlocutor = true;
 
-                        String infoText = Constants.EVENT_CHAT_JOIN;
-                        Message message = new Message(MessageType.INFO, infoText, true);
-                        if (mMessageListener != null) {
-                            mMessageListener.onMessageReceived(message);
-                        }
-                    }
-                });
+                String infoText = Constants.EVENT_CHAT_JOIN;
+                Message message = new Message(MessageType.INFO, infoText, true);
+                if (mMessageListener != null) {
+                    mMessageListener.onMessageReceived(message);
+                }
+            }
+        };
+
+        mConnection.addEventHandler(Constants.META_COM, "chatJoin", mChatJoinHandler);
     }
 
     private void initChatLeaveListener() {
-        mConnection.addEventHandler(Constants.META_COM, "chatLeave",
-                new ExecutableHandler(MainExecutor.get()) {
-                    @Override
-                    public void run() {
-                        mHasInterlocutor = false;
+        mChatLeaveHandler = new ExecutableHandler(MainExecutor.get()) {
+            @Override
+            public void run() {
+                mHasInterlocutor = false;
 
-                        String infoText = Constants.EVENT_CHAT_LEAVE;
-                        Message message = new Message(MessageType.INFO, infoText, true);
-                        if (mMessageListener != null) {
-                            mMessageListener.onMessageReceived(message);
-                        }
-                    }
-                });
+                String infoText = Constants.EVENT_CHAT_LEAVE;
+                Message message = new Message(MessageType.INFO, infoText, true);
+                if (mMessageListener != null) {
+                    mMessageListener.onMessageReceived(message);
+                }
+            }
+        };
+        mConnection.addEventHandler(Constants.META_COM, "chatLeave", mChatLeaveHandler);
     }
 
     private void initChatTransferListener() {
-        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferStart",
-                new ManualHandler() {
+        mStartHandler = new ManualHandler() {
+            @Override
+            public void handle(JSObject jsObject) {
+                List messagePayload = (List) (jsObject).get("chatFileTransferStart");
+                String type = (String) messagePayload.get(0);
+                mCurrentExtension = (type == null) ? "txt" :
+                        FileUtils.sMimeTypeMap.getExtensionFromMimeType(type);
 
-                    @Override
-                    public void handle(JSObject jsObject) {
-                        List messagePayload = (List) (jsObject).get("chatFileTransferStart");
-                        String type = (String) messagePayload.get(0);
-                        mCurrentExtension = (type == null) ? "txt" :
-                                FileUtils.sMimeTypeMap.getExtensionFromMimeType(type);
+                mCurrentFileBuffer = new ArrayList<>();
+            }
+        };
 
-                        mCurrentFileBuffer = new ArrayList<>();
-                    }
-                });
+        mChunkHandler = new ManualHandler() {
+            @Override
+            public void handle(JSObject jsObject) {
+                List messagePayload = (List) (jsObject).get("chatFileTransferChunk");
+                String fileChunk = (String) messagePayload.get(0);
+                if (mCurrentFileBuffer != null)
+                    mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.NO_WRAP));
+            }
+        };
 
-        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferChunk",
-                new ManualHandler() {
-                    @Override
-                    public void handle(JSObject jsObject) {
-                        List messagePayload = (List) (jsObject).get("chatFileTransferChunk");
-                        String fileChunk = (String) messagePayload.get(0);
-                        if (mCurrentFileBuffer != null)
-                            mCurrentFileBuffer.add(Base64.decode(fileChunk, Base64.NO_WRAP));
-                    }
-                });
+        mEndHandler = new ExecutableHandler(MainExecutor.get()) {
+            @Override
+            public void run() {
+                saveFile();
+            }
+        };
 
-        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferEnd",
-                new ExecutableHandler(MainExecutor.get()) {
-                    @Override
-                    public void run() {
-                        saveFile();
-                    }
-                });
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferStart", mStartHandler);
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferChunk", mChunkHandler);
+        mConnection.addEventHandler(Constants.META_COM, "chatFileTransferEnd", mEndHandler);
+    }
+
+    void removeAllHandlers() {
+        mConnection.removeEventHandler(Constants.META_COM, "chatFileTransferStart", mStartHandler);
+        mStartHandler = null;
+        mConnection.removeEventHandler(Constants.META_COM, "chatFileTransferChunk", mChunkHandler);
+        mChunkHandler = null;
+        mConnection.removeEventHandler(Constants.META_COM, "chatFileTransferEnd", mEndHandler);
+        mEndHandler = null;
+        mConnection.removeEventHandler(Constants.META_COM, "chatJoin", mChatJoinHandler);
+        mChatJoinHandler = null;
+        mConnection.removeEventHandler(Constants.META_COM, "chatLeave", mChatLeaveHandler);
+        mChatLeaveHandler = null;
+        mConnection.removeEventHandler(Constants.META_COM, "message", mMessageHandler);
+        mMessageHandler = null;
     }
 
     /**
@@ -221,27 +252,45 @@ public class ChatRoom {
      */
     public void uploadFile(final InputStream fileStream, String mimeType,
                            final FileUploadedCallback callback) {
-        startFileUpload(mimeType, new JSTPOkErrorHandler(MainExecutor.get()) {
+        if (!mFileQueue.isEmpty()) {
+            mFileQueue.add(new FileUploadData(fileStream, mimeType, callback));
+            return;
+        }
+
+        mFileQueue.add(new FileUploadData(fileStream, mimeType, callback));
+        uploadNextFromQueue();
+
+    }
+
+    private void uploadNextFromQueue() {
+        if (mFileQueue.isEmpty()) return;
+        final FileUploadData data = mFileQueue.peek();
+        startFileUpload(data.mimeType, new JSTPOkErrorHandler(MainExecutor.get()) {
             @Override
             public void onOk(List<?> args) {
-                FileUtils.uploadSplitFile(fileStream, new FileUtils.FileUploadingInterface() {
-                    @Override
-                    public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
-                        ChatRoom.this.sendChunk(chunk, handler);
-                    }
+                FileUtils.uploadSplitFile(data.fileStream,
+                        new FileUtils.FileUploadingInterface() {
+                            @Override
+                            public void sendChunk(byte[] chunk, JSTPOkErrorHandler handler) {
+                                ChatRoom.this.sendChunk(chunk, handler);
+                            }
 
-                    @Override
-                    public void endFileUpload(FileUploadedCallback callback) {
-                        ChatRoom.this.endFileUpload(callback);
-                    }
-                }, callback);
+                            @Override
+                            public void endFileUpload(FileUploadedCallback callback) {
+                                ChatRoom.this.endFileUpload(callback);
+
+                            }
+                        }, data.callback);
             }
 
             @Override
             public void onError(@Array(0) Integer errorCode) {
-                callback.onFileUploadError(Errors.getErrorByCode(errorCode));
+                data.callback.onFileUploadError(Errors.getErrorByCode(errorCode));
+                mFileQueue.remove();
+                uploadNextFromQueue();
             }
         });
+
     }
 
     /**
@@ -279,11 +328,15 @@ public class ChatRoom {
                     @Override
                     public void onOk(List<?> args) {
                         callback.onFileUploaded(null);
+                        mFileQueue.remove();
+                        uploadNextFromQueue();
                     }
 
                     @Override
                     public void onError(Integer errorCode) {
                         callback.onFileUploadError(Errors.getErrorByCode(errorCode));
+                        mFileQueue.remove();
+                        uploadNextFromQueue();
                     }
                 });
     }
@@ -292,12 +345,11 @@ public class ChatRoom {
      * Saves currently downloaded file to downloads folder
      */
     private void saveFile() {
-        FileUtils.saveFileInDownloads(mCurrentExtension, mCurrentFileBuffer,
+        FileUtils.saveFileInDownloads(String.valueOf(mCurrentExtension),
+                new ArrayList<>(mCurrentFileBuffer),
                 new FileDownloadedListener() {
                     @Override
                     public void onFileDownloaded(String path) {
-                        mCurrentExtension = null;
-
                         if (mFileDownloadedListener != null) {
                             mFileDownloadedListener.onFileDownloaded(path);
                         }
@@ -335,6 +387,7 @@ public class ChatRoom {
     }
 
     void reportConnectionLost() {
+        mFileQueue.clear();
         if (mChatReconnectionListener != null) {
             mChatReconnectionListener.onConnectionLost();
         }
@@ -365,5 +418,17 @@ public class ChatRoom {
      */
     void setHasInterlocutor(boolean hasInterlocutor) {
         this.mHasInterlocutor = hasInterlocutor;
+    }
+
+    private static class FileUploadData {
+        final InputStream fileStream;
+        final String mimeType;
+        final FileUploadedCallback callback;
+
+        FileUploadData(InputStream is, String mimeType, FileUploadedCallback cb) {
+            this.fileStream = is;
+            this.mimeType = mimeType;
+            this.callback = cb;
+        }
     }
 }
