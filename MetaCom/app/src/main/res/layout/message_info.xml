@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/tiny_margin"
+        android:fontFamily="sans-serif-light"
         android:textAlignment="center"
         android:textSize="@dimen/small_text"/>
 

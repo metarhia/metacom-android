@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -68,6 +69,8 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     View mBottomNoticeLayout;
     @BindView(R.id.upload_file)
     ImageView mUploadFile;
+    @BindView(R.id.download_file)
+    ImageView mDownloadFile;
     private Unbinder mUnbinder;
 
     private FilesManager mFilesManager;
@@ -159,6 +162,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     @Override
     public void onFileDownloaded(final String filePath) {
         setBottomNoticeMessage(getString(R.string.complete));
+        mDownloadFile.setEnabled(true);
+        mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_file_download_black_24dp, null));
         mOpenFile = true;
         mFilePath = filePath;
         mBottomNoticeLayout.setOnClickListener(new View.OnClickListener() {
@@ -187,6 +193,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         Toast.makeText(getContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT)
                 .show();
         hideBottomNotice();
+        mDownloadFile.setEnabled(true);
+        mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_file_download_black_24dp, null));
     }
 
     @Override
@@ -200,6 +209,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
             showUploadDialog = true;
             showUploadDialogCode = fileCode;
         }
+        mUploadFile.setEnabled(true);
+        mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_file_upload_black_24dp, null));
     }
 
     @Override
@@ -207,6 +219,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         Toast.makeText(getContext(), getString(R.string.err_upload_failed), Toast.LENGTH_SHORT)
                 .show();
         hideBottomNotice();
+        mUploadFile.setEnabled(true);
+        mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_file_upload_black_24dp, null));
     }
 
     @Override
@@ -219,6 +234,9 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     public void downloadByCode(String code) {
         setBottomNoticeMessage(getString(R.string.downloading_dots));
         mFilesManager.downloadFile(code, this);
+        mDownloadFile.setEnabled(false);
+        mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_file_download_grey_24dp, null));
     }
 
     @Override
@@ -244,12 +262,10 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
             try {
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 mFilesManager.uploadFile(is, this);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setBottomNoticeMessage(getString(R.string.uploading_dots));
-                    }
-                });
+                setBottomNoticeMessage(getString(R.string.uploading_dots));
+                mUploadFile.setEnabled(false);
+                mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R
+                        .drawable.ic_file_upload_grey_24dp, null));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

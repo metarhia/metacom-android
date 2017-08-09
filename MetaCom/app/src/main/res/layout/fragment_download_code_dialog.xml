@@ -23,7 +23,7 @@
         android:hint="@string/download_code"
         android:inputType="text"
         android:textColor="@color/black"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
 

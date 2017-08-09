@@ -13,7 +13,7 @@
         android:imeOptions="actionDone"
         android:inputType="text"
         android:textColor="@color/black"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
     <android.support.v7.widget.AppCompatButton

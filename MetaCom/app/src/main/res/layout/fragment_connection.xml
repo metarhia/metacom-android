@@ -33,7 +33,7 @@
         android:inputType="text"
         android:text="dev.metarhia.com"
         android:textColor="@color/black"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
     <android.support.design.widget.TextInputEditText
@@ -45,7 +45,7 @@
         android:inputType="number"
         android:text="3000"
         android:textColor="@color/black"
-        android:textColorHint="@color/black"
+        android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
     <android.support.v7.widget.AppCompatButton

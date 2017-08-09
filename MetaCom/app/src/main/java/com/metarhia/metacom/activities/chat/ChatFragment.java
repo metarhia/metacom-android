@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -303,6 +304,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 InputStream is = getActivity().getContentResolver().openInputStream(fileUri);
                 String mimeType = getActivity().getContentResolver().getType(fileUri);
                 mChatRoom.uploadFile(is, mimeType, this);
+                mFileAttach.setEnabled(false);
+                mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R
+                        .drawable.ic_attach_file_grey_24dp, null));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -314,11 +318,17 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         final Message message = new Message(TEXT,
                 getResources().getString(R.string.uploaded_file), false);
         onMessageReceived(message);
+        mFileAttach.setEnabled(true);
+        mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_attach_file_black_24dp, null));
     }
 
     @Override
     public void onFileUploadError(final String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        mFileAttach.setEnabled(true);
+        mFileAttach.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
+                .ic_attach_file_black_24dp, null));
     }
 
     @Override
