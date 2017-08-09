@@ -56,7 +56,7 @@
         android:clickable="true"
         android:enabled="true"
         android:fontFamily="sans-serif-light"
-        android:text="@string/submit"
+        android:text="@string/connect"
         android:textSize="@dimen/text_size"/>
 
     <ProgressBar
