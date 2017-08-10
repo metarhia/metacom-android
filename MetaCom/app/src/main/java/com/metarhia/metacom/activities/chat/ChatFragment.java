@@ -364,6 +364,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     public void onResume() {
         super.onResume();
         isUIVisible = true;
+        updateMessagesView();
     }
 
     @Override
