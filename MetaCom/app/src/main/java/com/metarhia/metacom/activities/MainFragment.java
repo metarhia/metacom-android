@@ -57,6 +57,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     private int mConnectionID;
     private boolean mExitDialog;
     private boolean mPermissionsDialog;
+    private boolean isUIVisible = true;
 
     public static MainFragment newInstance(int connectionID, String hostName, int port) {
         Bundle args = new Bundle();
@@ -134,8 +135,10 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
-                Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.toolbar_back)
@@ -216,5 +219,17 @@ public class MainFragment extends Fragment implements BackPressedHandler {
         super.onSaveInstanceState(outState);
         outState.putBoolean(KEY_EXIT_DIALOG, mExitDialog);
         outState.putBoolean(KEY_PERMISSIONS_DIALOG, mPermissionsDialog);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUIVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUIVisible = true;
     }
 }

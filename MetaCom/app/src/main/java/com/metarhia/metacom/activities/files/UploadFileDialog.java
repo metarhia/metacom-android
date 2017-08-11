@@ -32,6 +32,8 @@ public class UploadFileDialog extends DialogFragment {
     TextView mUploadResultString;
     private Unbinder mUnbinder;
 
+    private boolean isUIVisible = true;
+
     public static UploadFileDialog newInstance(String fileCode) {
         Bundle args = new Bundle();
         args.putString(KEY_UPLOAD_FILE_CODE, fileCode);
@@ -55,8 +57,10 @@ public class UploadFileDialog extends DialogFragment {
             @Override
             public boolean onLongClick(View view) {
                 copyToClipboard(getActivity(), code);
-                Toast.makeText(getContext(), getString(R.string.copied_code), Toast.LENGTH_SHORT)
-                        .show();
+                if (isUIVisible) {
+                    Toast.makeText(getContext(), getString(R.string.copied_code), Toast
+                            .LENGTH_SHORT).show();
+                }
                 return true;
             }
         });
@@ -76,8 +80,10 @@ public class UploadFileDialog extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dismiss();
                         copyToClipboard(getActivity(), code);
-                        Toast.makeText(getContext(), getString(R.string.copied_code),
-                                Toast.LENGTH_SHORT).show();
+                        if (isUIVisible) {
+                            Toast.makeText(getContext(), getString(R.string.copied_code), Toast
+                                    .LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -88,5 +94,17 @@ public class UploadFileDialog extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUIVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUIVisible = true;
     }
 }

@@ -39,6 +39,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     private String mHost;
     private Integer mPort;
+    private boolean isUIVisible = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,13 +81,27 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         mSpinner.setVisibility(View.INVISIBLE);
         mHostEditText.setEnabled(true);
         mPortEditText.setEnabled(true);
-        Toast.makeText(getContext(), getString(R.string.connection_error), Toast
-                .LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.connection_error), Toast
+                    .LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUIVisible = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUIVisible = true;
     }
 }

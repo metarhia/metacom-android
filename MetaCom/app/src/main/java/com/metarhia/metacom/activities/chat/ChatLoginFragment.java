@@ -40,6 +40,7 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
 
     private ChatRoomsManager mManager;
     private int mID;
+    private boolean isUIVisible = true;
 
     public static ChatLoginFragment newInstance(int connectionID) {
         Bundle args = new Bundle();
@@ -92,12 +93,26 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
         mButtonSubmit.setVisibility(View.VISIBLE);
         mSpinner.setVisibility(View.INVISIBLE);
         mChatNameEditText.setEnabled(true);
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isUIVisible = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isUIVisible = false;
     }
 }

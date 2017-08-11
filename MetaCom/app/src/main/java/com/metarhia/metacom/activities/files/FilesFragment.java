@@ -155,8 +155,10 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
-                Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -190,8 +192,10 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileDownloadError() {
-        Toast.makeText(getContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT)
-                .show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.download_failed), Toast.LENGTH_SHORT)
+                    .show();
+        }
         hideBottomNotice();
         mDownloadFile.setEnabled(true);
         mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
@@ -216,8 +220,10 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
 
     @Override
     public void onFileUploadError(final String message) {
-        Toast.makeText(getContext(), getString(R.string.err_upload_failed), Toast.LENGTH_SHORT)
-                .show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.err_upload_failed), Toast
+                    .LENGTH_SHORT).show();
+        }
         hideBottomNotice();
         mUploadFile.setEnabled(true);
         mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable

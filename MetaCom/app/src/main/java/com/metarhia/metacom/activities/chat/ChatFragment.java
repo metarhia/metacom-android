@@ -209,7 +209,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void displayError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.toolbar_back)
@@ -234,8 +236,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void showForbidDialog() {
-        Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
-                Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.permissions_are_not_granted),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.send)
@@ -335,7 +339,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileUploadError(final String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -345,7 +351,9 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onLeaveError(final String errorMessage) {
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -356,8 +364,10 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onFileDownloadError() {
-        Toast.makeText(getContext(), R.string.err_download_failed,
-                Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), R.string.err_download_failed,
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openFile(String filePath) {
@@ -408,19 +418,25 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
 
     @Override
     public void onConnectionLost() {
-        Toast.makeText(getContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT)
-                .show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
     @Override
     public void onRejoinSuccess(boolean hasInterlocutor) {
-        Toast.makeText(getContext(), getString(R.string.connection_established), Toast
-                .LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), getString(R.string.connection_established), Toast
+                    .LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onRejoinError(String errorMessage) {
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        if (isUIVisible) {
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
