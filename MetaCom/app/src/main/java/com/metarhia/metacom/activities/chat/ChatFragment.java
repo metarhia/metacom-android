@@ -148,6 +148,21 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         mMessagesAdapter = new MessagesAdapter(mMessages);
         mMessagesView.setAdapter(mMessagesAdapter);
 
+        // still doesn't scroll properly for few last messages in recycleview
+        mMessagesView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int left, int top, int right, final int bottom,
+                                       int oldLeft, int oldTop, int oldRight, final int oldBottom) {
+                if (bottom < oldBottom) {
+                    mMessagesView.smoothScrollBy(0, oldBottom - bottom);
+                } else {
+                    int direction = oldBottom - bottom;
+                    if (mMessagesView.canScrollVertically(-direction)) {
+                        mMessagesView.smoothScrollBy(0, direction);
+                    }
+                }
+            }
+        });
 
         return v;
     }
