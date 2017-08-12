@@ -179,6 +179,7 @@ public class ChatRoom {
     }
 
     private void initChatLeaveListener() {
+        mFileQueue.clear();
         mChatLeaveHandler = new ExecutableHandler(MainExecutor.get()) {
             @Override
             public void run() {
@@ -230,6 +231,8 @@ public class ChatRoom {
     }
 
     void removeAllHandlers() {
+        mFileQueue.clear();
+
         mConnection.removeEventHandler(Constants.META_COM, "chatFileTransferStart", mStartHandler);
         mStartHandler = null;
         mConnection.removeEventHandler(Constants.META_COM, "chatFileTransferChunk", mChunkHandler);

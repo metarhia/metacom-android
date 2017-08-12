@@ -1,6 +1,7 @@
 package com.metarhia.metacom.activities.connection;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -58,7 +59,8 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
             mPortEditText.setEnabled(false);
-            UserConnectionsManager.get().addConnection(getActivity(), mHost, mPort, this);
+            Context context = getActivity().getApplicationContext();
+            UserConnectionsManager.get().addConnection(context, mHost, mPort, this);
         }
     }
 
