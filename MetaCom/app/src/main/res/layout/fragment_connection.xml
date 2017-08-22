@@ -15,7 +15,7 @@
             android:id="@+id/icon_image"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:src="@drawable/icon_app" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:layout_width="match_parent"
