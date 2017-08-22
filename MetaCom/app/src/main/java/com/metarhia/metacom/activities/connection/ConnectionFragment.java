@@ -3,6 +3,7 @@ package com.metarhia.metacom.activities.connection;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -64,10 +65,17 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         }
     }
 
+    @OnClick(R.id.installation_guide)
+    public void showInstallationGuide() {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(getString(R.string.installation_guide_link)));
+        startActivity(Intent.createChooser(i, getString(R.string.installation_chooser)));
+    }
+
     @Override
     public void onConnectionEstablished(final int connectionID) {
         mButtonSubmit.setVisibility(View.VISIBLE);
-        mSpinner.setVisibility(View.INVISIBLE);
+        mSpinner.setVisibility(View.GONE);
         mHostEditText.setEnabled(true);
         mPortEditText.setEnabled(true);
         Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -80,7 +88,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @Override
     public void onConnectionError() {
         mButtonSubmit.setVisibility(View.VISIBLE);
-        mSpinner.setVisibility(View.INVISIBLE);
+        mSpinner.setVisibility(View.GONE);
         mHostEditText.setEnabled(true);
         mPortEditText.setEnabled(true);
         if (isUIVisible) {

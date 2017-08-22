@@ -7,6 +7,10 @@
     <string name="connect">Connect</string>
     <string name="connection_error">Could\'nt connect to server</string>
 
+    <string name="installation_chooser">Open via</string>
+    <string name="installation_guide">Server Installation Guide</string>
+    <string name="installation_guide_link">https://github.com/metarhia/server/blob/master/README.md</string>
+
     <!-- Main screen -->
     <string name="title_pattern">%1$s:%2$s</string>
     <string name="files">Files</string>
