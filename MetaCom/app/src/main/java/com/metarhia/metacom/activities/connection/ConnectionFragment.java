@@ -17,7 +17,10 @@ import android.widget.Toast;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.activities.MainActivity;
 import com.metarhia.metacom.interfaces.ConnectionCallback;
+import com.metarhia.metacom.models.ConnectionInfoProvider;
 import com.metarhia.metacom.models.UserConnectionsManager;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,13 +44,17 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     private String mHost;
     private Integer mPort;
-    private boolean isUIVisible = true;
+    private boolean mIsUIVisible = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_connection, container, false);
         mUnbinder = ButterKnife.bind(this, v);
+
+        // TODO use this for fields hints
+        Map<String, Integer> infoList = ConnectionInfoProvider.restoreConnectionInfo(getActivity());
+
         return v;
     }
 
@@ -56,6 +63,9 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         mHost = mHostEditText.getText().toString();
         mPort = Integer.valueOf(mPortEditText.getText().toString());
         if (!mHost.isEmpty()) {
+
+            ConnectionInfoProvider.saveConnectionInfo(getActivity(), mHost, mPort);
+
             mButtonSubmit.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
@@ -74,10 +84,12 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionEstablished(final int connectionID) {
-        mButtonSubmit.setVisibility(View.VISIBLE);
-        mSpinner.setVisibility(View.GONE);
-        mHostEditText.setEnabled(true);
-        mPortEditText.setEnabled(true);
+        if (mIsUIVisible) {
+            mButtonSubmit.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.GONE);
+            mHostEditText.setEnabled(true);
+            mPortEditText.setEnabled(true);
+        }
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
         intent.putExtra(MainActivity.EXTRA_HOST_NAME, mHost);
@@ -87,11 +99,11 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @Override
     public void onConnectionError() {
-        mButtonSubmit.setVisibility(View.VISIBLE);
-        mSpinner.setVisibility(View.GONE);
-        mHostEditText.setEnabled(true);
-        mPortEditText.setEnabled(true);
-        if (isUIVisible) {
+        if (mIsUIVisible) {
+            mButtonSubmit.setVisibility(View.VISIBLE);
+            mSpinner.setVisibility(View.GONE);
+            mHostEditText.setEnabled(true);
+            mPortEditText.setEnabled(true);
             Toast.makeText(getContext(), getString(R.string.connection_error), Toast
                     .LENGTH_SHORT).show();
         }
@@ -106,12 +118,12 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @Override
     public void onPause() {
         super.onPause();
-        isUIVisible = false;
+        mIsUIVisible = false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        isUIVisible = true;
+        mIsUIVisible = true;
     }
 }

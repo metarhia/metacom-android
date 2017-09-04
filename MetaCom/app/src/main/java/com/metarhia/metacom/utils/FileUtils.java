@@ -11,12 +11,17 @@ import com.metarhia.metacom.interfaces.FileDownloadedListener;
 import com.metarhia.metacom.interfaces.FileUploadedCallback;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utils for files manipulations
@@ -185,6 +190,48 @@ public class FileUtils {
                 }
             }
         });
+    }
+
+    public static void saveConnectionInfo(File file, String host, int port) {
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+                Map<String, Integer> infoList = new HashMap<>();
+                infoList.put(host, port);
+
+                writeConnectionListToFile(infoList, file);
+            } else {
+                Map<String, Integer> infoList = readConnectionListFromFile(file);
+
+                if (infoList != null) {
+                    infoList.put(host, port);
+                }
+
+                writeConnectionListToFile(infoList, file);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Map<String, Integer> readConnectionListFromFile(File file) throws IOException,
+            ClassNotFoundException {
+        ObjectInputStream is = new ObjectInputStream(new FileInputStream(file));
+        Map<String, Integer> infoList = (Map<String, Integer>) is.readObject();
+        is.close();
+
+        return infoList;
+    }
+
+    private static void writeConnectionListToFile(Map<String, Integer> infoList, File file) throws
+            IOException {
+        ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file));
+
+        os.writeObject(infoList);
+        os.flush();
+        os.close();
     }
 
     /**
