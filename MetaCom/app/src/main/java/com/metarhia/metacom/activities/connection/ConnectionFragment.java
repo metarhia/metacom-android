@@ -11,6 +11,9 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -33,7 +36,7 @@ import butterknife.Unbinder;
 public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
     @BindView(R.id.host)
-    TextInputEditText mHostEditText;
+    AutoCompleteTextView mHostEditText;
     @BindView(R.id.port)
     TextInputEditText mPortEditText;
     @BindView(R.id.submit)
@@ -52,8 +55,19 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         View v = inflater.inflate(R.layout.fragment_connection, container, false);
         mUnbinder = ButterKnife.bind(this, v);
 
-        // TODO use this for fields hints
-        Map<String, Integer> infoList = ConnectionInfoProvider.restoreConnectionInfo(getActivity());
+        final Map<String, Integer> infoList = ConnectionInfoProvider.restoreConnectionInfo
+                (getActivity());
+        String[] hosts = infoList.keySet().toArray(new String[infoList.size()]);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout
+                .support_simple_spinner_dropdown_item, hosts);
+        mHostEditText.setAdapter(adapter);
+        mHostEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String host = adapter.getItem(i);
+                mPortEditText.setText(infoList.get(host) + "");
+            }
+        });
 
         return v;
     }
@@ -61,11 +75,9 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @OnClick(R.id.submit)
     public void setButtonSubmitClick() {
         mHost = mHostEditText.getText().toString();
-        mPort = Integer.valueOf(mPortEditText.getText().toString());
-        if (!mHost.isEmpty()) {
-
+        if (!mPortEditText.getText().toString().isEmpty() && !mHost.isEmpty()) {
+            mPort = Integer.valueOf(mPortEditText.getText().toString());
             ConnectionInfoProvider.saveConnectionInfo(getActivity(), mHost, mPort);
-
             mButtonSubmit.setVisibility(View.GONE);
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
