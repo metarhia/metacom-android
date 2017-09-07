@@ -1,73 +1,78 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/colorFirst">
 
     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        tools:context=".activities.connection.ConnectionFragment">
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:orientation="vertical"
+                  tools:context=".activities.connection.ConnectionFragment">
 
         <ImageView
             android:id="@+id/icon_image"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/logo"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small_margin"
-            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="@dimen/big_margin"
+            android:fontFamily="sans-serif"
             android:text="@string/app_name"
             android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size" />
+            android:textColor="@color/colorSecond"
+            android:textSize="20sp"/>
 
         <AutoCompleteTextView
             android:id="@+id/host"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/big_margin"
             android:completionThreshold="1"
             android:fontFamily="sans-serif-light"
             android:hint="@string/connection_host"
             android:imeOptions="actionNext"
             android:inputType="text"
-            android:textColor="@color/black"
-            android:textColorHint="@color/greyDark"
-            android:textSize="@dimen/text_size" />
+            android:textColor="@color/colorSecond"
+            android:textColorHint="@color/greyLight"
+            android:textSize="@dimen/text_size"/>
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/port"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/big_margin"
             android:fontFamily="sans-serif-light"
             android:hint="@string/connection_port"
             android:inputType="number"
-            android:textColor="@color/black"
-            android:textColorHint="@color/greyDark"
-            android:textSize="@dimen/text_size" />
+            android:textColor="@color/colorSecond"
+            android:textColorHint="@color/greyLight"
+            android:textSize="@dimen/text_size"/>
 
-        <android.support.v7.widget.AppCompatButton
+        <TextView
             android:id="@+id/submit"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/big_margin"
             android:clickable="true"
             android:enabled="true"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif"
             android:text="@string/connect"
-            android:textSize="@dimen/text_size" />
+            android:textColor="@color/greyDark"
+            android:textSize="@dimen/text_size"/>
 
         <ProgressBar
             android:id="@+id/spinner"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:indeterminateTint="@color/black"
+            android:layout_margin="@dimen/small_margin"
+            android:indeterminateTint="@color/greyDark"
             android:indeterminateTintMode="src_atop"
-            android:visibility="gone" />
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <TextView
@@ -75,10 +80,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginTop="@dimen/small_margin"
         android:layout_marginBottom="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:text="@string/installation_guide"
-        android:textColor="@color/lightBlue600" />
+        android:textColor="@color/colorAccent"/>
 </FrameLayout>

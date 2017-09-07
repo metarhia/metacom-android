@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
@@ -40,7 +41,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     @BindView(R.id.port)
     TextInputEditText mPortEditText;
     @BindView(R.id.submit)
-    AppCompatButton mButtonSubmit;
+    TextView mButtonSubmit;
     @BindView(R.id.spinner)
     ProgressBar mSpinner;
     private Unbinder mUnbinder;
@@ -57,17 +58,19 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
 
         final Map<String, Integer> infoList = ConnectionInfoProvider.restoreConnectionInfo
                 (getActivity());
-        String[] hosts = infoList.keySet().toArray(new String[infoList.size()]);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout
-                .support_simple_spinner_dropdown_item, hosts);
-        mHostEditText.setAdapter(adapter);
-        mHostEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String host = adapter.getItem(i);
-                mPortEditText.setText(infoList.get(host) + "");
-            }
-        });
+        if (infoList != null) {
+            String[] hosts = infoList.keySet().toArray(new String[infoList.size()]);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout
+                    .support_simple_spinner_dropdown_item, hosts);
+            mHostEditText.setAdapter(adapter);
+            mHostEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    String host = adapter.getItem(i);
+                    mPortEditText.setText(infoList.get(host) + "");
+                }
+            });
+        }
 
         return v;
     }
@@ -78,7 +81,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
         if (!mPortEditText.getText().toString().isEmpty() && !mHost.isEmpty()) {
             mPort = Integer.valueOf(mPortEditText.getText().toString());
             ConnectionInfoProvider.saveConnectionInfo(getActivity(), mHost, mPort);
-            mButtonSubmit.setVisibility(View.GONE);
+            mButtonSubmit.setVisibility(View.INVISIBLE);
             mSpinner.setVisibility(View.VISIBLE);
             mHostEditText.setEnabled(false);
             mPortEditText.setEnabled(false);
@@ -98,7 +101,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     public void onConnectionEstablished(final int connectionID) {
         if (mIsUIVisible) {
             mButtonSubmit.setVisibility(View.VISIBLE);
-            mSpinner.setVisibility(View.GONE);
+            mSpinner.setVisibility(View.INVISIBLE);
             mHostEditText.setEnabled(true);
             mPortEditText.setEnabled(true);
         }
@@ -113,7 +116,7 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
     public void onConnectionError() {
         if (mIsUIVisible) {
             mButtonSubmit.setVisibility(View.VISIBLE);
-            mSpinner.setVisibility(View.GONE);
+            mSpinner.setVisibility(View.INVISIBLE);
             mHostEditText.setEnabled(true);
             mPortEditText.setEnabled(true);
             Toast.makeText(getContext(), getString(R.string.connection_error), Toast

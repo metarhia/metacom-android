@@ -166,7 +166,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         setBottomNoticeMessage(getString(R.string.complete));
         mDownloadFile.setEnabled(true);
         mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_file_download_black_24dp, null));
+                .ic_file_download_24dp, null));
         mOpenFile = true;
         mFilePath = filePath;
         mBottomNoticeLayout.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +199,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         hideBottomNotice();
         mDownloadFile.setEnabled(true);
         mDownloadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_file_download_black_24dp, null));
+                .ic_file_download_24dp, null));
     }
 
     @Override
@@ -215,7 +215,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         }
         mUploadFile.setEnabled(true);
         mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_file_upload_black_24dp, null));
+                .ic_file_upload_24dp, null));
     }
 
     @Override
@@ -227,7 +227,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         hideBottomNotice();
         mUploadFile.setEnabled(true);
         mUploadFile.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable
-                .ic_file_upload_black_24dp, null));
+                .ic_file_upload_24dp, null));
     }
 
     @Override

@@ -2,7 +2,9 @@
 <resources>
     <!--<color name="colorPrimary">#3F51B5</color>-->
     <!--<color name="colorPrimaryDark">@color/grey</color>-->
-    <color name="colorAccent">@color/lightBlue600</color>
+    <color name="colorAccent">@color/orange</color>
+    <color name="colorFirst">@color/black</color>
+    <color name="colorSecond">@color/white</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
@@ -10,4 +12,7 @@
     <color name="greyDark">#888888</color>
     <color name="red">#FF0000</color>
     <color name="lightBlue600">#039BE5</color>
+    <color name="orange">#ff8533</color>
+    <color name="dullOrange">#ffb380</color>
+    <color name="grey">#4d4d4d</color>
 </resources>

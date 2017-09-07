@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metarhia.metacom.R;
@@ -33,7 +34,7 @@ public class ChatLoginFragment extends Fragment implements JoinRoomCallback {
     @BindView(R.id.chat_name)
     TextInputEditText mChatNameEditText;
     @BindView(R.id.submit)
-    AppCompatButton mButtonSubmit;
+    TextView mButtonSubmit;
     @BindView(R.id.spinner)
     ProgressBar mSpinner;
     private Unbinder mUnbinder;

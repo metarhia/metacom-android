@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/tiny_margin"
         android:layout_marginRight="@dimen/tiny_margin"
-        android:src="@drawable/ic_error_black_24dp"
+        android:src="@drawable/ic_error_24dp"
         android:visibility="gone"/>
 
     <RelativeLayout

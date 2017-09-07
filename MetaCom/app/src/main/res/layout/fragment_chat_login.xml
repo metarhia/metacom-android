@@ -12,26 +12,27 @@
         android:hint="@string/input_chat_name"
         android:imeOptions="actionDone"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
-    <android.support.v7.widget.AppCompatButton
+    <TextView
         android:id="@+id/submit"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
         android:clickable="true"
         android:enabled="true"
         android:fontFamily="sans-serif-light"
         android:text="@string/join"
+        android:textColor="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
     <ProgressBar
         android:id="@+id/spinner"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:indeterminateTint="@color/black"
+        android:indeterminateTint="@color/greyDark"
         android:indeterminateTintMode="src_atop"
         android:visibility="invisible"/>
 

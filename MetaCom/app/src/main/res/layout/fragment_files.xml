@@ -17,14 +17,14 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="@dimen/small_margin"
-            android:src="@drawable/ic_file_upload_black_24dp"/>
+            android:src="@drawable/ic_file_upload_24dp"/>
 
         <ImageView
             android:id="@+id/download_file"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="@dimen/small_margin"
-            android:src="@drawable/ic_file_download_black_24dp"/>
+            android:src="@drawable/ic_file_download_24dp"/>
     </LinearLayout>
 
     <include
