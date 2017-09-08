@@ -6,7 +6,7 @@
     android:layout_height="?actionBarSize"
     android:layout_alignParentBottom="true"
     android:padding="@dimen/small_margin"
-    app:cardBackgroundColor="@color/colorFirst">
+    app:cardBackgroundColor="@color/grey900">
 
     <TextView
         android:id="@+id/bottom_notice_text"

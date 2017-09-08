@@ -3,7 +3,7 @@
     <!--<color name="colorPrimary">#3F51B5</color>-->
     <!--<color name="colorPrimaryDark">@color/grey</color>-->
     <color name="colorAccent">@color/orange</color>
-    <color name="colorFirst">@color/black</color>
+    <color name="colorFirst">@color/grey850</color>
     <color name="colorSecond">@color/white</color>
 
     <color name="black">#000000</color>
@@ -15,4 +15,8 @@
     <color name="orange">#ff8533</color>
     <color name="dullOrange">#ffb380</color>
     <color name="grey">#4d4d4d</color>
+
+    <color name="grey900">#212121</color>
+    <color name="grey850">#303030</color>
+    <color name="grey800">#424242</color>
 </resources>

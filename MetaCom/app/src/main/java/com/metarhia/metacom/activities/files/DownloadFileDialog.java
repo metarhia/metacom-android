@@ -3,6 +3,7 @@ package com.metarhia.metacom.activities.files;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
@@ -53,7 +54,10 @@ public class DownloadFileDialog extends DialogFragment {
                         }
                 );
 
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R
+                .color.grey800)));
+        return dialog;
     }
 
     public void setDownloadFileByCodeListener(DownloadFileByCodeListener listener) {

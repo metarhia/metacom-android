@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -395,7 +396,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     @Override
     public void handleBackPress() {
         mExitDialog = true;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style
+                .AlertDialogStyle);
         builder.setTitle(R.string.leave_chat)
                 .setMessage(R.string.leave_chat_desc)
                 .setCancelable(false)
@@ -414,6 +416,8 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 });
         AlertDialog alert = builder.create();
         alert.show();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color
+                .grey800)));
     }
 
     @Override

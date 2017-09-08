@@ -3,6 +3,7 @@ package com.metarhia.metacom.activities;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -192,7 +193,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
     @Override
     public void handleBackPress() {
         mExitDialog = true;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style
+                .AlertDialogStyle);
         builder.setTitle(R.string.leave_server)
                 .setMessage(R.string.leave_server_desc)
                 .setCancelable(false)
@@ -212,6 +214,8 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color
+                .grey800)));
     }
 
     @Override

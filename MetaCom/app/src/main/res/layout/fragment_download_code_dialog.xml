@@ -2,6 +2,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:background="@color/grey800"
               android:orientation="vertical"
               tools:context=".activities.files.DownloadFileDialog">
 
@@ -11,7 +12,7 @@
         android:layout_margin="@dimen/small_margin"
         android:fontFamily="sans-serif-light"
         android:text="@string/enter_download_code"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/text_size"/>
 
     <android.support.design.widget.TextInputEditText
@@ -22,7 +23,7 @@
         android:fontFamily="sans-serif-light"
         android:hint="@string/download_code"
         android:inputType="text"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textColorHint="@color/greyDark"
         android:textSize="@dimen/text_size"/>
 
