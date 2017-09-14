@@ -185,6 +185,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         Uri uri = FileProvider.getUriForFile(getActivity(),
                 BuildConfig.APPLICATION_ID + ".provider",
                 new File(filePath));
+
         String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
                 (fileExtension);

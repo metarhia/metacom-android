@@ -373,15 +373,16 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void openFile(String filePath) {
-        Uri selectedUri = FileProvider.getUriForFile(getActivity(),
+        Uri uri = FileProvider.getUriForFile(getActivity(),
                 BuildConfig.APPLICATION_ID + ".provider",
                 new File(filePath));
 
-        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+        String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
+                (fileExtension);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(selectedUri, mimeType);
+        intent.setDataAndType(uri, mimeType);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
     }
