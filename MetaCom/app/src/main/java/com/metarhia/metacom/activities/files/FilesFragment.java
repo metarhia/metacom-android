@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.metarhia.metacom.BuildConfig;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.DownloadFileByCodeListener;
 import com.metarhia.metacom.interfaces.FileDownloadedListener;
@@ -56,7 +57,7 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     private static final String KEY_OPEN_FILE = "keyOpenFile";
     private static final String KEY_FILE_URI = "keyFileUri";
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
-    private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
+    private static final String AUTHORITY_STRING = BuildConfig.APPLICATION_ID + ".provider";
 
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
     private static final int PICK_IMAGE_FROM_CAMERA = 1;
@@ -181,12 +182,16 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
     }
 
     private void openFile(String filePath) {
-        Uri uri = Uri.parse("file:///" + filePath);
+        Uri uri = FileProvider.getUriForFile(getActivity(),
+                BuildConfig.APPLICATION_ID + ".provider",
+                new File(filePath));
         String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension
                 (fileExtension);
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, mimeType);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
     }
 

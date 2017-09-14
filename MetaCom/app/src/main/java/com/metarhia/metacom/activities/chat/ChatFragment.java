@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.metarhia.metacom.BuildConfig;
 import com.metarhia.metacom.R;
 import com.metarhia.metacom.interfaces.BackPressedHandler;
 import com.metarhia.metacom.interfaces.ChatReconnectionListener;
@@ -72,7 +73,7 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     private static final String KEY_EXIT_DIALOG = "keyExitDialog";
 
     private static final String TMP_METACOM_JPG = "/tmp-metacom.jpg";
-    private static final String AUTHORITY_STRING = "com.metarhia.metacom.fileprovider";
+    private static final String AUTHORITY_STRING = BuildConfig.APPLICATION_ID + ".provider";
     private static final int PICK_IMAGE_FROM_EXPLORER = 0;
     private static final int PICK_IMAGE_FROM_CAMERA = 1;
     private static final int TAKE_PHOTO = 2;
@@ -372,11 +373,16 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
     }
 
     private void openFile(String filePath) {
-        Uri selectedUri = Uri.parse("file:///" + filePath);
+        Uri selectedUri = FileProvider.getUriForFile(getActivity(),
+                BuildConfig.APPLICATION_ID + ".provider",
+                new File(filePath));
+
         String fileExtension = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(selectedUri, mimeType);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(intent, getString(R.string.open_file)));
     }
 
