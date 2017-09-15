@@ -23,6 +23,7 @@ import com.metarhia.metacom.activities.chat.ChatLoginFragment;
 import com.metarhia.metacom.activities.files.FilesFragment;
 import com.metarhia.metacom.interfaces.BackPressedHandler;
 import com.metarhia.metacom.models.UserConnectionsManager;
+import com.metarhia.metacom.utils.KeyboardUtils;
 import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.util.ArrayList;
@@ -182,6 +183,23 @@ public class MainFragment extends Fragment implements BackPressedHandler {
         mFragmentTitles.add(getResources().getString(R.string.chat));
 
         mTabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                KeyboardUtils.hideKeyboard(getActivity());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
