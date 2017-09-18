@@ -2,7 +2,7 @@
 <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
-                                            android:background="@color/grey900"
+                                            android:background="@color/black14"
                                             android:orientation="vertical">
 
     <LinearLayout

@@ -1,6 +1,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="rectangle">
-    <solid android:color="@color/greyLight"/>
+    <solid android:color="@color/greyDark"/>
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="@dimen/message_angle"
@@ -8,5 +8,5 @@
         android:topRightRadius="@dimen/message_angle"/>
     <stroke
         android:width="1px"
-        android:color="@color/greyLight"/>
+        android:color="@color/greyDark"/>
 </shape>

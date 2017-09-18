@@ -56,7 +56,7 @@ public class DownloadFileDialog extends DialogFragment {
 
         Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R
-                .color.grey800)));
+                .color.black14)));
         return dialog;
     }
 

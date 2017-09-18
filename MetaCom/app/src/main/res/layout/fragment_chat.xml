@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_alignParentBottom="true"
-        android:background="@color/grey900"
+        android:background="@color/black14"
         android:elevation="@dimen/small_margin">
 
         <ImageView
@@ -56,7 +56,7 @@
             android:imeOptions="actionDone"
             android:inputType="textCapSentences"
             android:textColor="@color/colorSecond"
-            android:textColorHint="@color/greyDark"
+            android:textColorHint="@color/grey"
             android:textSize="@dimen/text_size"/>
 
     </RelativeLayout>

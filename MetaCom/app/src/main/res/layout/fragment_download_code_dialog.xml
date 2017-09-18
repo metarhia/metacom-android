@@ -2,7 +2,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@color/grey800"
+              android:background="@color/black14"
               android:orientation="vertical"
               tools:context=".activities.files.DownloadFileDialog">
 
@@ -24,7 +24,7 @@
         android:hint="@string/download_code"
         android:inputType="text"
         android:textColor="@color/white"
-        android:textColorHint="@color/greyDark"
+        android:textColorHint="@color/grey"
         android:textSize="@dimen/text_size"/>
 
 

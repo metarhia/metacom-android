@@ -11,7 +11,7 @@
         android:layout_margin="@dimen/tiny_margin"
         android:fontFamily="sans-serif-light"
         android:textAlignment="center"
-        android:textColor="@color/greyDark"
-        android:textSize="@dimen/small_text"/>
+        android:textColor="@color/grey"
+        android:textSize="@dimen/text_size"/>
 
 </LinearLayout>

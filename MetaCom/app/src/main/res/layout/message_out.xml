@@ -40,7 +40,7 @@
             android:fontFamily="sans-serif-light"
             android:linksClickable="true"
             android:text=""
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorLink="@color/black"
             android:textSize="@dimen/text_size"/>
 

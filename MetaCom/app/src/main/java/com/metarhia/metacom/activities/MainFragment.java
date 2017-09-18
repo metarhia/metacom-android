@@ -233,7 +233,7 @@ public class MainFragment extends Fragment implements BackPressedHandler {
         AlertDialog alert = builder.create();
         alert.show();
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color
-                .grey800)));
+                .black14)));
     }
 
     @Override

@@ -13,7 +13,7 @@
         android:imeOptions="actionDone"
         android:inputType="text"
         android:textColor="@color/white"
-        android:textColorHint="@color/greyDark"
+        android:textColorHint="@color/grey"
         android:textSize="@dimen/text_size"/>
 
     <TextView
@@ -25,14 +25,14 @@
         android:enabled="true"
         android:fontFamily="sans-serif-light"
         android:text="@string/join"
-        android:textColor="@color/greyDark"
+        android:textColor="@color/grey"
         android:textSize="@dimen/text_size"/>
 
     <ProgressBar
         android:id="@+id/spinner"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:indeterminateTint="@color/greyDark"
+        android:indeterminateTint="@color/grey"
         android:indeterminateTintMode="src_atop"
         android:visibility="invisible"/>
 
