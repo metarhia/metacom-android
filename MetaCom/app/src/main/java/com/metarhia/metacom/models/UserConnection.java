@@ -24,6 +24,7 @@ public class UserConnection {
      * Files manager
      */
     private final FilesManager mFilesManager;
+    private AndroidJSTPConnection mConnection;
 
     /**
      * Creates new user connection
@@ -33,6 +34,7 @@ public class UserConnection {
 
         mChatRoomsManager = new ChatRoomsManager(connection);
         mFilesManager = new FilesManager(connection);
+        mConnection = connection;
     }
 
     /**
@@ -62,4 +64,7 @@ public class UserConnection {
         return mFilesManager;
     }
 
+    public void closeConnection() {
+        mConnection.close();
+    }
 }

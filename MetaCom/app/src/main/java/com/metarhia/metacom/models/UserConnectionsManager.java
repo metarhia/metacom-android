@@ -110,5 +110,6 @@ public class UserConnectionsManager {
      */
     public void removeConnection(UserConnection connection) {
         mUserConnections.remove(connection);
+        connection.closeConnection();
     }
 }

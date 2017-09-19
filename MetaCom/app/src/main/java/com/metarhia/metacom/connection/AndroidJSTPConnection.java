@@ -53,12 +53,14 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
     private int mConnectionState;
 
     private final List<AndroidJSTPConnectionListener> mListeners;
+    private boolean mNeedsRestoration;
 
     public AndroidJSTPConnection(String host, int port, boolean usesSSL, Context context) {
         mListeners = new CopyOnWriteArrayList<>();
         mTaggedCacheCalls = new ConcurrentHashMap<>();
         mConnectionState = STATE_NOT_CONNECTED;
 
+        mNeedsRestoration = true;
         mContext = context;
 
         TCPTransport transport = new TCPTransport(host, port, usesSSL);
@@ -90,6 +92,7 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
         if (mConnectionState != STATE_NOT_CONNECTED) return;
         mConnectionState = STATE_CONNECTING;
 
+        mNeedsRestoration = true;
         mApplicationName = applicationName;
         checkStartConnection();
     }
@@ -165,7 +168,7 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
     @Override
     public void onConnectionClosed() {
         reportConnectionLost();
-        if (isConnectedFast()) openConnection(mApplicationName);
+        if (isConnectedFast() && mNeedsRestoration) openConnection(mApplicationName);
         else if (needsConnection()) notifyNeedsConnection();
     }
 
@@ -182,6 +185,11 @@ public class AndroidJSTPConnection implements ConnectionListener, RestorationPol
     public void removeCachedCalls(String cacheName) {
         ConcurrentHashMap<UUID, CacheCallData> cachedCalls = mTaggedCacheCalls.get(cacheName);
         if (cachedCalls != null) cachedCalls.clear();
+    }
+
+    public void close() {
+        mNeedsRestoration = false;
+        mConnection.close();
     }
 
     public interface AndroidJSTPConnectionListener {
