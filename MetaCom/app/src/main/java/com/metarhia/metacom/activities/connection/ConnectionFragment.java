@@ -3,11 +3,12 @@ package com.metarhia.metacom.activities.connection;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,20 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
             });
         }
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity
+                ().getApplicationContext());
+        String host = sharedPref.getString(getString(R.string.shared_preferences_host), null);
+        int port = sharedPref.getInt(getString(R.string.shared_preferences_port), -1);
+        boolean isAuthorized = sharedPref.getBoolean(getString(R.string
+                .shared_preferences_is_authorized), false);
+        if (host != null && port != -1) {
+            mHostEditText.setText(host);
+            mPortEditText.setText(port + "");
+        }
+        if (isAuthorized) {
+            setButtonSubmitClick();
+        }
+
         return v;
     }
 
@@ -105,6 +120,15 @@ public class ConnectionFragment extends Fragment implements ConnectionCallback {
             mHostEditText.setEnabled(true);
             mPortEditText.setEnabled(true);
         }
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity
+                ().getApplicationContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.shared_preferences_host), mHost);
+        editor.putInt(getString(R.string.shared_preferences_port), mPort);
+        editor.putBoolean(getString(R.string.shared_preferences_is_authorized), true);
+        editor.apply();
+
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra(MainActivity.EXTRA_CONNECTION_ID, connectionID);
         intent.putExtra(MainActivity.EXTRA_HOST_NAME, mHost);

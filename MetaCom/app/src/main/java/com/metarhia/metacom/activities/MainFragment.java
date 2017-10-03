@@ -2,9 +2,11 @@ package com.metarhia.metacom.activities;
 
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -227,6 +229,11 @@ public class MainFragment extends Fragment implements BackPressedHandler {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         leaveServer();
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences
+                                (getActivity().getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean(getString(R.string.shared_preferences_is_authorized), false);
+                        editor.apply();
                         getActivity().finish();
                     }
                 });
