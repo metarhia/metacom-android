@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -232,6 +233,26 @@ public class FileUtils {
         os.writeObject(infoList);
         os.flush();
         os.close();
+    }
+
+    public static void saveMessageHistory(String s, HistoryCallback callback) {
+        try {
+            String filename = System.currentTimeMillis() + ".txt";
+            final File file = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), filename);
+            if (file.createNewFile()) {
+                OutputStream os = new FileOutputStream(file);
+                os.write(s.getBytes());
+
+                os.flush();
+                os.close();
+                callback.onHistorySaved(filename);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.onSaveError();
+        }
     }
 
     /**

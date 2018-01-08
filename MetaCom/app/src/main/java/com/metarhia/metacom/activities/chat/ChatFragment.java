@@ -41,6 +41,7 @@ import com.metarhia.metacom.models.ChatRoomsManager;
 import com.metarhia.metacom.models.Message;
 import com.metarhia.metacom.models.UserConnectionsManager;
 import com.metarhia.metacom.utils.Constants;
+import com.metarhia.metacom.utils.HistoryCallback;
 import com.metarhia.metacom.utils.PermissionUtils;
 
 import java.io.File;
@@ -418,6 +419,31 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        showSaveHistoryDialog();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color
+                .black14)));
+    }
+
+    private void showSaveHistoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style
+                .AlertDialogStyle);
+        builder.setTitle(R.string.save_history)
+                .setMessage(R.string.save_history_desc)
+                .setCancelable(false)
+                .setNegativeButton(R.string.no,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                leaveRoom();
+                            }
+                        })
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        saveHistory();
                         leaveRoom();
                     }
                 });
@@ -425,6 +451,24 @@ public class ChatFragment extends Fragment implements MessageListener, MessageSe
         alert.show();
         alert.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color
                 .black14)));
+    }
+
+    private void saveHistory() {
+        mChatRoomsManager.saveHistory(mMessages, new HistoryCallback() {
+            @Override
+            public void onHistorySaved(String filename) {
+                String message = String.format(getString(R.string.saved_history), filename);
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onSaveError() {
+                Toast.makeText(getActivity(),
+                        getString(R.string.save_history_error), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
     }
 
     @Override

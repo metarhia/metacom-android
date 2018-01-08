@@ -7,6 +7,8 @@ import com.metarhia.metacom.connection.JSTPOkErrorHandler;
 import com.metarhia.metacom.interfaces.JoinRoomCallback;
 import com.metarhia.metacom.interfaces.LeaveRoomCallback;
 import com.metarhia.metacom.utils.Constants;
+import com.metarhia.metacom.utils.FileUtils;
+import com.metarhia.metacom.utils.HistoryCallback;
 import com.metarhia.metacom.utils.MainExecutor;
 
 import java.util.ArrayList;
@@ -143,5 +145,26 @@ public class ChatRoomsManager implements AndroidJSTPConnection.AndroidJSTPConnec
                 }
             }
         });
+    }
+
+    public void saveHistory(List<Message> messages, HistoryCallback callback) {
+        StringBuilder messageBuilder = new StringBuilder();
+        for (Message message : messages) {
+            if (message.getType() == MessageType.INFO) {
+                messageBuilder.append(message.getContent() + "\n");
+                continue;
+            }
+
+            String sender = message.isIncoming() ? "Interlocutor: " : "Me: ";
+            messageBuilder.append(sender);
+            if (message.getType() == MessageType.FILE) {
+                messageBuilder.append("File");
+            } else {
+                messageBuilder.append(message.getContent());
+            }
+            messageBuilder.append("\n");
+        }
+
+        FileUtils.saveMessageHistory(messageBuilder.toString(), callback);
     }
 }

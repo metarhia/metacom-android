@@ -56,7 +56,7 @@
 
     <!--Dialogs-->
     <string name="leave_chat">Leave chat</string>
-    <string name="leave_chat_desc">Leaving the chat will cause losing conversation history</string>
+    <string name="leave_chat_desc">Do you want to leave chat?</string>
 
     <string name="leave_server">Leave server</string>
     <string name="leave_server_desc">Leaving the server will cause aborting all file transitions</string>
@@ -85,5 +85,11 @@
     <string name="permissions">Permissions</string>
     <string name="permissions_info">Please, confirm the storage permission to make file transactions.</string>
     <string name="permissions_are_not_granted">You can\'t make file transactions without confirming permission</string>
+    <string name="save_history">Save messaging history</string>
+    <string name="save_history_desc">Do you want to save messaging history?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="saved_history">Saved history in %s in downloads directory</string>
+    <string name="save_history_error">Save history error</string>
 
 </resources>
