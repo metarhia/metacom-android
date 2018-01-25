@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.metarhia.metacom"
         minSdkVersion 16
@@ -11,6 +10,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
+        }
     }
     buildTypes {
         release {
@@ -21,29 +25,23 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    implementation 'com.android.support:appcompat-v7:25.3.1'
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile group: 'com.metarhia.jstp', name: 'jstp', version: '0.8.5'
-    compile group: 'com.metarhia.jstp', name: 'jstp-compiler', version: '0.2.6'
+    implementation 'com.metarhia.jstp:jstp:0.8.5'
+    compileOnly group: 'com.metarhia.jstp', name: 'jstp-compiler', version: '0.2.6'
+    annotationProcessor group: 'com.metarhia.jstp', name: 'jstp-compiler', version: '0.2.6'
 
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.jakewharton:butterknife:8.6.0'
-    apt 'com.jakewharton:butterknife-compiler:8.6.0'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:cardview-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    testCompile 'junit:junit:4.12'
-
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'com.github.tony19:logback-android-core:1.1.1-6'
-    compile('com.github.tony19:logback-android-classic:1.1.1-6') {
-        // workaround issue #73
-        exclude group: 'com.google.android', module: 'android'
-    }
+    implementation 'com.android.support.constraint:constraint-layout:1.0.1'
+    implementation 'com.android.support:design:25.3.1'
+    implementation 'com.jakewharton:butterknife:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    implementation 'com.android.support:support-v4:25.3.1'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:cardview-v7:25.3.1'
+    implementation 'com.android.support:recyclerview-v7:25.3.1'
+    testImplementation 'junit:junit:4.12'
 }
