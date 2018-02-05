@@ -162,7 +162,6 @@ public class FileUtils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
             callback.onFileDownloadError();
         }
     }
@@ -190,7 +189,6 @@ public class FileUtils {
                     callback.onWrittenToFile();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
                     callback.onWriteError(e);
                 }
             }
@@ -214,10 +212,8 @@ public class FileUtils {
 
                 writeConnectionListToFile(infoList, file);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+        } catch (ClassNotFoundException ignored) {
         }
     }
 
@@ -258,7 +254,6 @@ public class FileUtils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
             callback.onSaveError();
         }
     }

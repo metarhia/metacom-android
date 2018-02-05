@@ -33,7 +33,6 @@ public class ConnectionInfoProvider {
             try {
                 return FileUtils.readConnectionListFromFile(file);
             } catch (Exception e) {
-                e.printStackTrace();
                 return null;
             }
         }
