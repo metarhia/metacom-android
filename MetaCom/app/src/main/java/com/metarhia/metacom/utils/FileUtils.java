@@ -134,8 +134,12 @@ public class FileUtils {
     public static void saveFileInDownloads(String extension, ArrayList<byte[]> buffer,
                                            final FileDownloadedListener callback) {
         try {
-            final File file = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS), System.currentTimeMillis() + "." + extension);
+            File path = (Environment.getExternalStorageState() == null ||
+                    !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) ?
+                    Environment.getDataDirectory() :
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+            final File file = new File(path, System.currentTimeMillis() + "." + extension);
             if (file.createNewFile()) {
 
                 FileUtils.writeChunksToFile(file, buffer,
@@ -238,9 +242,13 @@ public class FileUtils {
     public static void saveMessageHistory(String s, HistoryCallback callback) {
         try {
             String filename = System.currentTimeMillis() + ".txt";
-            final File file = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS), filename);
-            if (file.createNewFile()) {
+
+            File path = (Environment.getExternalStorageState() == null ||
+                    !Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) ?
+                    Environment.getDataDirectory() :
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            final File file = new File(path, filename);
+            if (file.mkdirs() && file.createNewFile()) {
                 OutputStream os = new FileOutputStream(file);
                 os.write(s.getBytes());
 

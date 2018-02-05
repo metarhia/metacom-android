@@ -264,8 +264,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
                     break;
                 }
                 case PICK_IMAGE_FROM_CAMERA: {
-//                    fileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
-// TMP_METACOM_JPG));
                     File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                     fileUri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                     break;
@@ -302,8 +300,6 @@ public class FilesFragment extends Fragment implements FileDownloadedListener,
         switch (item.getItemId()) {
             case TAKE_PHOTO:
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() +
-// TMP_METACOM_JPG));
                 File f = new File(Environment.getExternalStorageDirectory() + TMP_METACOM_JPG);
                 Uri uri = FileProvider.getUriForFile(getContext(), AUTHORITY_STRING, f);
                 takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
